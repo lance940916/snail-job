@@ -1,4 +1,4 @@
-package com.snailwu.job.core.rpc;
+package com.snailwu.job.core.server;
 
 import org.junit.Test;
 
@@ -12,7 +12,7 @@ public class ServerTest {
 
     @Test
     public void testStart() throws InterruptedException {
-        RpcServer server = new RpcServer();
+        EmbedServer server = new EmbedServer();
         server.start(9999);
 
         TimeUnit.SECONDS.sleep(20);

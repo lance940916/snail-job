@@ -100,6 +100,13 @@
             <version>3.10</version>
         </dependency>
 
+        <!-- Spring Context -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>5.2.6.RELEASE</version>
+            <scope>provided</scope>
+        </dependency>
 
     </dependencies>
 

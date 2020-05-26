@@ -72,7 +72,7 @@ public class HttpUtil {
     private static final SocketConfig SOCKET_CONFIG = SocketConfig.custom()
             .setSoTimeout(SOCKET_TIMEOUT)
             .build();
-    
+
     static {
         // 默认的 header
         List<Header> headerList = new ArrayList<>();
@@ -140,7 +140,7 @@ public class HttpUtil {
      * @param bodyJsonContent 请求体使用 JSON 编码后放在请求体内
      * @return 响应结果
      */
-    public static String postWithJson(String uri, String bodyJsonContent) {
+    public static String post(String uri, String bodyJsonContent) {
         return post(uri, null, bodyJsonContent);
     }
 
@@ -222,15 +222,15 @@ public class HttpUtil {
             StatusLine statusLine = response.getStatusLine();
             HttpEntity responseEntity = response.getEntity();
             Header contentType = responseEntity.getContentType();
-
-            if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-                log.info("[HTTP 请求]-响应 StatusCode:{} ContentType:{}", HttpStatus.SC_OK, contentType);
+            int statusCode = statusLine.getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                log.info("[HTTP 请求]-响应 StatusCode:{} ContentType:{}", statusCode, contentType);
 
                 String responseContent = EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
                 log.info("[HTTP 请求]-响应消息: " + responseContent);
                 return responseContent;
             } else {
-                log.error("[HTTP 请求]-响应 StatusCode:{} ContentType:{}", HttpStatus.SC_OK, contentType);
+                log.error("[HTTP 请求]-响应 StatusCode:{} ContentType:{}", statusCode, contentType);
             }
 
             return null;

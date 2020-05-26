@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -69,11 +68,11 @@ public class JsonUtil {
         }
     }
 
-    public static <T> T readValue(String jsonContent, TypeReference<T> typeReference) {
+    public static <T> T readValue(String content, TypeReference<T> typeReference) {
         try {
-            return mapper.readValue(jsonContent, typeReference);
+            return mapper.readValue(content, typeReference);
         } catch (IOException e) {
-            log.error("Fail to convert json[{}] to bean[{}]", jsonContent, typeReference, e);
+            log.error("Fail to convert json[{}] to bean[{}]", content, typeReference, e);
         }
         return null;
     }

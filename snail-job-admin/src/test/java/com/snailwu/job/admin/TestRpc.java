@@ -16,7 +16,7 @@ public class TestRpc {
     @Test
     public void sayHello() throws IOException {
 
-//        HttpUtil.post("http://localhost:9999/say-hello?name=Mike", "你好，RPC.");
+        HttpUtil.post("http://localhost:9999/say-hello?name=Mike", "你好，RPC.");
 
     }
 
