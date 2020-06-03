@@ -13,13 +13,15 @@ import java.util.concurrent.TimeUnit;
 import static com.snailwu.job.core.enums.RegistryConfig.RegistryType.EXECUTOR;
 
 /**
+ * 向调度中心注册 Worker 节点
+ *
  * @author 吴庆龙
  * @date 2020/5/25 4:00 下午
  */
 public class ExecutorRegistryThread {
     public static final Logger log = LoggerFactory.getLogger(ExecutorRegistryThread.class);
 
-    private static ExecutorRegistryThread instance = new ExecutorRegistryThread();
+    private static final ExecutorRegistryThread instance = new ExecutorRegistryThread();
 
     public static ExecutorRegistryThread getInstance() {
         return instance;
@@ -35,11 +37,11 @@ public class ExecutorRegistryThread {
      */
     public void start(final String appName, final String address) {
         if (appName == null || appName.trim().length() == 0) {
-            log.warn("执行器注册失败, appName is null");
+            log.warn("注册失败. 没有配置 appName");
             return;
         }
         if (SnailJobExecutor.getAdminBiz() == null) {
-            log.warn("执行器注册失败, 未配置调度中心地址");
+            log.warn("注册失败. 未配置调度中心地址");
             return;
         }
 
@@ -51,49 +53,48 @@ public class ExecutorRegistryThread {
                     AdminBiz adminBiz = SnailJobExecutor.getAdminBiz();
                     ResultT<String> registryResult = adminBiz.registry(registryParam);
                     if (registryResult != null && ResultT.SUCCESS_CODE == registryResult.getCode()) {
-                        log.info("注册到调度中心成功");
+                        log.info("在调度中心注册成功");
                     } else {
-                        log.error("注册到调度中心失败");
+                        log.error("在调度中心注册失败");
                     }
                 } catch (Exception e) {
                     if (!toStop) {
-                        log.error(e.getMessage(), e);
+                        log.error("在调度中心注册异常", e);
                     }
                 }
 
-                // 休眠
+                // 线程没有停止，则进行休眠
                 try {
                     if (!toStop) {
                         TimeUnit.SECONDS.sleep(RegistryConfig.BEAT_TIMEOUT);
                     }
                 } catch (InterruptedException e) {
                     if (!toStop) {
-                        log.error("执行器注册线程被中断了, errMsg:{}", e.getMessage());
+                        log.error("休眠被中断，且 toStop 为 false. errMsg:{}", e.getMessage());
                     }
                 }
             }
 
-            // 移除节点
+            // 移除节点。线程被停止后（toStop 为 true）通知调度中心进行节点的移除
             try {
                 RegistryParam registryParam = new RegistryParam(EXECUTOR.name(), appName, address);
                 AdminBiz adminBiz = SnailJobExecutor.getAdminBiz();
                 ResultT<String> registryResult = adminBiz.registryRemove(registryParam);
                 if (registryResult != null && ResultT.SUCCESS_CODE == registryResult.getCode()) {
-                    log.info("移除节点成功");
+                    log.info("通知调度中心移除注册节点成功");
                 } else {
-                    log.info("移除节点失败");
+                    log.info("通知调度中心移除注册节点失败");
                 }
             } catch (Exception e) {
                 if (!toStop) {
-                    log.error(e.getMessage(), e);
+                    log.error("通知调度中心移除注册节点异常", e);
                 }
             }
-            log.info("executorRegistryThread 销毁成功");
         });
         registryThread.setDaemon(true);
         registryThread.setName("executorRegistryThread");
         registryThread.start();
-        log.info("注册节点守护线程启动成功");
+        log.info("注册节点守护线程 启动成功");
     }
 
     /**
@@ -108,7 +109,7 @@ public class ExecutorRegistryThread {
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
         }
-        log.info("注册节点守护线程停止成功");
+        log.info("注册节点守护线程 停止成功");
     }
 
 }

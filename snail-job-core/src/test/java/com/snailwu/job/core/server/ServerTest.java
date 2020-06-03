@@ -13,7 +13,7 @@ public class ServerTest {
     @Test
     public void testStart() throws InterruptedException {
         EmbedServer server = new EmbedServer();
-        server.start(9999);
+//        server.start(9999);
 
         TimeUnit.SECONDS.sleep(20);
         server.stop();

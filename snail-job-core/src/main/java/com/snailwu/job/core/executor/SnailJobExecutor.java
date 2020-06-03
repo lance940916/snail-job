@@ -6,6 +6,7 @@ import com.snailwu.job.core.executor.model.SnailJobConfig;
 import com.snailwu.job.core.handler.IJobHandler;
 import com.snailwu.job.core.server.EmbedServer;
 import com.snailwu.job.core.thread.JobThread;
+import com.snailwu.job.core.thread.TriggerCallbackThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,33 +32,35 @@ public class SnailJobExecutor {
     /**
      * JobHandler Repository
      */
-    private static ConcurrentHashMap<String, IJobHandler> jobHandlerRepository = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, IJobHandler> JOB_HANDLER_REPOSITORY = new ConcurrentHashMap<>();
 
     /**
      * JobThread Repository
      */
-    private static ConcurrentHashMap<Integer, JobThread> jobThreadRepository = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Integer, JobThread> JOB_THREAD_REPOSITORY = new ConcurrentHashMap<>();
 
     /**
      * SnailJob 的配置参数
      */
-    private SnailJobConfig snailJobConfig;
+    private final SnailJobConfig snailJobConfig;
 
     public SnailJobExecutor(SnailJobConfig snailJobConfig) {
         this.snailJobConfig = snailJobConfig;
     }
 
+    // -------------------------------- 启动停止 snail-job
+
     /**
-     * 启动、初始化
+     * 启动
      */
     public void start() {
-        // TODO 日志模块
-
-
         // 实例化 AdminClient 实例
         initAdminBiz(snailJobConfig.getAdminAddress());
 
-        // 启动 RPC 服务，并注册节点到调度中心
+        // 启动回调任务执行结果线程
+        TriggerCallbackThread.getInstance().start();
+
+        // 启动 Netty 服务，并将节点注册到调度中心
         startEmbedServer();
     }
 
@@ -65,8 +68,8 @@ public class SnailJobExecutor {
      * 停止
      */
     public void stop() {
+        TriggerCallbackThread.getInstance().stop();
         stopEmbedServer();
-
     }
 
     /**
@@ -84,6 +87,8 @@ public class SnailJobExecutor {
     public static AdminBiz getAdminBiz() {
         return adminBiz;
     }
+
+    // -------------------------------- 启动停止 Netty
 
     /**
      * 启动执行器的服务端
@@ -114,30 +119,34 @@ public class SnailJobExecutor {
         }
     }
 
+    // -------------------------------- JobHandler
+
     /**
      * 添加 JobHandler
      */
     public static IJobHandler registryJobHandler(String name, IJobHandler jobHandler) {
         log.info("注册 JobHandler 成功 name:{} handler:{}", name, jobHandler);
-        return jobHandlerRepository.put(name, jobHandler);
+        return JOB_HANDLER_REPOSITORY.put(name, jobHandler);
     }
 
     /**
      * 获取 JobHandler
      */
     public static IJobHandler loadJobHandler(String name) {
-        return jobHandlerRepository.get(name);
+        return JOB_HANDLER_REPOSITORY.get(name);
     }
 
+    // -------------------------------- JobThread
+
     /**
-     * 注册 JobThread
+     * 注册新的 jobThread，如果有相同的 jobId 就进行替换，并将之前的 jobId 对应的线程停止
      */
     public static JobThread registryJobThread(int jobId, IJobHandler handler, String removeOldReason) {
         JobThread jobThread = new JobThread(jobId, handler);
         jobThread.start();
         log.info("snail-job registry jobThread success. jobId:{}, handler:{}", jobId, handler);
 
-        JobThread oldJobThread = jobThreadRepository.put(jobId, jobThread);
+        JobThread oldJobThread = JOB_THREAD_REPOSITORY.put(jobId, jobThread);
         if (oldJobThread != null) {
             oldJobThread.toStop(removeOldReason);
             oldJobThread.interrupt();
@@ -146,10 +155,10 @@ public class SnailJobExecutor {
     }
 
     /**
-     * 移除 JobThread
+     * 移除并停止 JobThread
      */
     public static JobThread removeJobThread(int jobId, String removeOldReason) {
-        JobThread jobThread = jobThreadRepository.remove(jobId);
+        JobThread jobThread = JOB_THREAD_REPOSITORY.remove(jobId);
         if (jobThread != null) {
             jobThread.toStop(removeOldReason);
             jobThread.interrupt();
@@ -162,7 +171,7 @@ public class SnailJobExecutor {
      * 加载 JobThread
      */
     public static JobThread loadJobThread(int jobId) {
-        return jobThreadRepository.get(jobId);
+        return JOB_THREAD_REPOSITORY.get(jobId);
     }
 
 }

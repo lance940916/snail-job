@@ -5,7 +5,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,14 +17,15 @@ import java.util.TimeZone;
  * @author 吴庆龙
  * @date 2020/5/22 3:11 下午
  */
-@Slf4j
 public class JsonUtil {
+    private static final Logger log = LoggerFactory.getLogger(JsonUtil.class);
 
     /**
      * ObjectMapper
      */
     private static final ObjectMapper mapper = new ObjectMapper()
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             .setTimeZone(TimeZone.getDefault());
 

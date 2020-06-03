@@ -44,7 +44,7 @@ public class EmbedServer {
      *
      * @param localPort Netty 服务对应的本机端口
      */
-    public void start(int localPort, String rpcServerAddress, String appName) {
+    public void start(int localPort, String address, String appName) {
         executorBiz = new ExecutorBizImpl();
         serverThread = new Thread(() -> {
             // 启动 Netty
@@ -68,24 +68,23 @@ public class EmbedServer {
             try {
                 // 执行完 bind 之后就可以接受连接了
                 ChannelFuture future = bootstrap.bind(localPort).sync();
-                log.info("Worker Netty 服务启动成功. 监听端口:{}", localPort);
+                log.info("Netty 服务启动成功. 监听端口:{}", localPort);
 
                 // 注册节点到调度中心
-                startRegistry(appName, rpcServerAddress);
-                log.info("启动注册节点守护线程");
+                startRegistry(appName, address);
 
                 // 主线程 wait，等待服务端链路关闭，子线程开始监听接受请求
                 future.channel().closeFuture().sync();
             } catch (InterruptedException e) {
                 // 服务端主动进行中断，也就是 stop
-                log.info("Worker Netty 服务停止运行");
+                log.info("Netty 服务停止运行");
             } finally {
                 workerGroup.shutdownGracefully();
                 bossGroup.shutdownGracefully();
             }
         });
         serverThread.setDaemon(true);
-        serverThread.setName("EmbedServer-Main");
+        serverThread.setName("EmbedServer");
         serverThread.start();
     }
 
@@ -107,7 +106,7 @@ public class EmbedServer {
     public static class EmbedHttpServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         private static final Logger log = LoggerFactory.getLogger(EmbedHttpServerHandler.class);
 
-        private ExecutorBiz executorBiz;
+        private final ExecutorBiz executorBiz;
 
         public EmbedHttpServerHandler(ExecutorBiz executorBiz) {
             this.executorBiz = executorBiz;
@@ -207,7 +206,5 @@ public class EmbedServer {
     private void stopRegistry() {
         ExecutorRegistryThread.getInstance().stop();
     }
-
-
 
 }

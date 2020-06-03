@@ -6,6 +6,8 @@ import com.snailwu.job.core.biz.model.TriggerParam;
 import com.snailwu.job.core.biz.model.ResultT;
 
 /**
+ * 执行器需要的方法
+ *
  * @author 吴庆龙
  * @date 2020/5/25 11:59 上午
  */
