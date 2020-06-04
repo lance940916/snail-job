@@ -1,6 +1,5 @@
 package com.snailwu.job.admin.utils;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
@@ -13,6 +12,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
@@ -28,8 +29,8 @@ import java.util.Map;
  * @author 吴庆龙
  * @date 2020/5/22 4:38 下午
  */
-@Slf4j
 public class HttpUtil {
+    private static final Logger log = LoggerFactory.getLogger(HttpUtil.class);
 
     private static final HttpClient httpClient;
 
@@ -215,7 +216,6 @@ public class HttpUtil {
     /**
      * HTTP 对于文本的封装处理
      */
-    @Slf4j
     public static class HttpTextResponseHandler implements ResponseHandler<String> {
         @Override
         public String handleResponse(HttpResponse response) throws IOException {

@@ -2,7 +2,7 @@ package com.snailwu.job.core.executor;
 
 import com.snailwu.job.core.biz.AdminBiz;
 import com.snailwu.job.core.biz.client.AdminBizClient;
-import com.snailwu.job.core.executor.model.SnailJobConfig;
+import com.snailwu.job.core.executor.model.SnailJobConfiguration;
 import com.snailwu.job.core.handler.IJobHandler;
 import com.snailwu.job.core.server.EmbedServer;
 import com.snailwu.job.core.thread.JobThread;
@@ -42,10 +42,10 @@ public class SnailJobExecutor {
     /**
      * SnailJob 的配置参数
      */
-    private final SnailJobConfig snailJobConfig;
+    private final SnailJobConfiguration snailJobConfiguration;
 
-    public SnailJobExecutor(SnailJobConfig snailJobConfig) {
-        this.snailJobConfig = snailJobConfig;
+    public SnailJobExecutor(SnailJobConfiguration snailJobConfiguration) {
+        this.snailJobConfiguration = snailJobConfiguration;
     }
 
     // -------------------------------- 启动停止 snail-job
@@ -55,7 +55,7 @@ public class SnailJobExecutor {
      */
     public void start() {
         // 实例化 AdminClient 实例
-        initAdminBiz(snailJobConfig.getAdminAddress());
+        initAdminBiz(snailJobConfiguration.getAdminAddress());
 
         // 启动回调任务执行结果线程
         TriggerCallbackThread.getInstance().start();
@@ -95,9 +95,9 @@ public class SnailJobExecutor {
      */
     private void startEmbedServer() {
         // 确定 address
-        String address = snailJobConfig.getAddress();
-        String ip = snailJobConfig.getIp();
-        int port = snailJobConfig.getPort();
+        String address = snailJobConfiguration.getAddress();
+        String ip = snailJobConfiguration.getIp();
+        int port = snailJobConfiguration.getPort();
         if (address == null || address.trim().length() == 0) {
             String ipPortAddress = ip.concat(":").concat(String.valueOf(port));
             address = "http://" + ipPortAddress;
@@ -105,7 +105,7 @@ public class SnailJobExecutor {
 
         // 启动
         embedServer = new EmbedServer();
-        embedServer.start(port, address, snailJobConfig.getAppName());
+        embedServer.start(port, address, snailJobConfiguration.getAppName());
     }
 
     /**

@@ -2,7 +2,7 @@ package com.snailwu.job.core.executor.impl;
 
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.executor.SnailJobExecutor;
-import com.snailwu.job.core.executor.model.SnailJobConfig;
+import com.snailwu.job.core.executor.model.SnailJobConfiguration;
 import com.snailwu.job.core.handler.annotation.SnailJob;
 import com.snailwu.job.core.handler.impl.MethodJobHandler;
 import org.slf4j.Logger;
@@ -31,8 +31,8 @@ public class SnailJobSpringExecutor extends SnailJobExecutor
      */
     private static ApplicationContext applicationContext;
 
-    public SnailJobSpringExecutor(SnailJobConfig snailJobConfig) {
-        super(snailJobConfig);
+    public SnailJobSpringExecutor(SnailJobConfiguration snailJobConfiguration) {
+        super(snailJobConfiguration);
     }
 
     @Override

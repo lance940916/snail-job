@@ -4,7 +4,7 @@ package com.snailwu.job.core.executor.model;
  * @author 吴庆龙
  * @date 2020/5/26 10:48 上午
  */
-public class SnailJobConfig {
+public class SnailJobConfiguration {
 
     /**
      * 调度中心的地址
