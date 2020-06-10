@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snailwu.job.admin.dao.SnailJobGroupDao">
+  <resultMap id="BaseResultMap" type="com.snailwu.job.admin.core.model.SnailJobGroup">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="app_name" jdbcType="VARCHAR" property="appName" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="address_type" jdbcType="TINYINT" property="addressType" />
+    <result column="address_list" jdbcType="VARCHAR" property="addressList" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, app_name, title, address_type, address_list
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from snail_job_group
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from snail_job_group
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.snailwu.job.admin.core.model.SnailJobGroup" useGeneratedKeys="true">
+    insert into snail_job_group (app_name, title, address_type, 
+      address_list)
+    values (#{appName,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{addressType,jdbcType=TINYINT}, 
+      #{addressList,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.snailwu.job.admin.core.model.SnailJobGroup" useGeneratedKeys="true">
+    insert into snail_job_group
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="appName != null">
+        app_name,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="addressType != null">
+        address_type,
+      </if>
+      <if test="addressList != null">
+        address_list,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="appName != null">
+        #{appName,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="addressType != null">
+        #{addressType,jdbcType=TINYINT},
+      </if>
+      <if test="addressList != null">
+        #{addressList,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.snailwu.job.admin.core.model.SnailJobGroup">
+    update snail_job_group
+    <set>
+      <if test="appName != null">
+        app_name = #{appName,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="addressType != null">
+        address_type = #{addressType,jdbcType=TINYINT},
+      </if>
+      <if test="addressList != null">
+        address_list = #{addressList,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.snailwu.job.admin.core.model.SnailJobGroup">
+    update snail_job_group
+    set app_name = #{appName,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      address_type = #{addressType,jdbcType=TINYINT},
+      address_list = #{addressList,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

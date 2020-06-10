@@ -1,15 +1,15 @@
 package com.snailwu.job.admin.config;
 
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInterceptor;
 import com.zaxxer.hikari.HikariDataSource;
-import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.annotation.Resource;
@@ -27,7 +27,7 @@ public class RootConfig {
     @Resource
     private Environment env;
 
-    // ---------- 数据源 ----------
+    /* ---------- 数据源 ---------- */
     @Bean
     public DataSource dataSource() {
         HikariDataSource dataSource = new HikariDataSource();
@@ -45,23 +45,43 @@ public class RootConfig {
         return dataSource;
     }
 
-    // ---------- Spring 事务管理器 ----------
+    /* ---------- Spring 事务管理器 ---------- */
     @Bean
     public DataSourceTransactionManager transactionManager() {
         return new DataSourceTransactionManager(dataSource());
     }
 
-    // ---------- MyBatis 配置 ----------
+    /* ---------- MyBatis 配置 ---------- */
     @Bean
     public SqlSessionFactory sqlSessionFactory() throws Exception {
         SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
+
+        // 数据源
         factoryBean.setDataSource(dataSource());
 
-        factoryBean.setPlugins(pageInterceptor());
+        // MyBatis JavaConfig配置
+        factoryBean.setConfiguration(myBatisConfiguration());
+
         return factoryBean.getObject();
     }
 
-    // ---------- MyBatis 分页配置 ----------
+    /**
+     * MyBatis 配置
+     */
+    @Bean
+    public org.apache.ibatis.session.Configuration myBatisConfiguration() {
+        org.apache.ibatis.session.Configuration mbConfig = new org.apache.ibatis.session.Configuration();
+        mbConfig.setLogPrefix("mybatis-");
+
+        // Mapper 包
+        mbConfig.addMappers("com.snailwu.job.admin.dao");
+
+        // 增加分页拦截器
+        mbConfig.addInterceptor(pageInterceptor());
+        return mbConfig;
+    }
+
+    /* ---------- MyBatis 分页配置 ---------- */
     @Bean
     public PageInterceptor pageInterceptor() {
         Properties properties = new Properties();

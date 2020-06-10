@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * 执行器配置
+ *
  * @author 吴庆龙
  * @date 2020/5/25 2:32 下午
  */

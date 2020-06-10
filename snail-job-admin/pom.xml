@@ -18,13 +18,17 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.test.skip>true</maven.test.skip>
 
-        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
-        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
-        <maven-war-plugin.version>3.2.3</maven-war-plugin.version>
+        <snail-job-core.version>1.0-SNAPSHOT</snail-job-core.version>
     </properties>
 
     <dependencies>
+        <!-- Snail Job Core -->
+        <dependency>
+            <groupId>com.snailwu</groupId>
+            <artifactId>snail-job-core</artifactId>
+            <version>${snail-job-core.version}</version>
+        </dependency>
+
         <!-- Junit -->
         <dependency>
             <groupId>junit</groupId>
@@ -182,6 +186,13 @@
             <groupId>org.mybatis.generator</groupId>
             <artifactId>mybatis-generator-core</artifactId>
             <version>1.4.0</version>
+        </dependency>
+
+        <!-- MyBatis Dynamic SQL -->
+        <dependency>
+            <groupId>org.mybatis.dynamic-sql</groupId>
+            <artifactId>mybatis-dynamic-sql</artifactId>
+            <version>1.1.4</version>
         </dependency>
 
         <!-- Flyway -->

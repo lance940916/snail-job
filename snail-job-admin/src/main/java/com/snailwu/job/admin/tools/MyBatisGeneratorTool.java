@@ -22,7 +22,7 @@ public class MyBatisGeneratorTool {
     public static void main(String[] args) throws Exception {
         // 配置文件路径
         String userDir = System.getProperty("user.dir");
-        String filePath = "/snail-job-admin/src/main/resources/mybatis-generator-config.xml";
+        String filePath = "/snail-job-admin/src/main/resources/mbg-config.xml";
         File file = new File(userDir, filePath);
         if (!file.exists()) {
             throw new RuntimeException("MyBatisGenerator 配置文件不存在.");
