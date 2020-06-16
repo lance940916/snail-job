@@ -6,7 +6,7 @@ import com.snailwu.job.core.biz.model.IdleBeatParam;
 import com.snailwu.job.core.biz.model.KillParam;
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.biz.model.TriggerParam;
-import com.snailwu.job.core.thread.ExecutorRegistryThread;
+import com.snailwu.job.core.thread.ExecutorNodeRegistryThread;
 import com.snailwu.job.core.utils.JsonUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
@@ -197,14 +197,14 @@ public class EmbedServer {
      * 注册节点到调度中心
      */
     private void startRegistry(String appName, String address) {
-        ExecutorRegistryThread.getInstance().start(appName, address);
+        ExecutorNodeRegistryThread.getInstance().start(appName, address);
     }
 
     /**
      * 从调度中心移除节点
      */
     private void stopRegistry() {
-        ExecutorRegistryThread.getInstance().stop();
+        ExecutorNodeRegistryThread.getInstance().stop();
     }
 
 }

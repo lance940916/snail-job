@@ -26,8 +26,8 @@
 
         <commentGenerator>
             <property name="suppressAllComments" value="true"/>
-<!--            <property name="suppressDate" value="true"/>-->
-<!--            <property name="addRemarkComments" value="true"/>-->
+            <!--<property name="suppressDate" value="true"/>-->
+            <!--<property name="addRemarkComments" value="true"/>-->
         </commentGenerator>
 
         <!-- 数据库连接 -->
@@ -52,19 +52,21 @@
         <!-- Model -->
         <javaModelGenerator targetPackage="com.snailwu.job.admin.core.model"
                             targetProject="snail-job-admin/src/main/java">
-<!--            <property name="trimStrings" value="true"/>-->
+            <!--<property name="trimStrings" value="true"/>-->
         </javaModelGenerator>
 
         <!-- Mapper -->
-        <javaClientGenerator targetPackage="com.snailwu.job.admin.dao"
+        <javaClientGenerator targetPackage="com.snailwu.job.admin.mapper"
                              targetProject="snail-job-admin/src/main/java">
         </javaClientGenerator>
 
         <!-- Tables -->
-        <table tableName="snail_job_group" domainObjectName="SnailJobGroup"/>
-        <table tableName="snail_job_info" domainObjectName="SnailJobInfo"/>
-        <table tableName="snail_job_lock" domainObjectName="SnailJobLock"/>
-        <table tableName="snail_job_registry" domainObjectName="SnailJobRegistry"/>
+        <table tableName="job_executor_node" domainObjectName="JobExecutorNode"/>
+        <table tableName="job_executor" domainObjectName="JobExecutor"/>
+        <table tableName="job_info" domainObjectName="JobInfo"/>
+        <table tableName="job_log" domainObjectName="JobLog"/>
+        <table tableName="job_log_report" domainObjectName="JobLogReport"/>
+        <table tableName="job_lock" domainObjectName="JobLock"/>
 
     </context>
 </generatorConfiguration>

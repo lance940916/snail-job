@@ -6,40 +6,30 @@ package com.snailwu.job.core.biz.model;
  */
 public class RegistryParam {
 
-    private String registryGroup;
-    private String registryKey;
-    private String registryValue;
+    private String appName;
+    private String address;
 
     public RegistryParam() {
     }
 
-    public RegistryParam(String registryGroup, String registryKey, String registryValue) {
-        this.registryGroup = registryGroup;
-        this.registryKey = registryKey;
-        this.registryValue = registryValue;
+    public RegistryParam(String appName, String address) {
+        this.appName = appName;
+        this.address = address;
     }
 
-    public String getRegistryGroup() {
-        return registryGroup;
+    public String getAppName() {
+        return appName;
     }
 
-    public void setRegistryGroup(String registryGroup) {
-        this.registryGroup = registryGroup;
+    public void setAppName(String appName) {
+        this.appName = appName;
     }
 
-    public String getRegistryKey() {
-        return registryKey;
+    public String getAddress() {
+        return address;
     }
 
-    public void setRegistryKey(String registryKey) {
-        this.registryKey = registryKey;
-    }
-
-    public String getRegistryValue() {
-        return registryValue;
-    }
-
-    public void setRegistryValue(String registryValue) {
-        this.registryValue = registryValue;
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

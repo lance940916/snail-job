@@ -3,18 +3,18 @@ package com.snailwu.job.admin.core.model;
 import java.util.Date;
 import javax.annotation.Generated;
 
-public class SnailJobInfo {
+public class JobInfo {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Integer id;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private Integer jobGroup;
+    private Integer executorId;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String jobCron;
+    private String cron;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String jobDesc;
+    private String desc;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Date addTime;
@@ -47,16 +47,7 @@ public class SnailJobInfo {
     private Integer executorFailRetryCount;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String glueType;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String glueRemark;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private Date glueUpdatetime;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String childJobid;
+    private String childJobId;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Byte triggerStatus;
@@ -66,9 +57,6 @@ public class SnailJobInfo {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Long triggerNextTime;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String glueSource;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public Integer getId() {
@@ -81,33 +69,33 @@ public class SnailJobInfo {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public Integer getJobGroup() {
-        return jobGroup;
+    public Integer getExecutorId() {
+        return executorId;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setJobGroup(Integer jobGroup) {
-        this.jobGroup = jobGroup;
+    public void setExecutorId(Integer executorId) {
+        this.executorId = executorId;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getJobCron() {
-        return jobCron;
+    public String getCron() {
+        return cron;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setJobCron(String jobCron) {
-        this.jobCron = jobCron;
+    public void setCron(String cron) {
+        this.cron = cron;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getJobDesc() {
-        return jobDesc;
+    public String getDesc() {
+        return desc;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setJobDesc(String jobDesc) {
-        this.jobDesc = jobDesc;
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -211,43 +199,13 @@ public class SnailJobInfo {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getGlueType() {
-        return glueType;
+    public String getChildJobId() {
+        return childJobId;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setGlueType(String glueType) {
-        this.glueType = glueType;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getGlueRemark() {
-        return glueRemark;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setGlueRemark(String glueRemark) {
-        this.glueRemark = glueRemark;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public Date getGlueUpdatetime() {
-        return glueUpdatetime;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setGlueUpdatetime(Date glueUpdatetime) {
-        this.glueUpdatetime = glueUpdatetime;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getChildJobid() {
-        return childJobid;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setChildJobid(String childJobid) {
-        this.childJobid = childJobid;
+    public void setChildJobId(String childJobId) {
+        this.childJobId = childJobId;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -278,15 +236,5 @@ public class SnailJobInfo {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public void setTriggerNextTime(Long triggerNextTime) {
         this.triggerNextTime = triggerNextTime;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getGlueSource() {
-        return glueSource;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setGlueSource(String glueSource) {
-        this.glueSource = glueSource;
     }
 }

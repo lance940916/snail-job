@@ -1,9 +1,9 @@
-package com.snailwu.job.admin.dao;
+package com.snailwu.job.admin.mapper;
 
-import static com.snailwu.job.admin.dao.SnailJobLockDynamicSqlSupport.*;
+import static com.snailwu.job.admin.mapper.JobLockDynamicSqlSupport.*;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
-import com.snailwu.job.admin.core.model.SnailJobLock;
+import com.snailwu.job.admin.core.model.JobLock;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +33,7 @@ import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
 
 @Mapper
-public interface SnailJobLockMapper {
+public interface JobLockMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     BasicColumn[] selectList = BasicColumn.columnList(lockName);
 
@@ -47,23 +47,23 @@ public interface SnailJobLockMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @InsertProvider(type=SqlProviderAdapter.class, method="insert")
-    int insert(InsertStatementProvider<SnailJobLock> insertStatement);
+    int insert(InsertStatementProvider<JobLock> insertStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @InsertProvider(type=SqlProviderAdapter.class, method="insertMultiple")
-    int insertMultiple(MultiRowInsertStatementProvider<SnailJobLock> multipleInsertStatement);
+    int insertMultiple(MultiRowInsertStatementProvider<JobLock> multipleInsertStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
-    @ResultMap("SnailJobLockResult")
-    Optional<SnailJobLock> selectOne(SelectStatementProvider selectStatement);
+    @ResultMap("JobLockResult")
+    Optional<JobLock> selectOne(SelectStatementProvider selectStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
-    @Results(id="SnailJobLockResult", value = {
+    @Results(id="JobLockResult", value = {
         @Result(column="lock_name", property="lockName", jdbcType=JdbcType.VARCHAR, id=true)
     })
-    List<SnailJobLock> selectMany(SelectStatementProvider selectStatement);
+    List<JobLock> selectMany(SelectStatementProvider selectStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @UpdateProvider(type=SqlProviderAdapter.class, method="update")
@@ -71,12 +71,12 @@ public interface SnailJobLockMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default long count(CountDSLCompleter completer) {
-        return MyBatis3Utils.countFrom(this::count, snailJobLock, completer);
+        return MyBatis3Utils.countFrom(this::count, jobLock, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int delete(DeleteDSLCompleter completer) {
-        return MyBatis3Utils.deleteFrom(this::delete, snailJobLock, completer);
+        return MyBatis3Utils.deleteFrom(this::delete, jobLock, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -87,53 +87,53 @@ public interface SnailJobLockMapper {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int insert(SnailJobLock record) {
-        return MyBatis3Utils.insert(this::insert, record, snailJobLock, c ->
+    default int insert(JobLock record) {
+        return MyBatis3Utils.insert(this::insert, record, jobLock, c ->
             c.map(lockName).toProperty("lockName")
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int insertMultiple(Collection<SnailJobLock> records) {
-        return MyBatis3Utils.insertMultiple(this::insertMultiple, records, snailJobLock, c ->
+    default int insertMultiple(Collection<JobLock> records) {
+        return MyBatis3Utils.insertMultiple(this::insertMultiple, records, jobLock, c ->
             c.map(lockName).toProperty("lockName")
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int insertSelective(SnailJobLock record) {
-        return MyBatis3Utils.insert(this::insert, record, snailJobLock, c ->
+    default int insertSelective(JobLock record) {
+        return MyBatis3Utils.insert(this::insert, record, jobLock, c ->
             c.map(lockName).toPropertyWhenPresent("lockName", record::getLockName)
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default Optional<SnailJobLock> selectOne(SelectDSLCompleter completer) {
-        return MyBatis3Utils.selectOne(this::selectOne, selectList, snailJobLock, completer);
+    default Optional<JobLock> selectOne(SelectDSLCompleter completer) {
+        return MyBatis3Utils.selectOne(this::selectOne, selectList, jobLock, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default List<SnailJobLock> select(SelectDSLCompleter completer) {
-        return MyBatis3Utils.selectList(this::selectMany, selectList, snailJobLock, completer);
+    default List<JobLock> select(SelectDSLCompleter completer) {
+        return MyBatis3Utils.selectList(this::selectMany, selectList, jobLock, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default List<SnailJobLock> selectDistinct(SelectDSLCompleter completer) {
-        return MyBatis3Utils.selectDistinct(this::selectMany, selectList, snailJobLock, completer);
+    default List<JobLock> selectDistinct(SelectDSLCompleter completer) {
+        return MyBatis3Utils.selectDistinct(this::selectMany, selectList, jobLock, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int update(UpdateDSLCompleter completer) {
-        return MyBatis3Utils.update(this::update, snailJobLock, completer);
+        return MyBatis3Utils.update(this::update, jobLock, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    static UpdateDSL<UpdateModel> updateAllColumns(SnailJobLock record, UpdateDSL<UpdateModel> dsl) {
+    static UpdateDSL<UpdateModel> updateAllColumns(JobLock record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(lockName).equalTo(record::getLockName);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    static UpdateDSL<UpdateModel> updateSelectiveColumns(SnailJobLock record, UpdateDSL<UpdateModel> dsl) {
+    static UpdateDSL<UpdateModel> updateSelectiveColumns(JobLock record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(lockName).equalToWhenPresent(record::getLockName);
     }
 }

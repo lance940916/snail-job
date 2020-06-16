@@ -3,21 +3,21 @@ package com.snailwu.job.admin.core.model;
 import java.util.Date;
 import javax.annotation.Generated;
 
-public class SnailJobRegistry {
+public class JobLogReport {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Integer id;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String registryGroup;
+    private Date triggerTime;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String registryKey;
+    private Integer runningCount;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String registryValue;
+    private Integer successCount;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private Date updateTime;
+    private Integer failCount;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public Integer getId() {
@@ -30,42 +30,42 @@ public class SnailJobRegistry {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getRegistryGroup() {
-        return registryGroup;
+    public Date getTriggerTime() {
+        return triggerTime;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setRegistryGroup(String registryGroup) {
-        this.registryGroup = registryGroup;
+    public void setTriggerTime(Date triggerTime) {
+        this.triggerTime = triggerTime;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getRegistryKey() {
-        return registryKey;
+    public Integer getRunningCount() {
+        return runningCount;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setRegistryKey(String registryKey) {
-        this.registryKey = registryKey;
+    public void setRunningCount(Integer runningCount) {
+        this.runningCount = runningCount;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getRegistryValue() {
-        return registryValue;
+    public Integer getSuccessCount() {
+        return successCount;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setRegistryValue(String registryValue) {
-        this.registryValue = registryValue;
+    public void setSuccessCount(Integer successCount) {
+        this.successCount = successCount;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public Date getUpdateTime() {
-        return updateTime;
+    public Integer getFailCount() {
+        return failCount;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
+    public void setFailCount(Integer failCount) {
+        this.failCount = failCount;
     }
 }

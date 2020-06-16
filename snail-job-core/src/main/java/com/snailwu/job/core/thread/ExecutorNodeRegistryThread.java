@@ -10,20 +10,18 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.snailwu.job.core.enums.RegistryConfig.RegistryType.EXECUTOR;
-
 /**
- * 向调度中心注册 Worker 节点
+ * 定时向调度中心注册执行器节点
  *
  * @author 吴庆龙
  * @date 2020/5/25 4:00 下午
  */
-public class ExecutorRegistryThread {
-    public static final Logger log = LoggerFactory.getLogger(ExecutorRegistryThread.class);
+public class ExecutorNodeRegistryThread {
+    public static final Logger log = LoggerFactory.getLogger(ExecutorNodeRegistryThread.class);
 
-    private static final ExecutorRegistryThread instance = new ExecutorRegistryThread();
+    private static final ExecutorNodeRegistryThread instance = new ExecutorNodeRegistryThread();
 
-    public static ExecutorRegistryThread getInstance() {
+    public static ExecutorNodeRegistryThread getInstance() {
         return instance;
     }
 
@@ -49,9 +47,8 @@ public class ExecutorRegistryThread {
             // 一直进行注册
             while (!toStop) {
                 try {
-                    RegistryParam registryParam = new RegistryParam(EXECUTOR.name(), appName, address);
-                    AdminBiz adminBiz = SnailJobExecutor.getAdminBiz();
-                    ResultT<String> registryResult = adminBiz.registry(registryParam);
+                    RegistryParam registryParam = new RegistryParam(appName, address);
+                    ResultT<String> registryResult = SnailJobExecutor.getAdminBiz().registry(registryParam);
                     if (registryResult != null && ResultT.SUCCESS_CODE == registryResult.getCode()) {
                         log.info("在调度中心注册成功");
                     } else {
@@ -63,7 +60,7 @@ public class ExecutorRegistryThread {
                     }
                 }
 
-                // 线程没有停止，则进行休眠
+                // 线程没有标记为停止，则进行休眠
                 try {
                     if (!toStop) {
                         TimeUnit.SECONDS.sleep(RegistryConfig.BEAT_TIMEOUT);
@@ -77,9 +74,8 @@ public class ExecutorRegistryThread {
 
             // 移除节点。线程被停止后（toStop 为 true）通知调度中心进行节点的移除
             try {
-                RegistryParam registryParam = new RegistryParam(EXECUTOR.name(), appName, address);
-                AdminBiz adminBiz = SnailJobExecutor.getAdminBiz();
-                ResultT<String> registryResult = adminBiz.registryRemove(registryParam);
+                RegistryParam registryParam = new RegistryParam(appName, address);
+                ResultT<String> registryResult = SnailJobExecutor.getAdminBiz().registryRemove(registryParam);
                 if (registryResult != null && ResultT.SUCCESS_CODE == registryResult.getCode()) {
                     log.info("通知调度中心移除注册节点成功");
                 } else {
@@ -97,9 +93,6 @@ public class ExecutorRegistryThread {
         log.info("注册节点守护线程 启动成功");
     }
 
-    /**
-     * 停止 ExecutorRegistryThread 线程
-     */
     public void stop() {
         toStop = true;
         registryThread.interrupt();

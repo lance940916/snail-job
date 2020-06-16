@@ -1,9 +1,9 @@
-package com.snailwu.job.admin.dao;
+package com.snailwu.job.admin.mapper;
 
-import static com.snailwu.job.admin.dao.SnailJobGroupDynamicSqlSupport.*;
+import static com.snailwu.job.admin.mapper.JobExecutorDynamicSqlSupport.*;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
-import com.snailwu.job.admin.core.model.SnailJobGroup;
+import com.snailwu.job.admin.core.model.JobExecutor;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -33,9 +33,9 @@ import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
 
 @Mapper
-public interface SnailJobGroupMapper {
+public interface JobExecutorMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    BasicColumn[] selectList = BasicColumn.columnList(id, appName, title, addressType, addressList);
+    BasicColumn[] selectList = BasicColumn.columnList(id, appName, title, addressList);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
@@ -47,27 +47,26 @@ public interface SnailJobGroupMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @InsertProvider(type=SqlProviderAdapter.class, method="insert")
-    int insert(InsertStatementProvider<SnailJobGroup> insertStatement);
+    int insert(InsertStatementProvider<JobExecutor> insertStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @InsertProvider(type=SqlProviderAdapter.class, method="insertMultiple")
-    int insertMultiple(MultiRowInsertStatementProvider<SnailJobGroup> multipleInsertStatement);
+    int insertMultiple(MultiRowInsertStatementProvider<JobExecutor> multipleInsertStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
-    @ResultMap("SnailJobGroupResult")
-    Optional<SnailJobGroup> selectOne(SelectStatementProvider selectStatement);
+    @ResultMap("JobExecutorResult")
+    Optional<JobExecutor> selectOne(SelectStatementProvider selectStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
-    @Results(id="SnailJobGroupResult", value = {
+    @Results(id="JobExecutorResult", value = {
         @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
         @Result(column="app_name", property="appName", jdbcType=JdbcType.VARCHAR),
         @Result(column="title", property="title", jdbcType=JdbcType.VARCHAR),
-        @Result(column="address_type", property="addressType", jdbcType=JdbcType.TINYINT),
         @Result(column="address_list", property="addressList", jdbcType=JdbcType.VARCHAR)
     })
-    List<SnailJobGroup> selectMany(SelectStatementProvider selectStatement);
+    List<JobExecutor> selectMany(SelectStatementProvider selectStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @UpdateProvider(type=SqlProviderAdapter.class, method="update")
@@ -75,12 +74,12 @@ public interface SnailJobGroupMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default long count(CountDSLCompleter completer) {
-        return MyBatis3Utils.countFrom(this::count, snailJobGroup, completer);
+        return MyBatis3Utils.countFrom(this::count, jobExecutor, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int delete(DeleteDSLCompleter completer) {
-        return MyBatis3Utils.deleteFrom(this::delete, snailJobGroup, completer);
+        return MyBatis3Utils.deleteFrom(this::delete, jobExecutor, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -91,55 +90,52 @@ public interface SnailJobGroupMapper {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int insert(SnailJobGroup record) {
-        return MyBatis3Utils.insert(this::insert, record, snailJobGroup, c ->
+    default int insert(JobExecutor record) {
+        return MyBatis3Utils.insert(this::insert, record, jobExecutor, c ->
             c.map(id).toProperty("id")
             .map(appName).toProperty("appName")
             .map(title).toProperty("title")
-            .map(addressType).toProperty("addressType")
             .map(addressList).toProperty("addressList")
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int insertMultiple(Collection<SnailJobGroup> records) {
-        return MyBatis3Utils.insertMultiple(this::insertMultiple, records, snailJobGroup, c ->
+    default int insertMultiple(Collection<JobExecutor> records) {
+        return MyBatis3Utils.insertMultiple(this::insertMultiple, records, jobExecutor, c ->
             c.map(id).toProperty("id")
             .map(appName).toProperty("appName")
             .map(title).toProperty("title")
-            .map(addressType).toProperty("addressType")
             .map(addressList).toProperty("addressList")
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int insertSelective(SnailJobGroup record) {
-        return MyBatis3Utils.insert(this::insert, record, snailJobGroup, c ->
+    default int insertSelective(JobExecutor record) {
+        return MyBatis3Utils.insert(this::insert, record, jobExecutor, c ->
             c.map(id).toPropertyWhenPresent("id", record::getId)
             .map(appName).toPropertyWhenPresent("appName", record::getAppName)
             .map(title).toPropertyWhenPresent("title", record::getTitle)
-            .map(addressType).toPropertyWhenPresent("addressType", record::getAddressType)
             .map(addressList).toPropertyWhenPresent("addressList", record::getAddressList)
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default Optional<SnailJobGroup> selectOne(SelectDSLCompleter completer) {
-        return MyBatis3Utils.selectOne(this::selectOne, selectList, snailJobGroup, completer);
+    default Optional<JobExecutor> selectOne(SelectDSLCompleter completer) {
+        return MyBatis3Utils.selectOne(this::selectOne, selectList, jobExecutor, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default List<SnailJobGroup> select(SelectDSLCompleter completer) {
-        return MyBatis3Utils.selectList(this::selectMany, selectList, snailJobGroup, completer);
+    default List<JobExecutor> select(SelectDSLCompleter completer) {
+        return MyBatis3Utils.selectList(this::selectMany, selectList, jobExecutor, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default List<SnailJobGroup> selectDistinct(SelectDSLCompleter completer) {
-        return MyBatis3Utils.selectDistinct(this::selectMany, selectList, snailJobGroup, completer);
+    default List<JobExecutor> selectDistinct(SelectDSLCompleter completer) {
+        return MyBatis3Utils.selectDistinct(this::selectMany, selectList, jobExecutor, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default Optional<SnailJobGroup> selectByPrimaryKey(Integer id_) {
+    default Optional<JobExecutor> selectByPrimaryKey(Integer id_) {
         return selectOne(c ->
             c.where(id, isEqualTo(id_))
         );
@@ -147,44 +143,40 @@ public interface SnailJobGroupMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int update(UpdateDSLCompleter completer) {
-        return MyBatis3Utils.update(this::update, snailJobGroup, completer);
+        return MyBatis3Utils.update(this::update, jobExecutor, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    static UpdateDSL<UpdateModel> updateAllColumns(SnailJobGroup record, UpdateDSL<UpdateModel> dsl) {
+    static UpdateDSL<UpdateModel> updateAllColumns(JobExecutor record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(id).equalTo(record::getId)
                 .set(appName).equalTo(record::getAppName)
                 .set(title).equalTo(record::getTitle)
-                .set(addressType).equalTo(record::getAddressType)
                 .set(addressList).equalTo(record::getAddressList);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    static UpdateDSL<UpdateModel> updateSelectiveColumns(SnailJobGroup record, UpdateDSL<UpdateModel> dsl) {
+    static UpdateDSL<UpdateModel> updateSelectiveColumns(JobExecutor record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(id).equalToWhenPresent(record::getId)
                 .set(appName).equalToWhenPresent(record::getAppName)
                 .set(title).equalToWhenPresent(record::getTitle)
-                .set(addressType).equalToWhenPresent(record::getAddressType)
                 .set(addressList).equalToWhenPresent(record::getAddressList);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int updateByPrimaryKey(SnailJobGroup record) {
+    default int updateByPrimaryKey(JobExecutor record) {
         return update(c ->
             c.set(appName).equalTo(record::getAppName)
             .set(title).equalTo(record::getTitle)
-            .set(addressType).equalTo(record::getAddressType)
             .set(addressList).equalTo(record::getAddressList)
             .where(id, isEqualTo(record::getId))
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int updateByPrimaryKeySelective(SnailJobGroup record) {
+    default int updateByPrimaryKeySelective(JobExecutor record) {
         return update(c ->
             c.set(appName).equalToWhenPresent(record::getAppName)
             .set(title).equalToWhenPresent(record::getTitle)
-            .set(addressType).equalToWhenPresent(record::getAddressType)
             .set(addressList).equalToWhenPresent(record::getAddressList)
             .where(id, isEqualTo(record::getId))
         );

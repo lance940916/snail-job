@@ -1,4 +1,4 @@
-package com.snailwu.job.admin.dao;
+package com.snailwu.job.admin.mapper;
 
 import com.snailwu.job.admin.core.model.SnailJobRegistry;
 import com.snailwu.job.admin.core.model.SnailJobRegistryExample;

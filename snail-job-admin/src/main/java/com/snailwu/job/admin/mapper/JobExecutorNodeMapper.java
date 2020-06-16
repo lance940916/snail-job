@@ -1,9 +1,9 @@
-package com.snailwu.job.admin.dao;
+package com.snailwu.job.admin.mapper;
 
-import static com.snailwu.job.admin.dao.SnailJobRegistryDynamicSqlSupport.*;
+import static com.snailwu.job.admin.mapper.JobExecutorNodeDynamicSqlSupport.*;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
-import com.snailwu.job.admin.core.model.SnailJobRegistry;
+import com.snailwu.job.admin.core.model.JobExecutorNode;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -33,9 +33,9 @@ import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
 
 @Mapper
-public interface SnailJobRegistryMapper {
+public interface JobExecutorNodeMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    BasicColumn[] selectList = BasicColumn.columnList(id, registryGroup, registryKey, registryValue, updateTime);
+    BasicColumn[] selectList = BasicColumn.columnList(id, appName, address, updateTime);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
@@ -47,27 +47,26 @@ public interface SnailJobRegistryMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @InsertProvider(type=SqlProviderAdapter.class, method="insert")
-    int insert(InsertStatementProvider<SnailJobRegistry> insertStatement);
+    int insert(InsertStatementProvider<JobExecutorNode> insertStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @InsertProvider(type=SqlProviderAdapter.class, method="insertMultiple")
-    int insertMultiple(MultiRowInsertStatementProvider<SnailJobRegistry> multipleInsertStatement);
+    int insertMultiple(MultiRowInsertStatementProvider<JobExecutorNode> multipleInsertStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
-    @ResultMap("SnailJobRegistryResult")
-    Optional<SnailJobRegistry> selectOne(SelectStatementProvider selectStatement);
+    @ResultMap("JobExecutorNodeResult")
+    Optional<JobExecutorNode> selectOne(SelectStatementProvider selectStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
-    @Results(id="SnailJobRegistryResult", value = {
+    @Results(id="JobExecutorNodeResult", value = {
         @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
-        @Result(column="registry_group", property="registryGroup", jdbcType=JdbcType.VARCHAR),
-        @Result(column="registry_key", property="registryKey", jdbcType=JdbcType.VARCHAR),
-        @Result(column="registry_value", property="registryValue", jdbcType=JdbcType.VARCHAR),
+        @Result(column="app_name", property="appName", jdbcType=JdbcType.VARCHAR),
+        @Result(column="address", property="address", jdbcType=JdbcType.VARCHAR),
         @Result(column="update_time", property="updateTime", jdbcType=JdbcType.TIMESTAMP)
     })
-    List<SnailJobRegistry> selectMany(SelectStatementProvider selectStatement);
+    List<JobExecutorNode> selectMany(SelectStatementProvider selectStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @UpdateProvider(type=SqlProviderAdapter.class, method="update")
@@ -75,12 +74,12 @@ public interface SnailJobRegistryMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default long count(CountDSLCompleter completer) {
-        return MyBatis3Utils.countFrom(this::count, snailJobRegistry, completer);
+        return MyBatis3Utils.countFrom(this::count, jobExecutorNode, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int delete(DeleteDSLCompleter completer) {
-        return MyBatis3Utils.deleteFrom(this::delete, snailJobRegistry, completer);
+        return MyBatis3Utils.deleteFrom(this::delete, jobExecutorNode, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -91,55 +90,52 @@ public interface SnailJobRegistryMapper {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int insert(SnailJobRegistry record) {
-        return MyBatis3Utils.insert(this::insert, record, snailJobRegistry, c ->
+    default int insert(JobExecutorNode record) {
+        return MyBatis3Utils.insert(this::insert, record, jobExecutorNode, c ->
             c.map(id).toProperty("id")
-            .map(registryGroup).toProperty("registryGroup")
-            .map(registryKey).toProperty("registryKey")
-            .map(registryValue).toProperty("registryValue")
+            .map(appName).toProperty("appName")
+            .map(address).toProperty("address")
             .map(updateTime).toProperty("updateTime")
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int insertMultiple(Collection<SnailJobRegistry> records) {
-        return MyBatis3Utils.insertMultiple(this::insertMultiple, records, snailJobRegistry, c ->
+    default int insertMultiple(Collection<JobExecutorNode> records) {
+        return MyBatis3Utils.insertMultiple(this::insertMultiple, records, jobExecutorNode, c ->
             c.map(id).toProperty("id")
-            .map(registryGroup).toProperty("registryGroup")
-            .map(registryKey).toProperty("registryKey")
-            .map(registryValue).toProperty("registryValue")
+            .map(appName).toProperty("appName")
+            .map(address).toProperty("address")
             .map(updateTime).toProperty("updateTime")
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int insertSelective(SnailJobRegistry record) {
-        return MyBatis3Utils.insert(this::insert, record, snailJobRegistry, c ->
+    default int insertSelective(JobExecutorNode record) {
+        return MyBatis3Utils.insert(this::insert, record, jobExecutorNode, c ->
             c.map(id).toPropertyWhenPresent("id", record::getId)
-            .map(registryGroup).toPropertyWhenPresent("registryGroup", record::getRegistryGroup)
-            .map(registryKey).toPropertyWhenPresent("registryKey", record::getRegistryKey)
-            .map(registryValue).toPropertyWhenPresent("registryValue", record::getRegistryValue)
+            .map(appName).toPropertyWhenPresent("appName", record::getAppName)
+            .map(address).toPropertyWhenPresent("address", record::getAddress)
             .map(updateTime).toPropertyWhenPresent("updateTime", record::getUpdateTime)
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default Optional<SnailJobRegistry> selectOne(SelectDSLCompleter completer) {
-        return MyBatis3Utils.selectOne(this::selectOne, selectList, snailJobRegistry, completer);
+    default Optional<JobExecutorNode> selectOne(SelectDSLCompleter completer) {
+        return MyBatis3Utils.selectOne(this::selectOne, selectList, jobExecutorNode, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default List<SnailJobRegistry> select(SelectDSLCompleter completer) {
-        return MyBatis3Utils.selectList(this::selectMany, selectList, snailJobRegistry, completer);
+    default List<JobExecutorNode> select(SelectDSLCompleter completer) {
+        return MyBatis3Utils.selectList(this::selectMany, selectList, jobExecutorNode, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default List<SnailJobRegistry> selectDistinct(SelectDSLCompleter completer) {
-        return MyBatis3Utils.selectDistinct(this::selectMany, selectList, snailJobRegistry, completer);
+    default List<JobExecutorNode> selectDistinct(SelectDSLCompleter completer) {
+        return MyBatis3Utils.selectDistinct(this::selectMany, selectList, jobExecutorNode, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default Optional<SnailJobRegistry> selectByPrimaryKey(Integer id_) {
+    default Optional<JobExecutorNode> selectByPrimaryKey(Integer id_) {
         return selectOne(c ->
             c.where(id, isEqualTo(id_))
         );
@@ -147,44 +143,40 @@ public interface SnailJobRegistryMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int update(UpdateDSLCompleter completer) {
-        return MyBatis3Utils.update(this::update, snailJobRegistry, completer);
+        return MyBatis3Utils.update(this::update, jobExecutorNode, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    static UpdateDSL<UpdateModel> updateAllColumns(SnailJobRegistry record, UpdateDSL<UpdateModel> dsl) {
+    static UpdateDSL<UpdateModel> updateAllColumns(JobExecutorNode record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(id).equalTo(record::getId)
-                .set(registryGroup).equalTo(record::getRegistryGroup)
-                .set(registryKey).equalTo(record::getRegistryKey)
-                .set(registryValue).equalTo(record::getRegistryValue)
+                .set(appName).equalTo(record::getAppName)
+                .set(address).equalTo(record::getAddress)
                 .set(updateTime).equalTo(record::getUpdateTime);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    static UpdateDSL<UpdateModel> updateSelectiveColumns(SnailJobRegistry record, UpdateDSL<UpdateModel> dsl) {
+    static UpdateDSL<UpdateModel> updateSelectiveColumns(JobExecutorNode record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(id).equalToWhenPresent(record::getId)
-                .set(registryGroup).equalToWhenPresent(record::getRegistryGroup)
-                .set(registryKey).equalToWhenPresent(record::getRegistryKey)
-                .set(registryValue).equalToWhenPresent(record::getRegistryValue)
+                .set(appName).equalToWhenPresent(record::getAppName)
+                .set(address).equalToWhenPresent(record::getAddress)
                 .set(updateTime).equalToWhenPresent(record::getUpdateTime);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int updateByPrimaryKey(SnailJobRegistry record) {
+    default int updateByPrimaryKey(JobExecutorNode record) {
         return update(c ->
-            c.set(registryGroup).equalTo(record::getRegistryGroup)
-            .set(registryKey).equalTo(record::getRegistryKey)
-            .set(registryValue).equalTo(record::getRegistryValue)
+            c.set(appName).equalTo(record::getAppName)
+            .set(address).equalTo(record::getAddress)
             .set(updateTime).equalTo(record::getUpdateTime)
             .where(id, isEqualTo(record::getId))
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int updateByPrimaryKeySelective(SnailJobRegistry record) {
+    default int updateByPrimaryKeySelective(JobExecutorNode record) {
         return update(c ->
-            c.set(registryGroup).equalToWhenPresent(record::getRegistryGroup)
-            .set(registryKey).equalToWhenPresent(record::getRegistryKey)
-            .set(registryValue).equalToWhenPresent(record::getRegistryValue)
+            c.set(appName).equalToWhenPresent(record::getAppName)
+            .set(address).equalToWhenPresent(record::getAddress)
             .set(updateTime).equalToWhenPresent(record::getUpdateTime)
             .where(id, isEqualTo(record::getId))
         );

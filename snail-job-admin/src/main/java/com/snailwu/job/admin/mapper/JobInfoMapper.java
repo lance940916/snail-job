@@ -1,9 +1,9 @@
-package com.snailwu.job.admin.dao;
+package com.snailwu.job.admin.mapper;
 
-import static com.snailwu.job.admin.dao.SnailJobInfoDynamicSqlSupport.*;
+import static com.snailwu.job.admin.mapper.JobInfoDynamicSqlSupport.*;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
-import com.snailwu.job.admin.core.model.SnailJobInfo;
+import com.snailwu.job.admin.core.model.JobInfo;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -33,9 +33,9 @@ import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
 
 @Mapper
-public interface SnailJobInfoMapper {
+public interface JobInfoMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    BasicColumn[] selectList = BasicColumn.columnList(id, jobGroup, jobCron, jobDesc, addTime, updateTime, author, alarmEmail, executorRouteStrategy, executorHandler, executorParam, executorBlockStrategy, executorTimeout, executorFailRetryCount, glueType, glueRemark, glueUpdatetime, childJobid, triggerStatus, triggerLastTime, triggerNextTime, glueSource);
+    BasicColumn[] selectList = BasicColumn.columnList(id, executorId, cron, desc, addTime, updateTime, author, alarmEmail, executorRouteStrategy, executorHandler, executorParam, executorBlockStrategy, executorTimeout, executorFailRetryCount, childJobId, triggerStatus, triggerLastTime, triggerNextTime);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
@@ -47,24 +47,24 @@ public interface SnailJobInfoMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @InsertProvider(type=SqlProviderAdapter.class, method="insert")
-    int insert(InsertStatementProvider<SnailJobInfo> insertStatement);
+    int insert(InsertStatementProvider<JobInfo> insertStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @InsertProvider(type=SqlProviderAdapter.class, method="insertMultiple")
-    int insertMultiple(MultiRowInsertStatementProvider<SnailJobInfo> multipleInsertStatement);
+    int insertMultiple(MultiRowInsertStatementProvider<JobInfo> multipleInsertStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
-    @ResultMap("SnailJobInfoResult")
-    Optional<SnailJobInfo> selectOne(SelectStatementProvider selectStatement);
+    @ResultMap("JobInfoResult")
+    Optional<JobInfo> selectOne(SelectStatementProvider selectStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
-    @Results(id="SnailJobInfoResult", value = {
+    @Results(id="JobInfoResult", value = {
         @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
-        @Result(column="job_group", property="jobGroup", jdbcType=JdbcType.INTEGER),
-        @Result(column="job_cron", property="jobCron", jdbcType=JdbcType.VARCHAR),
-        @Result(column="job_desc", property="jobDesc", jdbcType=JdbcType.VARCHAR),
+        @Result(column="executor_id", property="executorId", jdbcType=JdbcType.INTEGER),
+        @Result(column="cron", property="cron", jdbcType=JdbcType.VARCHAR),
+        @Result(column="desc", property="desc", jdbcType=JdbcType.VARCHAR),
         @Result(column="add_time", property="addTime", jdbcType=JdbcType.TIMESTAMP),
         @Result(column="update_time", property="updateTime", jdbcType=JdbcType.TIMESTAMP),
         @Result(column="author", property="author", jdbcType=JdbcType.VARCHAR),
@@ -75,16 +75,12 @@ public interface SnailJobInfoMapper {
         @Result(column="executor_block_strategy", property="executorBlockStrategy", jdbcType=JdbcType.VARCHAR),
         @Result(column="executor_timeout", property="executorTimeout", jdbcType=JdbcType.INTEGER),
         @Result(column="executor_fail_retry_count", property="executorFailRetryCount", jdbcType=JdbcType.INTEGER),
-        @Result(column="glue_type", property="glueType", jdbcType=JdbcType.VARCHAR),
-        @Result(column="glue_remark", property="glueRemark", jdbcType=JdbcType.VARCHAR),
-        @Result(column="glue_updatetime", property="glueUpdatetime", jdbcType=JdbcType.TIMESTAMP),
-        @Result(column="child_jobid", property="childJobid", jdbcType=JdbcType.VARCHAR),
+        @Result(column="child_job_id", property="childJobId", jdbcType=JdbcType.VARCHAR),
         @Result(column="trigger_status", property="triggerStatus", jdbcType=JdbcType.TINYINT),
         @Result(column="trigger_last_time", property="triggerLastTime", jdbcType=JdbcType.BIGINT),
-        @Result(column="trigger_next_time", property="triggerNextTime", jdbcType=JdbcType.BIGINT),
-        @Result(column="glue_source", property="glueSource", jdbcType=JdbcType.LONGVARCHAR)
+        @Result(column="trigger_next_time", property="triggerNextTime", jdbcType=JdbcType.BIGINT)
     })
-    List<SnailJobInfo> selectMany(SelectStatementProvider selectStatement);
+    List<JobInfo> selectMany(SelectStatementProvider selectStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @UpdateProvider(type=SqlProviderAdapter.class, method="update")
@@ -92,12 +88,12 @@ public interface SnailJobInfoMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default long count(CountDSLCompleter completer) {
-        return MyBatis3Utils.countFrom(this::count, snailJobInfo, completer);
+        return MyBatis3Utils.countFrom(this::count, jobInfo, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int delete(DeleteDSLCompleter completer) {
-        return MyBatis3Utils.deleteFrom(this::delete, snailJobInfo, completer);
+        return MyBatis3Utils.deleteFrom(this::delete, jobInfo, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -108,12 +104,12 @@ public interface SnailJobInfoMapper {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int insert(SnailJobInfo record) {
-        return MyBatis3Utils.insert(this::insert, record, snailJobInfo, c ->
+    default int insert(JobInfo record) {
+        return MyBatis3Utils.insert(this::insert, record, jobInfo, c ->
             c.map(id).toProperty("id")
-            .map(jobGroup).toProperty("jobGroup")
-            .map(jobCron).toProperty("jobCron")
-            .map(jobDesc).toProperty("jobDesc")
+            .map(executorId).toProperty("executorId")
+            .map(cron).toProperty("cron")
+            .map(desc).toProperty("desc")
             .map(addTime).toProperty("addTime")
             .map(updateTime).toProperty("updateTime")
             .map(author).toProperty("author")
@@ -124,24 +120,20 @@ public interface SnailJobInfoMapper {
             .map(executorBlockStrategy).toProperty("executorBlockStrategy")
             .map(executorTimeout).toProperty("executorTimeout")
             .map(executorFailRetryCount).toProperty("executorFailRetryCount")
-            .map(glueType).toProperty("glueType")
-            .map(glueRemark).toProperty("glueRemark")
-            .map(glueUpdatetime).toProperty("glueUpdatetime")
-            .map(childJobid).toProperty("childJobid")
+            .map(childJobId).toProperty("childJobId")
             .map(triggerStatus).toProperty("triggerStatus")
             .map(triggerLastTime).toProperty("triggerLastTime")
             .map(triggerNextTime).toProperty("triggerNextTime")
-            .map(glueSource).toProperty("glueSource")
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int insertMultiple(Collection<SnailJobInfo> records) {
-        return MyBatis3Utils.insertMultiple(this::insertMultiple, records, snailJobInfo, c ->
+    default int insertMultiple(Collection<JobInfo> records) {
+        return MyBatis3Utils.insertMultiple(this::insertMultiple, records, jobInfo, c ->
             c.map(id).toProperty("id")
-            .map(jobGroup).toProperty("jobGroup")
-            .map(jobCron).toProperty("jobCron")
-            .map(jobDesc).toProperty("jobDesc")
+            .map(executorId).toProperty("executorId")
+            .map(cron).toProperty("cron")
+            .map(desc).toProperty("desc")
             .map(addTime).toProperty("addTime")
             .map(updateTime).toProperty("updateTime")
             .map(author).toProperty("author")
@@ -152,24 +144,20 @@ public interface SnailJobInfoMapper {
             .map(executorBlockStrategy).toProperty("executorBlockStrategy")
             .map(executorTimeout).toProperty("executorTimeout")
             .map(executorFailRetryCount).toProperty("executorFailRetryCount")
-            .map(glueType).toProperty("glueType")
-            .map(glueRemark).toProperty("glueRemark")
-            .map(glueUpdatetime).toProperty("glueUpdatetime")
-            .map(childJobid).toProperty("childJobid")
+            .map(childJobId).toProperty("childJobId")
             .map(triggerStatus).toProperty("triggerStatus")
             .map(triggerLastTime).toProperty("triggerLastTime")
             .map(triggerNextTime).toProperty("triggerNextTime")
-            .map(glueSource).toProperty("glueSource")
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int insertSelective(SnailJobInfo record) {
-        return MyBatis3Utils.insert(this::insert, record, snailJobInfo, c ->
+    default int insertSelective(JobInfo record) {
+        return MyBatis3Utils.insert(this::insert, record, jobInfo, c ->
             c.map(id).toPropertyWhenPresent("id", record::getId)
-            .map(jobGroup).toPropertyWhenPresent("jobGroup", record::getJobGroup)
-            .map(jobCron).toPropertyWhenPresent("jobCron", record::getJobCron)
-            .map(jobDesc).toPropertyWhenPresent("jobDesc", record::getJobDesc)
+            .map(executorId).toPropertyWhenPresent("executorId", record::getExecutorId)
+            .map(cron).toPropertyWhenPresent("cron", record::getCron)
+            .map(desc).toPropertyWhenPresent("desc", record::getDesc)
             .map(addTime).toPropertyWhenPresent("addTime", record::getAddTime)
             .map(updateTime).toPropertyWhenPresent("updateTime", record::getUpdateTime)
             .map(author).toPropertyWhenPresent("author", record::getAuthor)
@@ -180,34 +168,30 @@ public interface SnailJobInfoMapper {
             .map(executorBlockStrategy).toPropertyWhenPresent("executorBlockStrategy", record::getExecutorBlockStrategy)
             .map(executorTimeout).toPropertyWhenPresent("executorTimeout", record::getExecutorTimeout)
             .map(executorFailRetryCount).toPropertyWhenPresent("executorFailRetryCount", record::getExecutorFailRetryCount)
-            .map(glueType).toPropertyWhenPresent("glueType", record::getGlueType)
-            .map(glueRemark).toPropertyWhenPresent("glueRemark", record::getGlueRemark)
-            .map(glueUpdatetime).toPropertyWhenPresent("glueUpdatetime", record::getGlueUpdatetime)
-            .map(childJobid).toPropertyWhenPresent("childJobid", record::getChildJobid)
+            .map(childJobId).toPropertyWhenPresent("childJobId", record::getChildJobId)
             .map(triggerStatus).toPropertyWhenPresent("triggerStatus", record::getTriggerStatus)
             .map(triggerLastTime).toPropertyWhenPresent("triggerLastTime", record::getTriggerLastTime)
             .map(triggerNextTime).toPropertyWhenPresent("triggerNextTime", record::getTriggerNextTime)
-            .map(glueSource).toPropertyWhenPresent("glueSource", record::getGlueSource)
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default Optional<SnailJobInfo> selectOne(SelectDSLCompleter completer) {
-        return MyBatis3Utils.selectOne(this::selectOne, selectList, snailJobInfo, completer);
+    default Optional<JobInfo> selectOne(SelectDSLCompleter completer) {
+        return MyBatis3Utils.selectOne(this::selectOne, selectList, jobInfo, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default List<SnailJobInfo> select(SelectDSLCompleter completer) {
-        return MyBatis3Utils.selectList(this::selectMany, selectList, snailJobInfo, completer);
+    default List<JobInfo> select(SelectDSLCompleter completer) {
+        return MyBatis3Utils.selectList(this::selectMany, selectList, jobInfo, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default List<SnailJobInfo> selectDistinct(SelectDSLCompleter completer) {
-        return MyBatis3Utils.selectDistinct(this::selectMany, selectList, snailJobInfo, completer);
+    default List<JobInfo> selectDistinct(SelectDSLCompleter completer) {
+        return MyBatis3Utils.selectDistinct(this::selectMany, selectList, jobInfo, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default Optional<SnailJobInfo> selectByPrimaryKey(Integer id_) {
+    default Optional<JobInfo> selectByPrimaryKey(Integer id_) {
         return selectOne(c ->
             c.where(id, isEqualTo(id_))
         );
@@ -215,15 +199,15 @@ public interface SnailJobInfoMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int update(UpdateDSLCompleter completer) {
-        return MyBatis3Utils.update(this::update, snailJobInfo, completer);
+        return MyBatis3Utils.update(this::update, jobInfo, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    static UpdateDSL<UpdateModel> updateAllColumns(SnailJobInfo record, UpdateDSL<UpdateModel> dsl) {
+    static UpdateDSL<UpdateModel> updateAllColumns(JobInfo record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(id).equalTo(record::getId)
-                .set(jobGroup).equalTo(record::getJobGroup)
-                .set(jobCron).equalTo(record::getJobCron)
-                .set(jobDesc).equalTo(record::getJobDesc)
+                .set(executorId).equalTo(record::getExecutorId)
+                .set(cron).equalTo(record::getCron)
+                .set(desc).equalTo(record::getDesc)
                 .set(addTime).equalTo(record::getAddTime)
                 .set(updateTime).equalTo(record::getUpdateTime)
                 .set(author).equalTo(record::getAuthor)
@@ -234,22 +218,18 @@ public interface SnailJobInfoMapper {
                 .set(executorBlockStrategy).equalTo(record::getExecutorBlockStrategy)
                 .set(executorTimeout).equalTo(record::getExecutorTimeout)
                 .set(executorFailRetryCount).equalTo(record::getExecutorFailRetryCount)
-                .set(glueType).equalTo(record::getGlueType)
-                .set(glueRemark).equalTo(record::getGlueRemark)
-                .set(glueUpdatetime).equalTo(record::getGlueUpdatetime)
-                .set(childJobid).equalTo(record::getChildJobid)
+                .set(childJobId).equalTo(record::getChildJobId)
                 .set(triggerStatus).equalTo(record::getTriggerStatus)
                 .set(triggerLastTime).equalTo(record::getTriggerLastTime)
-                .set(triggerNextTime).equalTo(record::getTriggerNextTime)
-                .set(glueSource).equalTo(record::getGlueSource);
+                .set(triggerNextTime).equalTo(record::getTriggerNextTime);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    static UpdateDSL<UpdateModel> updateSelectiveColumns(SnailJobInfo record, UpdateDSL<UpdateModel> dsl) {
+    static UpdateDSL<UpdateModel> updateSelectiveColumns(JobInfo record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(id).equalToWhenPresent(record::getId)
-                .set(jobGroup).equalToWhenPresent(record::getJobGroup)
-                .set(jobCron).equalToWhenPresent(record::getJobCron)
-                .set(jobDesc).equalToWhenPresent(record::getJobDesc)
+                .set(executorId).equalToWhenPresent(record::getExecutorId)
+                .set(cron).equalToWhenPresent(record::getCron)
+                .set(desc).equalToWhenPresent(record::getDesc)
                 .set(addTime).equalToWhenPresent(record::getAddTime)
                 .set(updateTime).equalToWhenPresent(record::getUpdateTime)
                 .set(author).equalToWhenPresent(record::getAuthor)
@@ -260,22 +240,18 @@ public interface SnailJobInfoMapper {
                 .set(executorBlockStrategy).equalToWhenPresent(record::getExecutorBlockStrategy)
                 .set(executorTimeout).equalToWhenPresent(record::getExecutorTimeout)
                 .set(executorFailRetryCount).equalToWhenPresent(record::getExecutorFailRetryCount)
-                .set(glueType).equalToWhenPresent(record::getGlueType)
-                .set(glueRemark).equalToWhenPresent(record::getGlueRemark)
-                .set(glueUpdatetime).equalToWhenPresent(record::getGlueUpdatetime)
-                .set(childJobid).equalToWhenPresent(record::getChildJobid)
+                .set(childJobId).equalToWhenPresent(record::getChildJobId)
                 .set(triggerStatus).equalToWhenPresent(record::getTriggerStatus)
                 .set(triggerLastTime).equalToWhenPresent(record::getTriggerLastTime)
-                .set(triggerNextTime).equalToWhenPresent(record::getTriggerNextTime)
-                .set(glueSource).equalToWhenPresent(record::getGlueSource);
+                .set(triggerNextTime).equalToWhenPresent(record::getTriggerNextTime);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int updateByPrimaryKey(SnailJobInfo record) {
+    default int updateByPrimaryKey(JobInfo record) {
         return update(c ->
-            c.set(jobGroup).equalTo(record::getJobGroup)
-            .set(jobCron).equalTo(record::getJobCron)
-            .set(jobDesc).equalTo(record::getJobDesc)
+            c.set(executorId).equalTo(record::getExecutorId)
+            .set(cron).equalTo(record::getCron)
+            .set(desc).equalTo(record::getDesc)
             .set(addTime).equalTo(record::getAddTime)
             .set(updateTime).equalTo(record::getUpdateTime)
             .set(author).equalTo(record::getAuthor)
@@ -286,24 +262,20 @@ public interface SnailJobInfoMapper {
             .set(executorBlockStrategy).equalTo(record::getExecutorBlockStrategy)
             .set(executorTimeout).equalTo(record::getExecutorTimeout)
             .set(executorFailRetryCount).equalTo(record::getExecutorFailRetryCount)
-            .set(glueType).equalTo(record::getGlueType)
-            .set(glueRemark).equalTo(record::getGlueRemark)
-            .set(glueUpdatetime).equalTo(record::getGlueUpdatetime)
-            .set(childJobid).equalTo(record::getChildJobid)
+            .set(childJobId).equalTo(record::getChildJobId)
             .set(triggerStatus).equalTo(record::getTriggerStatus)
             .set(triggerLastTime).equalTo(record::getTriggerLastTime)
             .set(triggerNextTime).equalTo(record::getTriggerNextTime)
-            .set(glueSource).equalTo(record::getGlueSource)
             .where(id, isEqualTo(record::getId))
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int updateByPrimaryKeySelective(SnailJobInfo record) {
+    default int updateByPrimaryKeySelective(JobInfo record) {
         return update(c ->
-            c.set(jobGroup).equalToWhenPresent(record::getJobGroup)
-            .set(jobCron).equalToWhenPresent(record::getJobCron)
-            .set(jobDesc).equalToWhenPresent(record::getJobDesc)
+            c.set(executorId).equalToWhenPresent(record::getExecutorId)
+            .set(cron).equalToWhenPresent(record::getCron)
+            .set(desc).equalToWhenPresent(record::getDesc)
             .set(addTime).equalToWhenPresent(record::getAddTime)
             .set(updateTime).equalToWhenPresent(record::getUpdateTime)
             .set(author).equalToWhenPresent(record::getAuthor)
@@ -314,14 +286,10 @@ public interface SnailJobInfoMapper {
             .set(executorBlockStrategy).equalToWhenPresent(record::getExecutorBlockStrategy)
             .set(executorTimeout).equalToWhenPresent(record::getExecutorTimeout)
             .set(executorFailRetryCount).equalToWhenPresent(record::getExecutorFailRetryCount)
-            .set(glueType).equalToWhenPresent(record::getGlueType)
-            .set(glueRemark).equalToWhenPresent(record::getGlueRemark)
-            .set(glueUpdatetime).equalToWhenPresent(record::getGlueUpdatetime)
-            .set(childJobid).equalToWhenPresent(record::getChildJobid)
+            .set(childJobId).equalToWhenPresent(record::getChildJobId)
             .set(triggerStatus).equalToWhenPresent(record::getTriggerStatus)
             .set(triggerLastTime).equalToWhenPresent(record::getTriggerLastTime)
             .set(triggerNextTime).equalToWhenPresent(record::getTriggerNextTime)
-            .set(glueSource).equalToWhenPresent(record::getGlueSource)
             .where(id, isEqualTo(record::getId))
         );
     }

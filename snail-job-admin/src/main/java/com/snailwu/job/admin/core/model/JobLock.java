@@ -2,7 +2,7 @@ package com.snailwu.job.admin.core.model;
 
 import javax.annotation.Generated;
 
-public class SnailJobLock {
+public class JobLock {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private String lockName;
 
