@@ -16,10 +16,6 @@ public class TriggerParam {
     private long logId;
     private long logDateTime;
 
-    private String glueType;
-    private String glueSource;
-    private long glueUpdateTime;
-
     private int broadcastIndex;
     private int broadcastTotal;
 
@@ -77,30 +73,6 @@ public class TriggerParam {
 
     public void setLogDateTime(long logDateTime) {
         this.logDateTime = logDateTime;
-    }
-
-    public String getGlueType() {
-        return glueType;
-    }
-
-    public void setGlueType(String glueType) {
-        this.glueType = glueType;
-    }
-
-    public String getGlueSource() {
-        return glueSource;
-    }
-
-    public void setGlueSource(String glueSource) {
-        this.glueSource = glueSource;
-    }
-
-    public long getGlueUpdateTime() {
-        return glueUpdateTime;
-    }
-
-    public void setGlueUpdateTime(long glueUpdateTime) {
-        this.glueUpdateTime = glueUpdateTime;
     }
 
     public int getBroadcastIndex() {

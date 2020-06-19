@@ -27,14 +27,14 @@ public class JobApiController {
         return ResultT.SUCCESS;
     }
 
-    @PostMapping("registry")
+    @PostMapping("/registry")
     public ResultT<String> registry() {
         // 反序列化
 
         return ResultT.SUCCESS;
     }
 
-    @PostMapping("registryRemove")
+    @PostMapping("/registryRemove")
     public ResultT<String> registryRemove() {
         // 反序列化
 

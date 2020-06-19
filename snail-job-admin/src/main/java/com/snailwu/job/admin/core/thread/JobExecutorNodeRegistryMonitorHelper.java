@@ -27,12 +27,12 @@ import static org.mybatis.dynamic.sql.SqlBuilder.*;
  * @author 吴庆龙
  * @date 2020/6/4 11:23 上午
  */
-public class JobRegistryMonitorHelper {
-    public static final Logger log = LoggerFactory.getLogger(JobRegistryMonitorHelper.class);
+public class JobExecutorNodeRegistryMonitorHelper {
+    public static final Logger log = LoggerFactory.getLogger(JobExecutorNodeRegistryMonitorHelper.class);
 
-    private static final JobRegistryMonitorHelper instance = new JobRegistryMonitorHelper();
+    private static final JobExecutorNodeRegistryMonitorHelper instance = new JobExecutorNodeRegistryMonitorHelper();
 
-    public static JobRegistryMonitorHelper getInstance() {
+    public static JobExecutorNodeRegistryMonitorHelper getInstance() {
         return instance;
     }
 
@@ -92,7 +92,7 @@ public class JobRegistryMonitorHelper {
             }
         });
         registryThread.setDaemon(true);
-        registryThread.setName("JobNodeRegistryThread");
+        registryThread.setName("JobNodeRegistryMonitorThread");
         registryThread.start();
     }
 
