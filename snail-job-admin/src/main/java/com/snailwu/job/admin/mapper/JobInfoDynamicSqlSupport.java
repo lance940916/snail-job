@@ -1,10 +1,11 @@
 package com.snailwu.job.admin.mapper;
 
-import java.sql.JDBCType;
-import java.util.Date;
-import javax.annotation.Generated;
 import org.mybatis.dynamic.sql.SqlColumn;
 import org.mybatis.dynamic.sql.SqlTable;
+
+import javax.annotation.Generated;
+import java.sql.JDBCType;
+import java.util.Date;
 
 public final class JobInfoDynamicSqlSupport {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -14,7 +15,7 @@ public final class JobInfoDynamicSqlSupport {
     public static final SqlColumn<Integer> id = jobInfo.id;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<Integer> executorId = jobInfo.executorId;
+    public static final SqlColumn<Integer> groupId = jobInfo.groupId;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final SqlColumn<String> cron = jobInfo.cron;
@@ -53,9 +54,6 @@ public final class JobInfoDynamicSqlSupport {
     public static final SqlColumn<Integer> executorFailRetryCount = jobInfo.executorFailRetryCount;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<String> childJobId = jobInfo.childJobId;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final SqlColumn<Byte> triggerStatus = jobInfo.triggerStatus;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -68,7 +66,7 @@ public final class JobInfoDynamicSqlSupport {
     public static final class JobInfo extends SqlTable {
         public final SqlColumn<Integer> id = column("id", JDBCType.INTEGER);
 
-        public final SqlColumn<Integer> executorId = column("executor_id", JDBCType.INTEGER);
+        public final SqlColumn<Integer> groupId = column("group_id", JDBCType.INTEGER);
 
         public final SqlColumn<String> cron = column("cron", JDBCType.VARCHAR);
 
@@ -93,8 +91,6 @@ public final class JobInfoDynamicSqlSupport {
         public final SqlColumn<Integer> executorTimeout = column("executor_timeout", JDBCType.INTEGER);
 
         public final SqlColumn<Integer> executorFailRetryCount = column("executor_fail_retry_count", JDBCType.INTEGER);
-
-        public final SqlColumn<String> childJobId = column("child_job_id", JDBCType.VARCHAR);
 
         public final SqlColumn<Byte> triggerStatus = column("trigger_status", JDBCType.TINYINT);
 

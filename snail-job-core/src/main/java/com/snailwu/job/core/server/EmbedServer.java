@@ -42,9 +42,9 @@ public class EmbedServer {
     /**
      * 启 Netty 服务与 admin 进行通信
      *
-     * @param localPort Netty 服务对应的本机端口
+     * @param httpPort Netty 服务对应的本机端口
      */
-    public void start(int localPort, String address, String appName) {
+    public void start(int httpPort, String executorAddress, String groupName) {
         executorBiz = new ExecutorBizImpl();
         serverThread = new Thread(() -> {
             // 启动 Netty
@@ -67,11 +67,11 @@ public class EmbedServer {
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
             try {
                 // 执行完 bind 之后就可以接受连接了
-                ChannelFuture future = bootstrap.bind(localPort).sync();
-                log.info("Netty 服务启动成功. 监听端口:{}", localPort);
+                ChannelFuture future = bootstrap.bind(httpPort).sync();
+                log.info("Netty 服务启动成功. 监听端口:{}", httpPort);
 
                 // 注册节点到调度中心
-                startRegistry(appName, address);
+                startRegistry(groupName, executorAddress);
 
                 // 主线程 wait，等待服务端链路关闭，子线程开始监听接受请求
                 future.channel().closeFuture().sync();

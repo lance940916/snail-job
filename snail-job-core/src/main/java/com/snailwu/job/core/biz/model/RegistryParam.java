@@ -6,30 +6,33 @@ package com.snailwu.job.core.biz.model;
  */
 public class RegistryParam {
 
-    private String appName;
-    private String address;
+    // 注册到指定的执行器上
+    private String groupUuid;
+
+    // 注册节点的地址
+    private String executorAddress;
 
     public RegistryParam() {
     }
 
-    public RegistryParam(String appName, String address) {
-        this.appName = appName;
-        this.address = address;
+    public RegistryParam(String groupUuid, String executorAddress) {
+        this.groupUuid = groupUuid;
+        this.executorAddress = executorAddress;
     }
 
-    public String getAppName() {
-        return appName;
+    public String getGroupUuid() {
+        return groupUuid;
     }
 
-    public void setAppName(String appName) {
-        this.appName = appName;
+    public void setGroupUuid(String groupUuid) {
+        this.groupUuid = groupUuid;
     }
 
-    public String getAddress() {
-        return address;
+    public String getExecutorAddress() {
+        return executorAddress;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setExecutorAddress(String executorAddress) {
+        this.executorAddress = executorAddress;
     }
 }

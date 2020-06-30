@@ -1,8 +1,8 @@
 package com.snailwu.job.core.executor.impl;
 
 import com.snailwu.job.core.biz.model.ResultT;
-import com.snailwu.job.core.executor.SnailJobExecutor;
-import com.snailwu.job.core.executor.model.SnailJobConfiguration;
+import com.snailwu.job.core.executor.JobExecutor;
+import com.snailwu.job.core.executor.model.ExecutorConfiguration;
 import com.snailwu.job.core.handler.annotation.SnailJob;
 import com.snailwu.job.core.handler.impl.MethodJobHandler;
 import org.slf4j.Logger;
@@ -19,20 +19,22 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
+ * Spring 的执行器节点配置
+ *
  * @author 吴庆龙
  * @date 2020/5/26 10:45 上午
  */
-public class SnailJobSpringExecutor extends SnailJobExecutor
+public class JobSpringExecutor extends JobExecutor
         implements ApplicationContextAware, SmartInitializingSingleton, DisposableBean {
-    public static final Logger log = LoggerFactory.getLogger(SnailJobSpringExecutor.class);
+    public static final Logger log = LoggerFactory.getLogger(JobSpringExecutor.class);
 
     /**
      * Spring 上下文
      */
     private static ApplicationContext applicationContext;
 
-    public SnailJobSpringExecutor(SnailJobConfiguration snailJobConfiguration) {
-        super(snailJobConfiguration);
+    public JobSpringExecutor(ExecutorConfiguration executorConfiguration) {
+        super(executorConfiguration);
     }
 
     @Override
@@ -44,7 +46,7 @@ public class SnailJobSpringExecutor extends SnailJobExecutor
     }
 
     /**
-     * 获取所有的 JobHandler
+     * 获取所有的 JobHandler 并注册到 Map 中
      */
     private void initJobHandlerMethodRepository() {
         if (applicationContext == null) {
@@ -121,7 +123,7 @@ public class SnailJobSpringExecutor extends SnailJobExecutor
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        SnailJobSpringExecutor.applicationContext = applicationContext;
+        JobSpringExecutor.applicationContext = applicationContext;
     }
 
     public static ApplicationContext getApplicationContext() {

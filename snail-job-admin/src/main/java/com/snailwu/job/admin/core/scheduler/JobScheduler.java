@@ -1,5 +1,6 @@
 package com.snailwu.job.admin.core.scheduler;
 
+import com.snailwu.job.admin.core.thread.ExecutorRegistryMonitorHelper;
 import com.snailwu.job.core.biz.ExecutorBiz;
 import com.snailwu.job.core.biz.client.ExecutorBizClient;
 import org.slf4j.Logger;
@@ -11,13 +12,15 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author 吴庆龙
  * @date 2020/6/4 11:19 上午
  */
-public class SnailJobScheduler {
-    private static final Logger log = LoggerFactory.getLogger(SnailJobScheduler.class);
+public class JobScheduler {
+    private static final Logger log = LoggerFactory.getLogger(JobScheduler.class);
 
     /**
      * 初始化
      */
     public void init() {
+        ExecutorRegistryMonitorHelper.getInstance().start();
+
 
     }
 

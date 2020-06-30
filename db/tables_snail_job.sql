@@ -3,26 +3,28 @@ use `snail_job`;
 
 show tables;
 
+
 -- 执行器节点注册信息
-DROP TABLE IF EXISTS `job_executor_node`;
-CREATE TABLE IF NOT EXISTS `job_executor_node`
+DROP TABLE IF EXISTS `job_executor`;
+CREATE TABLE IF NOT EXISTS `job_executor`
 (
-    `id`          INT(11)      NOT NULL AUTO_INCREMENT,
-    `app_name`    VARCHAR(255) NOT NULL COMMENT '对应执行器',
-    `address`     VARCHAR(255) NOT NULL COMMENT '注册地址',
-    `update_time` DATETIME     NULL COMMENT '更新时间',
+    `id`            INT(11)      NOT NULL AUTO_INCREMENT,
+    `group_uuid`    VARCHAR(255) NOT NULL COMMENT '执行器组',
+    `address`       VARCHAR(255) NOT NULL COMMENT '执行器地址',
+    `registry_type` CHAR(1)      NOT NULL COMMENT '执行器地址类型：0=自动注册、1=手动录入',
+    `update_time`   DATETIME     NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),
-    INDEX `idx_a_a` (`app_name`, `address`)
+    INDEX `idx_g_a` (`group_uuid`, `address`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
 -- 执行器信息
-DROP TABLE IF EXISTS `job_executor`;
-CREATE TABLE IF NOT EXISTS `job_executor`
+DROP TABLE IF EXISTS `job_group`;
+CREATE TABLE IF NOT EXISTS `job_group`
 (
     `id`           INT(11)      NOT NULL AUTO_INCREMENT,
-    `app_name`     VARCHAR(64)  NOT NULL COMMENT 'appName',
-    `title`        VARCHAR(12)  NOT NULL COMMENT '执行器名称',
+    `name`         VARCHAR(64)  NOT NULL COMMENT '执行器组名',
+    `uuid`         VARCHAR(16)  NOT NULL COMMENT '组的 UUID, ',
     `address_list` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '执行器节点地址列表，多地址逗号分隔',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -33,9 +35,9 @@ DROP TABLE IF EXISTS `job_info`;
 CREATE TABLE IF NOT EXISTS `job_info`
 (
     `id`                        INT(11)      NOT NULL AUTO_INCREMENT,
-    `executor_id`               INT(11)      NOT NULL COMMENT '执行器主键ID',
-    `cron`                      VARCHAR(50)  NOT NULL COMMENT '任务执行CRON',
-    `desc`                      VARCHAR(255) NOT NULL COMMENT '任务描述',
+    `group_id`                  INT(11)      NOT NULL COMMENT '执行器组',
+    `cron`                      VARCHAR(50)  NOT NULL COMMENT '任务CRON',
+    `desc`                      VARCHAR(255) NOT NULL DEFAULT '' COMMENT '任务描述',
     `add_time`                  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
     `update_time`               DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
     `author`                    VARCHAR(64)  NULL COMMENT '管理者',
@@ -46,7 +48,6 @@ CREATE TABLE IF NOT EXISTS `job_info`
     `executor_block_strategy`   VARCHAR(50)  NOT NULL COMMENT '阻塞处理策略',
     `executor_timeout`          INT(11)      NOT NULL DEFAULT 0 COMMENT '任务执行超时时间，单位秒',
     `executor_fail_retry_count` INT(11)      NOT NULL DEFAULT 0 COMMENT '失败重试次数',
-    `child_job_id`              VARCHAR(255) NULL COMMENT '子任务ID，多个逗号分隔',
     `trigger_status`            TINYINT(4)   NOT NULL DEFAULT '0' COMMENT '调度状态：0-停止，1-运行',
     `trigger_last_time`         BIGINT(13)   NOT NULL DEFAULT '0' COMMENT '上次调度时间',
     `trigger_next_time`         BIGINT(13)   NOT NULL DEFAULT '0' COMMENT '下次调度时间',
@@ -59,22 +60,21 @@ DROP TABLE IF EXISTS `job_log`;
 CREATE TABLE IF NOT EXISTS `job_log`
 (
     `id`                        BIGINT(20)   NOT NULL AUTO_INCREMENT,
-    `executor_id`               INT(11)      NOT NULL COMMENT '执行器主键ID',
     `job_id`                    INT(11)      NOT NULL COMMENT '任务，主键ID',
+    `group_id`                  INT(11)      NOT NULL COMMENT '执行器组',
 
-    `executor_node_address`     VARCHAR(255) NOT NULL COMMENT '执行器地址，本次执行的地址',
-    `executor_handler`          VARCHAR(255) NOT NULL COMMENT '执行器任务handler',
+    `executor_address`          VARCHAR(255) NULL COMMENT '执行器地址，本次执行的地址',
+    `executor_handler`          VARCHAR(255) NULL COMMENT '执行器任务handler',
     `executor_param`            VARCHAR(512) NULL COMMENT '执行器任务参数',
-    `executor_sharding_param`   VARCHAR(20)  NULL COMMENT '执行器任务分片参数，格式如 1/2',
     `executor_fail_retry_count` TINYINT(11)  NOT NULL DEFAULT 0 COMMENT '失败重试次数',
 
-    `trigger_time`              DATETIME     NOT NULL COMMENT '调度-时间',
-    `trigger_code`              INT(11)      NOT NULL COMMENT '调度-结果',
+    `trigger_time`              DATETIME     NULL COMMENT '调度-时间',
+    `trigger_code`              INT(11)      NULL COMMENT '调度-结果',
     `trigger_msg`               TEXT         NULL COMMENT '调度-日志',
 
-    `exec_time`                 DATETIME     NOT NULL COMMENT '执行-时间',
+    `exec_time`                 DATETIME     NULL COMMENT '执行-时间',
     `exec_code`                 INT(11)      NOT NULL COMMENT '执行-结果',
-    `exec_log`                  TEXT         NULL COMMENT '执行-日志',
+    `exec_log`                  TEXT COMMENT '执行-日志',
 
     `alarm_status`              TINYINT(4)   NOT NULL DEFAULT '0' COMMENT '告警状态：0-默认、1-无需告警、2-告警成功、3-告警失败',
     PRIMARY KEY (`id`)

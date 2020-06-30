@@ -3,9 +3,9 @@ package com.snailwu.job.core.biz.impl;
 import com.snailwu.job.core.biz.ExecutorBiz;
 import com.snailwu.job.core.biz.model.IdleBeatParam;
 import com.snailwu.job.core.biz.model.KillParam;
-import com.snailwu.job.core.biz.model.TriggerParam;
 import com.snailwu.job.core.biz.model.ResultT;
-import com.snailwu.job.core.executor.SnailJobExecutor;
+import com.snailwu.job.core.biz.model.TriggerParam;
+import com.snailwu.job.core.executor.JobExecutor;
 import com.snailwu.job.core.handler.IJobHandler;
 import com.snailwu.job.core.thread.JobThread;
 
@@ -25,7 +25,7 @@ public class ExecutorBizImpl implements ExecutorBiz {
     @Override
     public ResultT<String> idleBeat(IdleBeatParam idleBeatParam) {
         boolean isRunningOrHasQueue = false;
-        JobThread jobThread = SnailJobExecutor.loadJobThread(idleBeatParam.getJobId());
+        JobThread jobThread = JobExecutor.loadJobThread(idleBeatParam.getJobId());
         if (jobThread != null && jobThread.isRunningOrHasQueue()) {
             isRunningOrHasQueue = true;
         }
@@ -39,14 +39,14 @@ public class ExecutorBizImpl implements ExecutorBiz {
     @Override
     public ResultT<String> run(TriggerParam triggerParam) {
         // 通过 jobId, 获取执行线程，获取执行方法。如果任务执行了一次后，这里就可以获取到了
-        JobThread jobThread = SnailJobExecutor.loadJobThread(triggerParam.getJobId());
+        JobThread jobThread = JobExecutor.loadJobThread(triggerParam.getJobId());
         IJobHandler jobHandler = jobThread != null ? jobThread.getJobHandler() : null;
 
         // 移除原因
         String removeOldReason = null;
 
         // 与已存在的线程对比线程内的 jobHandler，如果不一样，则动态替换 handler，下次就生效了。
-        IJobHandler newJobHandler = SnailJobExecutor.loadJobHandler(triggerParam.getExecutorHandler());
+        IJobHandler newJobHandler = JobExecutor.loadJobHandler(triggerParam.getExecutorHandler());
         if (jobThread != null && jobHandler != newJobHandler) {
             removeOldReason = "更换了 JobHandler，将旧的 Thread 终止掉。";
             jobThread = null;
@@ -62,7 +62,7 @@ public class ExecutorBizImpl implements ExecutorBiz {
         }
 
         if (jobThread == null) {
-            jobThread = SnailJobExecutor.registryJobThread(triggerParam.getJobId(), jobHandler, removeOldReason);
+            jobThread = JobExecutor.registryJobThread(triggerParam.getJobId(), jobHandler, removeOldReason);
         }
 
         // 添加到队列中
@@ -71,9 +71,9 @@ public class ExecutorBizImpl implements ExecutorBiz {
 
     @Override
     public ResultT<String> kill(KillParam killParam) {
-        JobThread jobThread = SnailJobExecutor.loadJobThread(killParam.getJobId());
+        JobThread jobThread = JobExecutor.loadJobThread(killParam.getJobId());
         if (jobThread != null) {
-            SnailJobExecutor.removeJobThread(killParam.getJobId(), "scheduling center kill job.");
+            JobExecutor.removeJobThread(killParam.getJobId(), "scheduling center kill job.");
             return ResultT.SUCCESS;
         }
         return new ResultT<>(ResultT.SUCCESS_CODE, "job thread already killed.");

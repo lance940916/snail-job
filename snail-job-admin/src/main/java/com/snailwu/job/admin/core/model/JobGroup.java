@@ -1,20 +1,19 @@
 package com.snailwu.job.admin.core.model;
 
-import java.util.Date;
 import javax.annotation.Generated;
 
-public class JobExecutorNode {
+public class JobGroup {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Integer id;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String appName;
+    private String name;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String address;
+    private String uuid;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private Date updateTime;
+    private String addressList;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public Integer getId() {
@@ -27,32 +26,32 @@ public class JobExecutorNode {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getAppName() {
-        return appName;
+    public String getName() {
+        return name;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setAppName(String appName) {
-        this.appName = appName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getAddress() {
-        return address;
+    public String getUuid() {
+        return uuid;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setAddress(String address) {
-        this.address = address;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public Date getUpdateTime() {
-        return updateTime;
+    public String getAddressList() {
+        return addressList;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
+    public void setAddressList(String addressList) {
+        this.addressList = addressList;
     }
 }

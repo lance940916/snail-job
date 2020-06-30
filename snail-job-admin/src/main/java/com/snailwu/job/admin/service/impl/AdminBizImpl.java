@@ -1,11 +1,12 @@
 package com.snailwu.job.admin.service.impl;
 
-import com.snailwu.job.admin.core.model.JobExecutorNode;
-import com.snailwu.job.admin.mapper.JobExecutorNodeMapper;
+import com.snailwu.job.admin.core.model.JobExecutor;
+import com.snailwu.job.admin.mapper.JobExecutorMapper;
 import com.snailwu.job.core.biz.AdminBiz;
 import com.snailwu.job.core.biz.model.CallbackParam;
 import com.snailwu.job.core.biz.model.RegistryParam;
 import com.snailwu.job.core.biz.model.ResultT;
+import com.snailwu.job.core.enums.RegistryType;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,7 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 
-import static com.snailwu.job.admin.mapper.JobExecutorNodeDynamicSqlSupport.*;
+import static com.snailwu.job.admin.mapper.JobExecutorDynamicSqlSupport.*;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
 /**
@@ -27,7 +28,7 @@ public class AdminBizImpl implements AdminBiz {
     private static final Logger log = LoggerFactory.getLogger(AdminBizImpl.class);
 
     @Resource
-    private JobExecutorNodeMapper jobExecutorNodeMapper;
+    private JobExecutorMapper jobExecutorMapper;
 
     /**
      * 接收任务执行结果
@@ -45,21 +46,22 @@ public class AdminBizImpl implements AdminBiz {
     @Override
     public ResultT<String> registry(RegistryParam registryParam) {
         // 更新数据库
-        int update = jobExecutorNodeMapper.update(
-                update(jobExecutorNode)
-                .set(updateTime).equalTo(new Date())
-                .where(appName, isEqualTo(registryParam.getAppName()))
-                .and(address, isEqualTo(registryParam.getAddress()))
-                .build().render(RenderingStrategies.MYBATIS3)
+        int update = jobExecutorMapper.update(
+                update(jobExecutor)
+                        .set(updateTime).equalTo(new Date())
+                        .where(groupUuid, isEqualTo(registryParam.getGroupUuid()))
+                        .and(address, isEqualTo(registryParam.getExecutorAddress()))
+                        .build().render(RenderingStrategies.MYBATIS3)
         );
 
         // 数据不存在，插入数据
         if (update < 1) {
-            JobExecutorNode node = new JobExecutorNode();
-            node.setAppName(registryParam.getAppName());
-            node.setAddress(registryParam.getAddress());
-            node.setUpdateTime(new Date());
-            jobExecutorNodeMapper.insertSelective(node);
+            JobExecutor executor = new JobExecutor();
+            executor.setGroupUuid(registryParam.getGroupUuid());
+            executor.setAddress(registryParam.getExecutorAddress());
+            executor.setRegistryType(RegistryType.AUTO.getValue() + "");
+            executor.setUpdateTime(new Date());
+            jobExecutorMapper.insertSelective(executor);
         }
         return ResultT.SUCCESS;
     }
@@ -67,11 +69,11 @@ public class AdminBizImpl implements AdminBiz {
     @Override
     public ResultT<String> registryRemove(RegistryParam registryParam) {
         // 直接删除
-        jobExecutorNodeMapper.delete(
-                deleteFrom(jobExecutorNode)
-                .where(appName, isEqualTo(registryParam.getAppName()))
-                .and(address, isEqualTo(registryParam.getAddress()))
-                .build().render(RenderingStrategies.MYBATIS3)
+        jobExecutorMapper.delete(
+                deleteFrom(jobExecutor)
+                        .where(groupUuid, isEqualTo(registryParam.getGroupUuid()))
+                        .and(address, isEqualTo(registryParam.getExecutorAddress()))
+                        .build().render(RenderingStrategies.MYBATIS3)
         );
         return ResultT.SUCCESS;
     }

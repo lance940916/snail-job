@@ -3,14 +3,11 @@ package com.snailwu.job.core.thread;
 import com.snailwu.job.core.biz.model.CallbackParam;
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.biz.model.TriggerParam;
-import com.snailwu.job.core.executor.SnailJobExecutor;
+import com.snailwu.job.core.executor.JobExecutor;
 import com.snailwu.job.core.handler.IJobHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.*;
 
 /**
@@ -42,7 +39,7 @@ public class JobThread extends Thread {
     /**
      * 是否退出 run 方法的 while 循环
      */
-    private volatile boolean toStop = false;
+    private volatile boolean stopFlag = false;
 
     /**
      * 停止 while 循环的原因
@@ -52,7 +49,7 @@ public class JobThread extends Thread {
     /**
      * 是否正在执行任务
      */
-    private boolean running = false;
+    private boolean runningFlag = false;
 
     /**
      * 从队列中获取任务失败的次数，达到指定次数后则将该线程停止
@@ -93,7 +90,7 @@ public class JobThread extends Thread {
      * 该 JobThread 是否忙碌
      */
     public boolean isRunningOrHasQueue() {
-        return running || triggerQueue.size() > 0;
+        return runningFlag || triggerQueue.size() > 0;
     }
 
     @Override
@@ -106,9 +103,9 @@ public class JobThread extends Thread {
         }
 
         // 线程启动后不断轮训队列，有任务就执行，没有任务则累加次数达到 30 次就将该线程停止
-        while (!toStop) {
+        while (!stopFlag) {
             // 没有运行任务
-            running = false;
+            runningFlag = false;
             // 累加无任务次数
             idleTimes++;
 
@@ -122,7 +119,7 @@ public class JobThread extends Thread {
                 triggerParam = triggerQueue.poll(3L, TimeUnit.SECONDS);
                 if (triggerParam != null) { // 有任务需要执行
                     // 设置为运行任务中
-                    running = true;
+                    runningFlag = true;
                     // 重置无任务次数
                     idleTimes = 0;
 //                    triggerLogIdSet.remove(triggerParam.getLogId());
@@ -156,11 +153,11 @@ public class JobThread extends Thread {
                 } else {
                     if (idleTimes > 30 && triggerQueue.size() == 0) {
                         // 30 次获取操作后，没有任务可以处理，则自动销毁线程
-                        SnailJobExecutor.removeJobThread(jobId, "executor idle time over limit");
+                        JobExecutor.removeJobThread(jobId, "executor idle time over limit");
                     }
                 }
             } catch (Exception e) {
-                if (toStop) {
+                if (stopFlag) {
                     // 线程停止时抛出的异常忽略
                     log.info("JobThread toStop, stopReason:{}", stopReason);
                 } else {
@@ -169,7 +166,7 @@ public class JobThread extends Thread {
                 }
             } finally {
                 if (triggerParam != null) {
-                    if (!toStop) {
+                    if (!stopFlag) {
                         CallbackParam callbackParam = new CallbackParam(triggerParam.getLogId(), triggerParam.getLogDateTime(), executeResult);
                         TriggerCallbackThread.pushCallback(callbackParam);
                     } else {
@@ -184,7 +181,7 @@ public class JobThread extends Thread {
         }
 
         // 线程被终止，但是还有待执行的任务在队列中
-        while (triggerQueue != null && triggerQueue.size() > 0) {
+        while (triggerQueue.size() > 0) {
             TriggerParam triggerParam = triggerQueue.poll();
             if (triggerParam != null) {
                 ResultT<String> resultT = new ResultT<>(ResultT.FAIL_CODE,
@@ -208,7 +205,7 @@ public class JobThread extends Thread {
      * 所以需要注意，此处彻底销毁本线程，需要通过共享变量方式；
      */
     public void toStop(String stopReason) {
-        this.toStop = true;
+        this.stopFlag = true;
         this.stopReason = stopReason;
     }
 }

@@ -1,29 +1,26 @@
 package com.snailwu.job.admin.core.model;
 
-import java.util.Date;
 import javax.annotation.Generated;
+import java.util.Date;
 
 public class JobLog {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Long id;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private Integer executorId;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Integer jobId;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String executorNodeAddress;
+    private Integer groupId;
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    private String executorAddress;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private String executorHandler;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private String executorParam;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String executorShardingParam;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Byte executorFailRetryCount;
@@ -60,16 +57,6 @@ public class JobLog {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public Integer getExecutorId() {
-        return executorId;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setExecutorId(Integer executorId) {
-        this.executorId = executorId;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public Integer getJobId() {
         return jobId;
     }
@@ -80,13 +67,23 @@ public class JobLog {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getExecutorNodeAddress() {
-        return executorNodeAddress;
+    public Integer getGroupId() {
+        return groupId;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setExecutorNodeAddress(String executorNodeAddress) {
-        this.executorNodeAddress = executorNodeAddress;
+    public void setGroupId(Integer groupId) {
+        this.groupId = groupId;
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public String getExecutorAddress() {
+        return executorAddress;
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public void setExecutorAddress(String executorAddress) {
+        this.executorAddress = executorAddress;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -107,16 +104,6 @@ public class JobLog {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public void setExecutorParam(String executorParam) {
         this.executorParam = executorParam;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getExecutorShardingParam() {
-        return executorShardingParam;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setExecutorShardingParam(String executorShardingParam) {
-        this.executorShardingParam = executorShardingParam;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")

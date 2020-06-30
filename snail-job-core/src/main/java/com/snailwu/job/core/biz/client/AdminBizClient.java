@@ -16,10 +16,10 @@ import java.util.List;
  */
 public class AdminBizClient implements AdminBiz {
 
-    private String adminAddress;
-
-    public AdminBizClient() {
-    }
+    /**
+     * 调度中心的地址
+     */
+    private final String adminAddress;
 
     public AdminBizClient(String adminAddress) {
         if (!adminAddress.endsWith("/")) {

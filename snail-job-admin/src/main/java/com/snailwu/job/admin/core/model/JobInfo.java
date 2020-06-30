@@ -1,14 +1,14 @@
 package com.snailwu.job.admin.core.model;
 
-import java.util.Date;
 import javax.annotation.Generated;
+import java.util.Date;
 
 public class JobInfo {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Integer id;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private Integer executorId;
+    private Integer groupId;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private String cron;
@@ -47,9 +47,6 @@ public class JobInfo {
     private Integer executorFailRetryCount;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String childJobId;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Byte triggerStatus;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -69,13 +66,13 @@ public class JobInfo {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public Integer getExecutorId() {
-        return executorId;
+    public Integer getGroupId() {
+        return groupId;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setExecutorId(Integer executorId) {
-        this.executorId = executorId;
+    public void setGroupId(Integer groupId) {
+        this.groupId = groupId;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -196,16 +193,6 @@ public class JobInfo {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public void setExecutorFailRetryCount(Integer executorFailRetryCount) {
         this.executorFailRetryCount = executorFailRetryCount;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getChildJobId() {
-        return childJobId;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setChildJobId(String childJobId) {
-        this.childJobId = childJobId;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")

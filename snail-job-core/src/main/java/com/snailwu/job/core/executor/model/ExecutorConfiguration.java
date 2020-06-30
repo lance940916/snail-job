@@ -1,36 +1,33 @@
 package com.snailwu.job.core.executor.model;
 
 /**
+ * 执行器的配置
+ *
  * @author 吴庆龙
  * @date 2020/5/26 10:48 上午
  */
-public class SnailJobConfiguration {
+public class ExecutorConfiguration {
 
     /**
      * 调度中心的地址
+     * 具体到 Context 根目录, 如: http://localhost:8080/job-admin
      */
     private String adminAddress;
 
     /**
-     * 本机的 ip 地址
+     * 本机的外网 IP 地址
      */
     private String ip;
 
     /**
-     * 本机的端口
+     * 本机与调度中心通讯的端口
      */
     private int port;
 
     /**
-     * 本机的地址，优先使用这个字段，为 null 则使用 ip + port
+     * 执行器组 Name
      */
-    private String address;
-
-    /**
-     * 执行器的 appName
-     */
-    private String appName;
-
+    private String groupName;
 
     public String getAdminAddress() {
         return adminAddress;
@@ -38,22 +35,6 @@ public class SnailJobConfiguration {
 
     public void setAdminAddress(String adminAddress) {
         this.adminAddress = adminAddress;
-    }
-
-    public String getAppName() {
-        return appName;
-    }
-
-    public void setAppName(String appName) {
-        this.appName = appName;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 
     public String getIp() {
@@ -72,4 +53,11 @@ public class SnailJobConfiguration {
         this.port = port;
     }
 
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
 }

@@ -3,7 +3,7 @@ package com.snailwu.job.core.thread;
 import com.snailwu.job.core.biz.AdminBiz;
 import com.snailwu.job.core.biz.model.CallbackParam;
 import com.snailwu.job.core.biz.model.ResultT;
-import com.snailwu.job.core.executor.SnailJobExecutor;
+import com.snailwu.job.core.executor.JobExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +55,7 @@ public class TriggerCallbackThread {
      * 启动回调线程
      */
     public void start() {
-        if (SnailJobExecutor.getAdminBiz() == null) {
+        if (JobExecutor.getAdminBiz() == null) {
             log.warn("snail-job, executor callback config fail, adminAddress is null.");
             return;
         }
@@ -105,7 +105,7 @@ public class TriggerCallbackThread {
         boolean callbackRet = false;
 
         // 获取 AdminBizClient
-        AdminBiz adminBiz = SnailJobExecutor.getAdminBiz();
+        AdminBiz adminBiz = JobExecutor.getAdminBiz();
 
         // 尝试进行回调
         try {

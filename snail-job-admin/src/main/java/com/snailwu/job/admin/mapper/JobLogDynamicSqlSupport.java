@@ -1,10 +1,11 @@
 package com.snailwu.job.admin.mapper;
 
-import java.sql.JDBCType;
-import java.util.Date;
-import javax.annotation.Generated;
 import org.mybatis.dynamic.sql.SqlColumn;
 import org.mybatis.dynamic.sql.SqlTable;
+
+import javax.annotation.Generated;
+import java.sql.JDBCType;
+import java.util.Date;
 
 public final class JobLogDynamicSqlSupport {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -14,22 +15,19 @@ public final class JobLogDynamicSqlSupport {
     public static final SqlColumn<Long> id = jobLog.id;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<Integer> executorId = jobLog.executorId;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final SqlColumn<Integer> jobId = jobLog.jobId;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<String> executorNodeAddress = jobLog.executorNodeAddress;
+    public static final SqlColumn<Integer> groupId = jobLog.groupId;
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public static final SqlColumn<String> executorAddress = jobLog.executorAddress;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final SqlColumn<String> executorHandler = jobLog.executorHandler;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final SqlColumn<String> executorParam = jobLog.executorParam;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<String> executorShardingParam = jobLog.executorShardingParam;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final SqlColumn<Byte> executorFailRetryCount = jobLog.executorFailRetryCount;
@@ -59,17 +57,15 @@ public final class JobLogDynamicSqlSupport {
     public static final class JobLog extends SqlTable {
         public final SqlColumn<Long> id = column("id", JDBCType.BIGINT);
 
-        public final SqlColumn<Integer> executorId = column("executor_id", JDBCType.INTEGER);
-
         public final SqlColumn<Integer> jobId = column("job_id", JDBCType.INTEGER);
 
-        public final SqlColumn<String> executorNodeAddress = column("executor_node_address", JDBCType.VARCHAR);
+        public final SqlColumn<Integer> groupId = column("group_id", JDBCType.INTEGER);
+
+        public final SqlColumn<String> executorAddress = column("executor_address", JDBCType.VARCHAR);
 
         public final SqlColumn<String> executorHandler = column("executor_handler", JDBCType.VARCHAR);
 
         public final SqlColumn<String> executorParam = column("executor_param", JDBCType.VARCHAR);
-
-        public final SqlColumn<String> executorShardingParam = column("executor_sharding_param", JDBCType.VARCHAR);
 
         public final SqlColumn<Byte> executorFailRetryCount = column("executor_fail_retry_count", JDBCType.TINYINT);
 
