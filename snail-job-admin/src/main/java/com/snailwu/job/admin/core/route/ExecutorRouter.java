@@ -14,7 +14,7 @@ import java.util.List;
  * @date 2020/6/4 11:23 上午
  */
 public abstract class ExecutorRouter {
-    protected static Logger logger = LoggerFactory.getLogger(ExecutorRouter.class);
+    protected static Logger log = LoggerFactory.getLogger(ExecutorRouter.class);
 
     /**
      * route address

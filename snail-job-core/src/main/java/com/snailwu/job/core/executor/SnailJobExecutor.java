@@ -19,8 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author 吴庆龙
  * @date 2020/5/25 2:32 下午
  */
-public class JobExecutor {
-    public static final Logger log = LoggerFactory.getLogger(JobExecutor.class);
+public class SnailJobExecutor {
+    public static final Logger log = LoggerFactory.getLogger(SnailJobExecutor.class);
 
     /**
      * 与调度中心通信
@@ -47,7 +47,7 @@ public class JobExecutor {
      */
     private final ExecutorConfiguration executorConfiguration;
 
-    public JobExecutor(ExecutorConfiguration executorConfiguration) {
+    public SnailJobExecutor(ExecutorConfiguration executorConfiguration) {
         this.executorConfiguration = executorConfiguration;
     }
 

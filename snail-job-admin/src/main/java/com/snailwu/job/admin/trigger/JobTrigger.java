@@ -2,7 +2,7 @@ package com.snailwu.job.admin.trigger;
 
 import com.snailwu.job.admin.core.conf.AdminConfig;
 import com.snailwu.job.admin.core.route.ExecutorRouteStrategyEnum;
-import com.snailwu.job.admin.core.scheduler.JobScheduler;
+import com.snailwu.job.admin.core.scheduler.SnailJobScheduler;
 import com.snailwu.job.admin.utils.I18nUtil;
 import com.snailwu.job.core.biz.ExecutorBiz;
 import com.snailwu.job.core.biz.model.ResultT;
@@ -154,7 +154,7 @@ public class JobTrigger {
     private static ResultT<String> runExecutor(TriggerParam triggerParam, String address) {
         ResultT<String> result = null;
         try {
-            ExecutorBiz executorBiz = JobScheduler.getExecutorBiz(address);
+            ExecutorBiz executorBiz = SnailJobScheduler.getExecutorBiz(address);
             result = executorBiz.run(triggerParam);
         } catch (Exception e) {
             log.error("trigger error, please check if the executor[{}] is running.", address, e);

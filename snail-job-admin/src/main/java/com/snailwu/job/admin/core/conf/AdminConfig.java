@@ -1,6 +1,6 @@
 package com.snailwu.job.admin.core.conf;
 
-import com.snailwu.job.admin.core.scheduler.JobScheduler;
+import com.snailwu.job.admin.core.scheduler.SnailJobScheduler;
 import com.snailwu.job.admin.mapper.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,19 +35,19 @@ public class AdminConfig implements InitializingBean, DisposableBean {
 
     // ---------------------- XxlJobScheduler ----------------------
 
-    private JobScheduler jobScheduler;
+    private SnailJobScheduler snailJobScheduler;
 
     @Override
     public void afterPropertiesSet() throws Exception {
         instance = this;
 
-        jobScheduler = new JobScheduler();
-        jobScheduler.init();
+        snailJobScheduler = new SnailJobScheduler();
+        snailJobScheduler.init();
     }
 
     @Override
     public void destroy() throws Exception {
-        jobScheduler.destroy();
+        snailJobScheduler.destroy();
     }
 
     // ---------------------- dao service ----------------------

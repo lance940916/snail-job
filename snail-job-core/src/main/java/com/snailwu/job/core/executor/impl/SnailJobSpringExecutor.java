@@ -1,7 +1,7 @@
 package com.snailwu.job.core.executor.impl;
 
 import com.snailwu.job.core.biz.model.ResultT;
-import com.snailwu.job.core.executor.JobExecutor;
+import com.snailwu.job.core.executor.SnailJobExecutor;
 import com.snailwu.job.core.executor.model.ExecutorConfiguration;
 import com.snailwu.job.core.handler.annotation.SnailJob;
 import com.snailwu.job.core.handler.impl.MethodJobHandler;
@@ -24,16 +24,16 @@ import java.util.Map;
  * @author 吴庆龙
  * @date 2020/5/26 10:45 上午
  */
-public class JobSpringExecutor extends JobExecutor
+public class SnailJobSpringExecutor extends SnailJobExecutor
         implements ApplicationContextAware, SmartInitializingSingleton, DisposableBean {
-    public static final Logger log = LoggerFactory.getLogger(JobSpringExecutor.class);
+    public static final Logger log = LoggerFactory.getLogger(SnailJobSpringExecutor.class);
 
     /**
      * Spring 上下文
      */
     private static ApplicationContext applicationContext;
 
-    public JobSpringExecutor(ExecutorConfiguration executorConfiguration) {
+    public SnailJobSpringExecutor(ExecutorConfiguration executorConfiguration) {
         super(executorConfiguration);
     }
 
@@ -123,7 +123,7 @@ public class JobSpringExecutor extends JobExecutor
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        JobSpringExecutor.applicationContext = applicationContext;
+        SnailJobSpringExecutor.applicationContext = applicationContext;
     }
 
     public static ApplicationContext getApplicationContext() {

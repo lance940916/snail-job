@@ -3,7 +3,7 @@ package com.snailwu.job.core.thread;
 import com.snailwu.job.core.biz.model.RegistryParam;
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.enums.RegistryConfig;
-import com.snailwu.job.core.executor.JobExecutor;
+import com.snailwu.job.core.executor.SnailJobExecutor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +58,7 @@ public class ExecutorNodeRegistryThread {
             log.warn("注册失败. 没有配置 executorName");
             return;
         }
-        if (JobExecutor.getAdminBiz() == null) {
+        if (SnailJobExecutor.getAdminBiz() == null) {
             log.warn("注册失败. 未配置调度中心地址");
             return;
         }
@@ -68,7 +68,7 @@ public class ExecutorNodeRegistryThread {
             while (!stopFlag) {
                 try {
                     RegistryParam registryParam = new RegistryParam(executorName, nodeAddress);
-                    ResultT<String> registryResult = JobExecutor.getAdminBiz().registry(registryParam);
+                    ResultT<String> registryResult = SnailJobExecutor.getAdminBiz().registry(registryParam);
                     if (registryResult != null && ResultT.SUCCESS_CODE == registryResult.getCode()) {
                         log.info("在调度中心注册成功");
                     } else {
@@ -95,7 +95,7 @@ public class ExecutorNodeRegistryThread {
             // 移除节点。线程被停止后（toStop 为 true）通知调度中心进行节点的移除
             try {
                 RegistryParam registryParam = new RegistryParam(executorName, nodeAddress);
-                ResultT<String> registryResult = JobExecutor.getAdminBiz().registryRemove(registryParam);
+                ResultT<String> registryResult = SnailJobExecutor.getAdminBiz().registryRemove(registryParam);
                 if (registryResult != null && ResultT.SUCCESS_CODE == registryResult.getCode()) {
                     log.info("通知调度中心移除注册节点成功");
                 } else {

@@ -3,7 +3,7 @@ package com.snailwu.job.core.thread;
 import com.snailwu.job.core.biz.model.CallbackParam;
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.biz.model.TriggerParam;
-import com.snailwu.job.core.executor.JobExecutor;
+import com.snailwu.job.core.executor.SnailJobExecutor;
 import com.snailwu.job.core.handler.IJobHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,7 +153,7 @@ public class JobThread extends Thread {
                 } else {
                     if (idleTimes > 30 && triggerQueue.size() == 0) {
                         // 30 次获取操作后，没有任务可以处理，则自动销毁线程
-                        JobExecutor.removeJobThread(jobId, "executor idle time over limit");
+                        SnailJobExecutor.removeJobThread(jobId, "executor idle time over limit");
                     }
                 }
             } catch (Exception e) {
