@@ -6,7 +6,7 @@ package com.snailwu.job.core.biz.model;
  */
 public class RegistryParam {
 
-    // 注册到指定的执行器上
+    // 执行器组的
     private String groupUuid;
 
     // 注册节点的地址

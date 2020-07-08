@@ -6,18 +6,18 @@ package com.snailwu.job.core.biz.model;
  */
 public class TriggerParam {
 
+    // 任务 ID
     private int jobId;
 
+    // 执行 handler、参数、堵塞策略、超时时间
     private String executorHandler;
     private String executorParams;
     private String executorBlockStrategy;
     private int executorTimeout;
 
+    // 任务对应的日志 ID 和 时间
     private long logId;
     private long logDateTime;
-
-    private int broadcastIndex;
-    private int broadcastTotal;
 
     public int getJobId() {
         return jobId;
@@ -75,19 +75,4 @@ public class TriggerParam {
         this.logDateTime = logDateTime;
     }
 
-    public int getBroadcastIndex() {
-        return broadcastIndex;
-    }
-
-    public void setBroadcastIndex(int broadcastIndex) {
-        this.broadcastIndex = broadcastIndex;
-    }
-
-    public int getBroadcastTotal() {
-        return broadcastTotal;
-    }
-
-    public void setBroadcastTotal(int broadcastTotal) {
-        this.broadcastTotal = broadcastTotal;
-    }
 }

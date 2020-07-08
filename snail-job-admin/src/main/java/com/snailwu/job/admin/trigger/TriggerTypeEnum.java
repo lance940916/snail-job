@@ -1,26 +1,38 @@
 package com.snailwu.job.admin.trigger;
 
-import com.snailwu.job.admin.utils.I18nUtil;
-
 /**
+ * 任务触发类型
+ *
  * @author 吴庆龙
  * @date 2020/6/17 1:59 下午
  */
 public enum TriggerTypeEnum {
 
-    MANUAL(I18nUtil.getString("jobconf_trigger_type_manual")),
-    CRON(I18nUtil.getString("jobconf_trigger_type_cron")),
-    RETRY(I18nUtil.getString("jobconf_trigger_type_retry")),
-    PARENT(I18nUtil.getString("jobconf_trigger_type_parent")),
-    API(I18nUtil.getString("jobconf_trigger_type_api"));
+    MANUAL("manual", (byte) 1, "手动触发"),
+    CRON("cron", (byte) 2, "Cron触发"),
+    RETRY("retry", (byte) 3, "失败重试触发"),
+    API("api", (byte) 4, "API触发"),
+    ;
 
-    private TriggerTypeEnum(String title) {
-        this.title = title;
+    private final String name;
+    private final Byte value;
+    private final String desc;
+
+    TriggerTypeEnum(String name, Byte value, String desc) {
+        this.name = name;
+        this.value = value;
+        this.desc = desc;
     }
 
-    private String title;
+    public String getName() {
+        return name;
+    }
 
-    public String getTitle() {
-        return title;
+    public Byte getValue() {
+        return value;
+    }
+
+    public String getDesc() {
+        return desc;
     }
 }

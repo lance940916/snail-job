@@ -8,6 +8,9 @@ import com.snailwu.job.core.handler.IJobHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.*;
 
 /**
@@ -34,7 +37,10 @@ public class JobThread extends Thread {
      */
     private final LinkedBlockingQueue<TriggerParam> triggerQueue;
 
-//    private final Set<Long> triggerLogIdSet;
+    /**
+     * Job 对应的日志表的 ID
+     */
+    private final Set<Long> triggerLogIdSet;
 
     /**
      * 是否退出 run 方法的 while 循环
@@ -61,7 +67,7 @@ public class JobThread extends Thread {
         this.jobHandler = jobHandler;
 
         this.triggerQueue = new LinkedBlockingQueue<>();
-//        this.triggerLogIdSet = Collections.synchronizedSet(new HashSet<>());
+        this.triggerLogIdSet = Collections.synchronizedSet(new HashSet<>());
     }
 
     /**
@@ -75,11 +81,11 @@ public class JobThread extends Thread {
      * 添加任务到任务队列中
      */
     public ResultT<String> pushTriggerQueue(TriggerParam triggerParam) {
-//        if (triggerLogIdSet.contains(triggerParam.getLogId())) {
-//            log.info("repeat trigger job, logId:{}", triggerParam.getLogId());
-//            return new ResultT<>(ResultT.FAIL_CODE, "repeat trigger job, logId:" + triggerParam.getLogId());
-//        }
-//        triggerLogIdSet.add(triggerParam.getLogId());
+        if (triggerLogIdSet.contains(triggerParam.getLogId())) {
+            log.info("repeat trigger job, logId:{}", triggerParam.getLogId());
+            return new ResultT<>(ResultT.FAIL_CODE, "repeat trigger job, logId:" + triggerParam.getLogId());
+        }
+        triggerLogIdSet.add(triggerParam.getLogId());
 
         // 放入无界队列中
         triggerQueue.add(triggerParam);
@@ -122,9 +128,11 @@ public class JobThread extends Thread {
                     runningFlag = true;
                     // 重置无任务次数
                     idleTimes = 0;
-//                    triggerLogIdSet.remove(triggerParam.getLogId());
+                    // 日志集合中移除
+                    triggerLogIdSet.remove(triggerParam.getLogId());
 
                     if (triggerParam.getExecutorTimeout() > 0) { // 有超时时间的
+                        // 启动线程
                         final TriggerParam triggerParamTmp = triggerParam;
                         FutureTask<ResultT<String>> futureTask = new FutureTask<>(new Callable<ResultT<String>>() {
                             @Override
@@ -135,12 +143,12 @@ public class JobThread extends Thread {
                         Thread futureThead = new Thread(futureTask);
                         futureThead.start();
 
-                        // 获取执行结果
+                        // 获取执行结果，有超时时间
                         try {
                             executeResult = futureTask.get(triggerParam.getExecutorTimeout(), TimeUnit.SECONDS);
                         } catch (TimeoutException e) {
-                            log.error("snail-job job execute timeout");
-                            executeResult = new ResultT<>(ResultT.FAIL_CODE, "job execute timeout");
+                            log.error("任务执行超时, jobId:{}", jobId);
+                            executeResult = new ResultT<>(ResultT.FAIL_CODE, "任务执行超时");
                         } finally {
                             // 发生异常时，终止线程的挂起操作，让线程自行结束
                             // 线程内如果用 while(true) 的话，interrupt 方法不能停止线程

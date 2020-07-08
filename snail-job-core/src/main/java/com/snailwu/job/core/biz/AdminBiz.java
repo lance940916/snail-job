@@ -12,10 +12,19 @@ import java.util.List;
  */
 public interface AdminBiz {
 
+    /**
+     * 回调任务执行结果
+     */
     ResultT<String> callback(List<CallbackParam> callbackParamList);
 
+    /**
+     * 进行客户端的注册
+     */
     ResultT<String> registry(RegistryParam registryParam);
 
+    /**
+     * 移除客户端
+     */
     ResultT<String> registryRemove(RegistryParam registryParam);
 
 }
