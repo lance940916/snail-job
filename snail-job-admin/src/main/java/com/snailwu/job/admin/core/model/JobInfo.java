@@ -8,16 +8,16 @@ public class JobInfo {
     private Integer id;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private Integer groupId;
+    private String groupName;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private String cron;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String desc;
+    private String description;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private Date addTime;
+    private Date createTime;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Date updateTime;
@@ -44,7 +44,7 @@ public class JobInfo {
     private Integer executorTimeout;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private Integer executorFailRetryCount;
+    private Byte executorFailRetryCount;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Byte triggerStatus;
@@ -66,13 +66,13 @@ public class JobInfo {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public Integer getGroupId() {
-        return groupId;
+    public String getGroupName() {
+        return groupName;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setGroupId(Integer groupId) {
-        this.groupId = groupId;
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -86,23 +86,23 @@ public class JobInfo {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getDesc() {
-        return desc;
+    public String getDescription() {
+        return description;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public Date getAddTime() {
-        return addTime;
+    public Date getCreateTime() {
+        return createTime;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setAddTime(Date addTime) {
-        this.addTime = addTime;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -186,12 +186,12 @@ public class JobInfo {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public Integer getExecutorFailRetryCount() {
+    public Byte getExecutorFailRetryCount() {
         return executorFailRetryCount;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setExecutorFailRetryCount(Integer executorFailRetryCount) {
+    public void setExecutorFailRetryCount(Byte executorFailRetryCount) {
         this.executorFailRetryCount = executorFailRetryCount;
     }
 

@@ -7,10 +7,7 @@ import com.snailwu.job.admin.mapper.JobGroupDynamicSqlSupport;
 import com.snailwu.job.core.enums.RegistryConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.mybatis.dynamic.sql.delete.render.DeleteStatementProvider;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
-import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
-import org.mybatis.dynamic.sql.update.render.UpdateStatementProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,34 +44,34 @@ public class ExecutorRegistryMonitorHelper {
             while (!toStop) {
                 // 删除所有不活跃的执行器节点
                 Date deadDate = DateUtils.addSeconds(new Date(), RegistryConfig.BEAT_TIMEOUT * -1);
-                DeleteStatementProvider deleteDeadWorkerStat = deleteFrom(jobExecutor)
-                        .where(updateTime, isLessThanOrEqualTo(deadDate))
-                        .build().render(RenderingStrategies.MYBATIS3);
-                AdminConfig.getInstance().getJobExecutorMapper().delete(deleteDeadWorkerStat);
+                AdminConfig.getInstance().getJobExecutorMapper().delete(
+                        deleteFrom(jobExecutor).where(updateTime, isLessThanOrEqualTo(deadDate))
+                                .build().render(RenderingStrategies.MYBATIS3)
+                );
 
                 // 列出所有的分组
-                SelectStatementProvider jobExecutorSelect = select(jobGroup.allColumns())
-                        .from(jobGroup)
-                        .orderBy(JobGroupDynamicSqlSupport.name, JobGroupDynamicSqlSupport.uuid, JobGroupDynamicSqlSupport.id)
-                        .build().render(RenderingStrategies.MYBATIS3);
-                List<JobGroup> groupList = AdminConfig.getInstance().getJobGroupMapper().selectMany(jobExecutorSelect);
+                List<JobGroup> groupList = AdminConfig.getInstance().getJobGroupMapper().selectMany(
+                        select(jobGroup.allColumns()).from(jobGroup)
+                                .build().render(RenderingStrategies.MYBATIS3)
+                );
 
                 // 将活跃的执行器节点整理到执行器表中
-                SelectStatementProvider onlineNodeSelect = select(jobExecutor.allColumns())
-                        .from(jobExecutor)
-                        .where(updateTime, isGreaterThan(deadDate))
-                        .build().render(RenderingStrategies.MYBATIS3);
-                List<JobExecutor> executorList = AdminConfig.getInstance().getJobExecutorMapper().selectMany(onlineNodeSelect);
+                List<JobExecutor> executorList = AdminConfig.getInstance().getJobExecutorMapper().selectMany(
+                        select(jobExecutor.allColumns()).from(jobExecutor).where(updateTime, isGreaterThan(deadDate))
+                                .build().render(RenderingStrategies.MYBATIS3)
+                );
+
+                // 合并同一个分组的执行器地址
                 Map<String, List<String>> appNameAddressMap = new HashMap<>();
                 for (JobExecutor executor : executorList) {
-                    String groupUuid = executor.getGroupUuid();
+                    String groupName = executor.getGroupName();
                     String address = executor.getAddress();
 
-                    List<String> addressList = appNameAddressMap.get(groupUuid);
+                    List<String> addressList = appNameAddressMap.get(groupName);
                     if (addressList == null) {
                         addressList = new ArrayList<>();
                         addressList.add(address);
-                        appNameAddressMap.put(groupUuid, addressList);
+                        appNameAddressMap.put(groupName, addressList);
                     }
                     // 没有包含，则添加进去
                     if (!addressList.contains(address)) {
@@ -82,15 +79,15 @@ public class ExecutorRegistryMonitorHelper {
                     }
                 }
 
-                // 更新 jobExecutor 中的 address 列表
+                // 更新 jobGroup 中的 address 列表
                 for (JobGroup group : groupList) {
-                    List<String> addrList = appNameAddressMap.get(group.getUuid());
-                    String addressListStr = StringUtils.join(addrList, ",");
-                    UpdateStatementProvider usp = update(jobGroup)
-                            .set(JobGroupDynamicSqlSupport.addressList).equalTo(addressListStr)
-                            .where(JobGroupDynamicSqlSupport.id, isEqualTo(group.getId()))
-                            .build().render(RenderingStrategies.MYBATIS3);
-                    AdminConfig.getInstance().getJobGroupMapper().update(usp);
+                    List<String> addrList = appNameAddressMap.get(group.getName());
+                    String addresses = StringUtils.join(addrList, ",");
+                    AdminConfig.getInstance().getJobGroupMapper().update(
+                            update(jobGroup).set(JobGroupDynamicSqlSupport.addressList).equalTo(addresses)
+                                    .where(JobGroupDynamicSqlSupport.id, isEqualTo(group.getId()))
+                                    .build().render(RenderingStrategies.MYBATIS3)
+                    );
                 }
             }
         });

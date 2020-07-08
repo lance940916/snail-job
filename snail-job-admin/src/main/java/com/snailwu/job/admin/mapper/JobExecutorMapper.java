@@ -29,7 +29,7 @@ import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 @Mapper
 public interface JobExecutorMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    BasicColumn[] selectList = BasicColumn.columnList(id, groupUuid, address, registryType, updateTime);
+    BasicColumn[] selectList = BasicColumn.columnList(id, groupName, address, registryType, updateTime);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type = SqlProviderAdapter.class, method = "select")
@@ -56,9 +56,9 @@ public interface JobExecutorMapper {
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
     @Results(id="JobExecutorResult", value = {
             @Result(column = "id", property = "id", jdbcType = JdbcType.INTEGER, id = true),
-            @Result(column = "group_uuid", property = "groupUuid", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "group_name", property = "groupName", jdbcType = JdbcType.VARCHAR),
             @Result(column = "address", property = "address", jdbcType = JdbcType.VARCHAR),
-            @Result(column = "registry_type", property = "registryType", jdbcType = JdbcType.CHAR),
+            @Result(column = "registry_type", property = "registryType", jdbcType = JdbcType.TINYINT),
             @Result(column = "update_time", property = "updateTime", jdbcType = JdbcType.TIMESTAMP)
     })
     List<JobExecutor> selectMany(SelectStatementProvider selectStatement);
@@ -88,7 +88,7 @@ public interface JobExecutorMapper {
     default int insert(JobExecutor record) {
         return MyBatis3Utils.insert(this::insert, record, jobExecutor, c ->
                 c.map(id).toProperty("id")
-                        .map(groupUuid).toProperty("groupUuid")
+                        .map(groupName).toProperty("groupName")
                         .map(address).toProperty("address")
                         .map(registryType).toProperty("registryType")
                         .map(updateTime).toProperty("updateTime")
@@ -99,7 +99,7 @@ public interface JobExecutorMapper {
     default int insertMultiple(Collection<JobExecutor> records) {
         return MyBatis3Utils.insertMultiple(this::insertMultiple, records, jobExecutor, c ->
                 c.map(id).toProperty("id")
-                        .map(groupUuid).toProperty("groupUuid")
+                        .map(groupName).toProperty("groupName")
                         .map(address).toProperty("address")
                         .map(registryType).toProperty("registryType")
                         .map(updateTime).toProperty("updateTime")
@@ -110,7 +110,7 @@ public interface JobExecutorMapper {
     default int insertSelective(JobExecutor record) {
         return MyBatis3Utils.insert(this::insert, record, jobExecutor, c ->
                 c.map(id).toPropertyWhenPresent("id", record::getId)
-                        .map(groupUuid).toPropertyWhenPresent("groupUuid", record::getGroupUuid)
+                        .map(groupName).toPropertyWhenPresent("groupName", record::getGroupName)
                         .map(address).toPropertyWhenPresent("address", record::getAddress)
                         .map(registryType).toPropertyWhenPresent("registryType", record::getRegistryType)
                         .map(updateTime).toPropertyWhenPresent("updateTime", record::getUpdateTime)
@@ -147,7 +147,7 @@ public interface JobExecutorMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     static UpdateDSL<UpdateModel> updateAllColumns(JobExecutor record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(id).equalTo(record::getId)
-                .set(groupUuid).equalTo(record::getGroupUuid)
+                .set(groupName).equalTo(record::getGroupName)
                 .set(address).equalTo(record::getAddress)
                 .set(registryType).equalTo(record::getRegistryType)
                 .set(updateTime).equalTo(record::getUpdateTime);
@@ -156,7 +156,7 @@ public interface JobExecutorMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     static UpdateDSL<UpdateModel> updateSelectiveColumns(JobExecutor record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(id).equalToWhenPresent(record::getId)
-                .set(groupUuid).equalToWhenPresent(record::getGroupUuid)
+                .set(groupName).equalToWhenPresent(record::getGroupName)
                 .set(address).equalToWhenPresent(record::getAddress)
                 .set(registryType).equalToWhenPresent(record::getRegistryType)
                 .set(updateTime).equalToWhenPresent(record::getUpdateTime);
@@ -165,7 +165,7 @@ public interface JobExecutorMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int updateByPrimaryKey(JobExecutor record) {
         return update(c ->
-                c.set(groupUuid).equalTo(record::getGroupUuid)
+                c.set(groupName).equalTo(record::getGroupName)
                         .set(address).equalTo(record::getAddress)
                         .set(registryType).equalTo(record::getRegistryType)
                         .set(updateTime).equalTo(record::getUpdateTime)
@@ -176,7 +176,7 @@ public interface JobExecutorMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int updateByPrimaryKeySelective(JobExecutor record) {
         return update(c ->
-                c.set(groupUuid).equalToWhenPresent(record::getGroupUuid)
+                c.set(groupName).equalToWhenPresent(record::getGroupName)
                         .set(address).equalToWhenPresent(record::getAddress)
                         .set(registryType).equalToWhenPresent(record::getRegistryType)
                         .set(updateTime).equalToWhenPresent(record::getUpdateTime)

@@ -10,10 +10,10 @@ public class JobGroup {
     private String name;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String uuid;
+    private String addressList;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String addressList;
+    private String description;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public Integer getId() {
@@ -36,16 +36,6 @@ public class JobGroup {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getUuid() {
-        return uuid;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public String getAddressList() {
         return addressList;
     }
@@ -53,5 +43,15 @@ public class JobGroup {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public void setAddressList(String addressList) {
         this.addressList = addressList;
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public String getDescription() {
+        return description;
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

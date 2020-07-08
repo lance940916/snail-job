@@ -1,6 +1,5 @@
 package com.snailwu.job.admin.core.scheduler;
 
-import com.snailwu.job.admin.core.thread.ExecutorRegistryMonitorHelper;
 import com.snailwu.job.core.biz.ExecutorBiz;
 import com.snailwu.job.core.biz.client.ExecutorBizClient;
 import org.slf4j.Logger;
@@ -19,9 +18,7 @@ public class SnailJobScheduler {
      * 初始化
      */
     public void init() {
-        ExecutorRegistryMonitorHelper.getInstance().start();
-
-
+//        ExecutorRegistryMonitorHelper.getInstance().start();
     }
 
     /**
@@ -32,7 +29,7 @@ public class SnailJobScheduler {
     }
 
     // Executor-Client
-    private static ConcurrentHashMap<String, ExecutorBiz> executorBizRepository = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, ExecutorBiz> EXECUTOR_BIZ_REPOSITORY = new ConcurrentHashMap<>();
 
     public static ExecutorBiz getExecutorBiz(String address) {
         if (address == null || address.trim().length() == 0) {
@@ -40,13 +37,13 @@ public class SnailJobScheduler {
         }
 
         address = address.trim();
-        ExecutorBiz executorBiz = executorBizRepository.get(address);
+        ExecutorBiz executorBiz = EXECUTOR_BIZ_REPOSITORY.get(address);
         if (executorBiz != null) {
             return executorBiz;
         }
 
         executorBiz = new ExecutorBizClient(address);
-        executorBizRepository.put(address, executorBiz);
+        EXECUTOR_BIZ_REPOSITORY.put(address, executorBiz);
         return null;
     }
 

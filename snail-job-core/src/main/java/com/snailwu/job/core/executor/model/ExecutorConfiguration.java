@@ -22,7 +22,7 @@ public class ExecutorConfiguration {
     /**
      * 本机与调度中心通讯的端口
      */
-    private int port;
+    private int port = 9999;
 
     /**
      * 执行器组 Name

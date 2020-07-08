@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS `job_executor`
     `id`            INT(11)     NOT NULL AUTO_INCREMENT,
     `group_name`    VARCHAR(32) NOT NULL COMMENT '要执行的任务组名',
     `address`       VARCHAR(64) NOT NULL COMMENT '执行器地址',
-    `registry_type` TINYINT(1)  NOT NULL COMMENT '执行器地址类型：0=自动注册、1=手动录入',
+    `registry_type` TINYINT     NOT NULL COMMENT '执行器地址类型：0=自动注册、1=手动录入',
     `update_time`   DATETIME    NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),
     INDEX `idx_g_a` (`group_name`, `address`)
@@ -48,9 +48,9 @@ CREATE TABLE IF NOT EXISTS `job_info`
     `executor_param`            VARCHAR(512) NULL COMMENT '执行器任务参数',
     `executor_block_strategy`   VARCHAR(50)  NOT NULL COMMENT '阻塞处理策略',
     `executor_timeout`          INT(11)      NOT NULL DEFAULT 0 COMMENT '任务执行超时时间，单位秒',
-    `executor_fail_retry_count` TINYINT(1)   NOT NULL DEFAULT 0 COMMENT '失败重试次数',
+    `executor_fail_retry_count` TINYINT      NOT NULL DEFAULT 0 COMMENT '失败重试次数',
 
-    `trigger_status`            TINYINT(1)   NOT NULL DEFAULT '0' COMMENT '调度状态：0-停止，1-运行',
+    `trigger_status`            TINYINT      NOT NULL DEFAULT '0' COMMENT '调度状态：0-停止，1-运行',
     `trigger_last_time`         BIGINT(13)   NOT NULL DEFAULT '0' COMMENT '上次调度时间',
     `trigger_next_time`         BIGINT(13)   NOT NULL DEFAULT '0' COMMENT '下次调度时间',
 
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `job_log`
     `executor_address`          VARCHAR(255) NULL COMMENT '执行器地址，本次执行的地址',
     `executor_handler`          VARCHAR(255) NULL COMMENT '执行器任务handler',
     `executor_param`            VARCHAR(512) NULL COMMENT '执行器任务参数',
-    `executor_fail_retry_count` TINYINT(11)  NOT NULL DEFAULT 0 COMMENT '失败重试次数',
+    `executor_fail_retry_count` TINYINT      NOT NULL DEFAULT 0 COMMENT '失败重试次数',
 
     `trigger_time`              DATETIME     NULL COMMENT '调度-时间',
     `trigger_code`              INT(11)      NULL COMMENT '调度-结果',
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS `job_log`
     `exec_code`                 INT(11)      NOT NULL COMMENT '执行-结果',
     `exec_log`                  TEXT COMMENT '执行-日志',
 
-    `alarm_status`              TINYINT(1)   NOT NULL DEFAULT '0' COMMENT '告警状态：0-默认、1-无需告警、2-告警成功、3-告警失败',
+    `alarm_status`              TINYINT      NOT NULL DEFAULT '0' COMMENT '告警状态：0-默认、1-无需告警、2-告警成功、3-告警失败',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;

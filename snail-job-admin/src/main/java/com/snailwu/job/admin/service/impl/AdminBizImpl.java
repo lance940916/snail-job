@@ -49,7 +49,7 @@ public class AdminBizImpl implements AdminBiz {
         int update = jobExecutorMapper.update(
                 update(jobExecutor)
                         .set(updateTime).equalTo(new Date())
-                        .where(groupUuid, isEqualTo(registryParam.getGroupUuid()))
+                        .where(groupName, isEqualTo(registryParam.getGroupName()))
                         .and(address, isEqualTo(registryParam.getExecutorAddress()))
                         .build().render(RenderingStrategies.MYBATIS3)
         );
@@ -57,9 +57,9 @@ public class AdminBizImpl implements AdminBiz {
         // 数据不存在，插入数据
         if (update < 1) {
             JobExecutor executor = new JobExecutor();
-            executor.setGroupUuid(registryParam.getGroupUuid());
+            executor.setGroupName(registryParam.getGroupName());
             executor.setAddress(registryParam.getExecutorAddress());
-            executor.setRegistryType(RegistryType.AUTO.getValue() + "");
+            executor.setRegistryType(RegistryType.AUTO.getValue());
             executor.setUpdateTime(new Date());
             jobExecutorMapper.insertSelective(executor);
         }
@@ -71,7 +71,7 @@ public class AdminBizImpl implements AdminBiz {
         // 直接删除
         jobExecutorMapper.delete(
                 deleteFrom(jobExecutor)
-                        .where(groupUuid, isEqualTo(registryParam.getGroupUuid()))
+                        .where(groupName, isEqualTo(registryParam.getGroupName()))
                         .and(address, isEqualTo(registryParam.getExecutorAddress()))
                         .build().render(RenderingStrategies.MYBATIS3)
         );

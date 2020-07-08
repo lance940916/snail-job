@@ -29,7 +29,7 @@ import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 @Mapper
 public interface JobLogMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    BasicColumn[] selectList = BasicColumn.columnList(id, jobId, groupId, executorAddress, executorHandler, executorParam, executorFailRetryCount, triggerTime, triggerCode, execTime, execCode, alarmStatus, triggerMsg, execLog);
+    BasicColumn[] selectList = BasicColumn.columnList(id, jobId, groupName, executorAddress, executorHandler, executorParam, executorFailRetryCount, triggerTime, triggerCode, execTime, execCode, alarmStatus, triggerMsg, execLog);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type = SqlProviderAdapter.class, method = "select")
@@ -57,7 +57,7 @@ public interface JobLogMapper {
     @Results(id="JobLogResult", value = {
             @Result(column = "id", property = "id", jdbcType = JdbcType.BIGINT, id = true),
             @Result(column = "job_id", property = "jobId", jdbcType = JdbcType.INTEGER),
-            @Result(column = "group_id", property = "groupId", jdbcType = JdbcType.INTEGER),
+            @Result(column = "group_name", property = "groupName", jdbcType = JdbcType.VARCHAR),
             @Result(column = "executor_address", property = "executorAddress", jdbcType = JdbcType.VARCHAR),
             @Result(column = "executor_handler", property = "executorHandler", jdbcType = JdbcType.VARCHAR),
             @Result(column = "executor_param", property = "executorParam", jdbcType = JdbcType.VARCHAR),
@@ -98,18 +98,18 @@ public interface JobLogMapper {
         return MyBatis3Utils.insert(this::insert, record, jobLog, c ->
                 c.map(id).toProperty("id")
                         .map(jobId).toProperty("jobId")
-                        .map(groupId).toProperty("groupId")
+                        .map(groupName).toProperty("groupName")
                         .map(executorAddress).toProperty("executorAddress")
-            .map(executorHandler).toProperty("executorHandler")
-            .map(executorParam).toProperty("executorParam")
-            .map(executorFailRetryCount).toProperty("executorFailRetryCount")
-            .map(triggerTime).toProperty("triggerTime")
-            .map(triggerCode).toProperty("triggerCode")
-            .map(execTime).toProperty("execTime")
-            .map(execCode).toProperty("execCode")
-            .map(alarmStatus).toProperty("alarmStatus")
-            .map(triggerMsg).toProperty("triggerMsg")
-            .map(execLog).toProperty("execLog")
+                        .map(executorHandler).toProperty("executorHandler")
+                        .map(executorParam).toProperty("executorParam")
+                        .map(executorFailRetryCount).toProperty("executorFailRetryCount")
+                        .map(triggerTime).toProperty("triggerTime")
+                        .map(triggerCode).toProperty("triggerCode")
+                        .map(execTime).toProperty("execTime")
+                        .map(execCode).toProperty("execCode")
+                        .map(alarmStatus).toProperty("alarmStatus")
+                        .map(triggerMsg).toProperty("triggerMsg")
+                        .map(execLog).toProperty("execLog")
         );
     }
 
@@ -118,18 +118,18 @@ public interface JobLogMapper {
         return MyBatis3Utils.insertMultiple(this::insertMultiple, records, jobLog, c ->
                 c.map(id).toProperty("id")
                         .map(jobId).toProperty("jobId")
-                        .map(groupId).toProperty("groupId")
+                        .map(groupName).toProperty("groupName")
                         .map(executorAddress).toProperty("executorAddress")
-            .map(executorHandler).toProperty("executorHandler")
-            .map(executorParam).toProperty("executorParam")
-            .map(executorFailRetryCount).toProperty("executorFailRetryCount")
-            .map(triggerTime).toProperty("triggerTime")
-            .map(triggerCode).toProperty("triggerCode")
-            .map(execTime).toProperty("execTime")
-            .map(execCode).toProperty("execCode")
-            .map(alarmStatus).toProperty("alarmStatus")
-            .map(triggerMsg).toProperty("triggerMsg")
-            .map(execLog).toProperty("execLog")
+                        .map(executorHandler).toProperty("executorHandler")
+                        .map(executorParam).toProperty("executorParam")
+                        .map(executorFailRetryCount).toProperty("executorFailRetryCount")
+                        .map(triggerTime).toProperty("triggerTime")
+                        .map(triggerCode).toProperty("triggerCode")
+                        .map(execTime).toProperty("execTime")
+                        .map(execCode).toProperty("execCode")
+                        .map(alarmStatus).toProperty("alarmStatus")
+                        .map(triggerMsg).toProperty("triggerMsg")
+                        .map(execLog).toProperty("execLog")
         );
     }
 
@@ -138,18 +138,18 @@ public interface JobLogMapper {
         return MyBatis3Utils.insert(this::insert, record, jobLog, c ->
                 c.map(id).toPropertyWhenPresent("id", record::getId)
                         .map(jobId).toPropertyWhenPresent("jobId", record::getJobId)
-                        .map(groupId).toPropertyWhenPresent("groupId", record::getGroupId)
+                        .map(groupName).toPropertyWhenPresent("groupName", record::getGroupName)
                         .map(executorAddress).toPropertyWhenPresent("executorAddress", record::getExecutorAddress)
-            .map(executorHandler).toPropertyWhenPresent("executorHandler", record::getExecutorHandler)
-            .map(executorParam).toPropertyWhenPresent("executorParam", record::getExecutorParam)
-            .map(executorFailRetryCount).toPropertyWhenPresent("executorFailRetryCount", record::getExecutorFailRetryCount)
-            .map(triggerTime).toPropertyWhenPresent("triggerTime", record::getTriggerTime)
-            .map(triggerCode).toPropertyWhenPresent("triggerCode", record::getTriggerCode)
-            .map(execTime).toPropertyWhenPresent("execTime", record::getExecTime)
-            .map(execCode).toPropertyWhenPresent("execCode", record::getExecCode)
-            .map(alarmStatus).toPropertyWhenPresent("alarmStatus", record::getAlarmStatus)
-            .map(triggerMsg).toPropertyWhenPresent("triggerMsg", record::getTriggerMsg)
-            .map(execLog).toPropertyWhenPresent("execLog", record::getExecLog)
+                        .map(executorHandler).toPropertyWhenPresent("executorHandler", record::getExecutorHandler)
+                        .map(executorParam).toPropertyWhenPresent("executorParam", record::getExecutorParam)
+                        .map(executorFailRetryCount).toPropertyWhenPresent("executorFailRetryCount", record::getExecutorFailRetryCount)
+                        .map(triggerTime).toPropertyWhenPresent("triggerTime", record::getTriggerTime)
+                        .map(triggerCode).toPropertyWhenPresent("triggerCode", record::getTriggerCode)
+                        .map(execTime).toPropertyWhenPresent("execTime", record::getExecTime)
+                        .map(execCode).toPropertyWhenPresent("execCode", record::getExecCode)
+                        .map(alarmStatus).toPropertyWhenPresent("alarmStatus", record::getAlarmStatus)
+                        .map(triggerMsg).toPropertyWhenPresent("triggerMsg", record::getTriggerMsg)
+                        .map(execLog).toPropertyWhenPresent("execLog", record::getExecLog)
         );
     }
 
@@ -184,7 +184,7 @@ public interface JobLogMapper {
     static UpdateDSL<UpdateModel> updateAllColumns(JobLog record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(id).equalTo(record::getId)
                 .set(jobId).equalTo(record::getJobId)
-                .set(groupId).equalTo(record::getGroupId)
+                .set(groupName).equalTo(record::getGroupName)
                 .set(executorAddress).equalTo(record::getExecutorAddress)
                 .set(executorHandler).equalTo(record::getExecutorHandler)
                 .set(executorParam).equalTo(record::getExecutorParam)
@@ -202,7 +202,7 @@ public interface JobLogMapper {
     static UpdateDSL<UpdateModel> updateSelectiveColumns(JobLog record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(id).equalToWhenPresent(record::getId)
                 .set(jobId).equalToWhenPresent(record::getJobId)
-                .set(groupId).equalToWhenPresent(record::getGroupId)
+                .set(groupName).equalToWhenPresent(record::getGroupName)
                 .set(executorAddress).equalToWhenPresent(record::getExecutorAddress)
                 .set(executorHandler).equalToWhenPresent(record::getExecutorHandler)
                 .set(executorParam).equalToWhenPresent(record::getExecutorParam)
@@ -220,7 +220,7 @@ public interface JobLogMapper {
     default int updateByPrimaryKey(JobLog record) {
         return update(c ->
                 c.set(jobId).equalTo(record::getJobId)
-                        .set(groupId).equalTo(record::getGroupId)
+                        .set(groupName).equalTo(record::getGroupName)
                         .set(executorAddress).equalTo(record::getExecutorAddress)
                         .set(executorHandler).equalTo(record::getExecutorHandler)
                         .set(executorParam).equalTo(record::getExecutorParam)
@@ -232,7 +232,7 @@ public interface JobLogMapper {
                         .set(alarmStatus).equalTo(record::getAlarmStatus)
                         .set(triggerMsg).equalTo(record::getTriggerMsg)
                         .set(execLog).equalTo(record::getExecLog)
-            .where(id, isEqualTo(record::getId))
+                        .where(id, isEqualTo(record::getId))
         );
     }
 
@@ -240,7 +240,7 @@ public interface JobLogMapper {
     default int updateByPrimaryKeySelective(JobLog record) {
         return update(c ->
                 c.set(jobId).equalToWhenPresent(record::getJobId)
-                        .set(groupId).equalToWhenPresent(record::getGroupId)
+                        .set(groupName).equalToWhenPresent(record::getGroupName)
                         .set(executorAddress).equalToWhenPresent(record::getExecutorAddress)
                         .set(executorHandler).equalToWhenPresent(record::getExecutorHandler)
                         .set(executorParam).equalToWhenPresent(record::getExecutorParam)
@@ -252,7 +252,7 @@ public interface JobLogMapper {
                         .set(alarmStatus).equalToWhenPresent(record::getAlarmStatus)
                         .set(triggerMsg).equalToWhenPresent(record::getTriggerMsg)
                         .set(execLog).equalToWhenPresent(record::getExecLog)
-            .where(id, isEqualTo(record::getId))
+                        .where(id, isEqualTo(record::getId))
         );
     }
 }

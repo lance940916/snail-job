@@ -18,7 +18,7 @@ public final class JobLogDynamicSqlSupport {
     public static final SqlColumn<Integer> jobId = jobLog.jobId;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<Integer> groupId = jobLog.groupId;
+    public static final SqlColumn<String> groupName = jobLog.groupName;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final SqlColumn<String> executorAddress = jobLog.executorAddress;
@@ -59,7 +59,7 @@ public final class JobLogDynamicSqlSupport {
 
         public final SqlColumn<Integer> jobId = column("job_id", JDBCType.INTEGER);
 
-        public final SqlColumn<Integer> groupId = column("group_id", JDBCType.INTEGER);
+        public final SqlColumn<String> groupName = column("group_name", JDBCType.VARCHAR);
 
         public final SqlColumn<String> executorAddress = column("executor_address", JDBCType.VARCHAR);
 

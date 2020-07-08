@@ -7,23 +7,23 @@ package com.snailwu.job.core.biz.model;
 public class TriggerParam {
 
     // 任务 ID
-    private int jobId;
+    private Integer jobId;
 
     // 执行 handler、参数、堵塞策略、超时时间
     private String executorHandler;
     private String executorParams;
     private String executorBlockStrategy;
-    private int executorTimeout;
+    private Integer executorTimeout;
 
     // 任务对应的日志 ID 和 时间
-    private long logId;
-    private long logDateTime;
+    private Long logId;
+    private Long logDateTime;
 
-    public int getJobId() {
+    public Integer getJobId() {
         return jobId;
     }
 
-    public void setJobId(int jobId) {
+    public void setJobId(Integer jobId) {
         this.jobId = jobId;
     }
 
@@ -51,27 +51,27 @@ public class TriggerParam {
         this.executorBlockStrategy = executorBlockStrategy;
     }
 
-    public int getExecutorTimeout() {
+    public Integer getExecutorTimeout() {
         return executorTimeout;
     }
 
-    public void setExecutorTimeout(int executorTimeout) {
+    public void setExecutorTimeout(Integer executorTimeout) {
         this.executorTimeout = executorTimeout;
     }
 
-    public long getLogId() {
+    public Long getLogId() {
         return logId;
     }
 
-    public void setLogId(long logId) {
+    public void setLogId(Long logId) {
         this.logId = logId;
     }
 
-    public long getLogDateTime() {
+    public Long getLogDateTime() {
         return logDateTime;
     }
 
-    public void setLogDateTime(long logDateTime) {
+    public void setLogDateTime(Long logDateTime) {
         this.logDateTime = logDateTime;
     }
 

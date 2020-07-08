@@ -11,7 +11,7 @@ public class JobLog {
     private Integer jobId;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private Integer groupId;
+    private String groupName;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private String executorAddress;
@@ -67,13 +67,13 @@ public class JobLog {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public Integer getGroupId() {
-        return groupId;
+    public String getGroupName() {
+        return groupName;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setGroupId(Integer groupId) {
-        this.groupId = groupId;
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")

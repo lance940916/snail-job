@@ -7,7 +7,7 @@ package com.snailwu.job.core.biz.model;
 public class RegistryParam {
 
     // 执行器组的
-    private String groupUuid;
+    private String groupName;
 
     // 注册节点的地址
     private String executorAddress;
@@ -15,17 +15,17 @@ public class RegistryParam {
     public RegistryParam() {
     }
 
-    public RegistryParam(String groupUuid, String executorAddress) {
-        this.groupUuid = groupUuid;
+    public RegistryParam(String groupName, String executorAddress) {
+        this.groupName = groupName;
         this.executorAddress = executorAddress;
     }
 
-    public String getGroupUuid() {
-        return groupUuid;
+    public String getGroupName() {
+        return groupName;
     }
 
-    public void setGroupUuid(String groupUuid) {
-        this.groupUuid = groupUuid;
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
     public String getExecutorAddress() {

@@ -24,21 +24,14 @@ public class AdminConfig implements InitializingBean, DisposableBean {
         return instance;
     }
 
-    // ---------------------- AdminProperties ----------------------
 
-    @Resource
-    private AdminProperties properties;
-
-    public AdminProperties getProperties() {
-        return properties;
-    }
 
     // ---------------------- XxlJobScheduler ----------------------
 
     private SnailJobScheduler snailJobScheduler;
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         instance = this;
 
         snailJobScheduler = new SnailJobScheduler();
@@ -50,7 +43,7 @@ public class AdminConfig implements InitializingBean, DisposableBean {
         snailJobScheduler.destroy();
     }
 
-    // ---------------------- dao service ----------------------
+    // ---------------------- mapper ----------------------
 
     @Resource
     private JobExecutorMapper jobExecutorMapper;

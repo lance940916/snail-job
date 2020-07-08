@@ -82,7 +82,7 @@ public class JobThread extends Thread {
      */
     public ResultT<String> pushTriggerQueue(TriggerParam triggerParam) {
         if (triggerLogIdSet.contains(triggerParam.getLogId())) {
-            log.info("repeat trigger job, logId:{}", triggerParam.getLogId());
+            log.info("[SnailJob]-执行任务-队列中已有重复的任务, logId:{}", triggerParam.getLogId());
             return new ResultT<>(ResultT.FAIL_CODE, "repeat trigger job, logId:" + triggerParam.getLogId());
         }
         triggerLogIdSet.add(triggerParam.getLogId());
@@ -147,7 +147,7 @@ public class JobThread extends Thread {
                         try {
                             executeResult = futureTask.get(triggerParam.getExecutorTimeout(), TimeUnit.SECONDS);
                         } catch (TimeoutException e) {
-                            log.error("任务执行超时, jobId:{}", jobId);
+                            log.error("[SnailJob]-任务执行超时, jobId:{}", jobId);
                             executeResult = new ResultT<>(ResultT.FAIL_CODE, "任务执行超时");
                         } finally {
                             // 发生异常时，终止线程的挂起操作，让线程自行结束
@@ -157,7 +157,7 @@ public class JobThread extends Thread {
                     } else { // 没有超时时间的，直接执行
                         executeResult = jobHandler.execute(triggerParam.getExecutorParams());
                     }
-                    log.info("snail-job job execute end(finish)");
+                    log.info("[SnailJob]-任务执行完成");
                 } else {
                     if (idleTimes > 30 && triggerQueue.size() == 0) {
                         // 30 次获取操作后，没有任务可以处理，则自动销毁线程
@@ -167,21 +167,24 @@ public class JobThread extends Thread {
             } catch (Exception e) {
                 if (stopFlag) {
                     // 线程停止时抛出的异常忽略
-                    log.info("JobThread toStop, stopReason:{}", stopReason);
+                    log.info("[SnailJob]-任务执行线程停止, 原因:{}", stopReason);
                 } else {
                     // 线程未停止时抛出了异常需要打印
-                    log.error("JobThread 异常结束.", e);
+                    log.error("[SnailJob]-任务执行线程异常结束.", e);
                 }
             } finally {
                 if (triggerParam != null) {
+                    CallbackParam callbackParam = new CallbackParam();
+                    callbackParam.setLogId(triggerParam.getLogId());
+                    callbackParam.setLogDateTime(triggerParam.getLogDateTime());
                     if (!stopFlag) {
-                        CallbackParam callbackParam = new CallbackParam(triggerParam.getLogId(), triggerParam.getLogDateTime(), executeResult);
+                        callbackParam.setExecuteResult(executeResult);
                         TriggerCallbackThread.pushCallback(callbackParam);
                     } else {
                         // 线程被杀死了
                         ResultT<String> stopResult = new ResultT<>(ResultT.FAIL_CODE,
                                 stopReason + "[job running, killed]");
-                        CallbackParam callbackParam = new CallbackParam(triggerParam.getLogId(), triggerParam.getLogDateTime(), stopResult);
+                        callbackParam.setExecuteResult(stopResult);
                         TriggerCallbackThread.pushCallback(callbackParam);
                     }
                 }

@@ -8,13 +8,13 @@ public class JobExecutor {
     private Integer id;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String groupUuid;
+    private String groupName;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private String address;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String registryType;
+    private Byte registryType;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Date updateTime;
@@ -30,13 +30,13 @@ public class JobExecutor {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getGroupUuid() {
-        return groupUuid;
+    public String getGroupName() {
+        return groupName;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setGroupUuid(String groupUuid) {
-        this.groupUuid = groupUuid;
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -50,12 +50,12 @@ public class JobExecutor {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getRegistryType() {
+    public Byte getRegistryType() {
         return registryType;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setRegistryType(String registryType) {
+    public void setRegistryType(Byte registryType) {
         this.registryType = registryType;
     }
 

@@ -29,7 +29,7 @@ import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 @Mapper
 public interface JobInfoMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    BasicColumn[] selectList = BasicColumn.columnList(id, groupId, cron, desc, addTime, updateTime, author, alarmEmail, executorRouteStrategy, executorHandler, executorParam, executorBlockStrategy, executorTimeout, executorFailRetryCount, triggerStatus, triggerLastTime, triggerNextTime);
+    BasicColumn[] selectList = BasicColumn.columnList(id, groupName, cron, description, createTime, updateTime, author, alarmEmail, executorRouteStrategy, executorHandler, executorParam, executorBlockStrategy, executorTimeout, executorFailRetryCount, triggerStatus, triggerLastTime, triggerNextTime);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type = SqlProviderAdapter.class, method = "select")
@@ -56,10 +56,10 @@ public interface JobInfoMapper {
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
     @Results(id="JobInfoResult", value = {
             @Result(column = "id", property = "id", jdbcType = JdbcType.INTEGER, id = true),
-            @Result(column = "group_id", property = "groupId", jdbcType = JdbcType.INTEGER),
+            @Result(column = "group_name", property = "groupName", jdbcType = JdbcType.VARCHAR),
             @Result(column = "cron", property = "cron", jdbcType = JdbcType.VARCHAR),
-            @Result(column = "desc", property = "desc", jdbcType = JdbcType.VARCHAR),
-            @Result(column = "add_time", property = "addTime", jdbcType = JdbcType.TIMESTAMP),
+            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.TIMESTAMP),
             @Result(column = "update_time", property = "updateTime", jdbcType = JdbcType.TIMESTAMP),
             @Result(column = "author", property = "author", jdbcType = JdbcType.VARCHAR),
             @Result(column = "alarm_email", property = "alarmEmail", jdbcType = JdbcType.VARCHAR),
@@ -67,11 +67,11 @@ public interface JobInfoMapper {
             @Result(column = "executor_handler", property = "executorHandler", jdbcType = JdbcType.VARCHAR),
             @Result(column = "executor_param", property = "executorParam", jdbcType = JdbcType.VARCHAR),
             @Result(column = "executor_block_strategy", property = "executorBlockStrategy", jdbcType = JdbcType.VARCHAR),
-        @Result(column="executor_timeout", property="executorTimeout", jdbcType=JdbcType.INTEGER),
-        @Result(column="executor_fail_retry_count", property="executorFailRetryCount", jdbcType=JdbcType.INTEGER),
-        @Result(column="trigger_status", property="triggerStatus", jdbcType=JdbcType.TINYINT),
-        @Result(column="trigger_last_time", property="triggerLastTime", jdbcType=JdbcType.BIGINT),
-        @Result(column="trigger_next_time", property="triggerNextTime", jdbcType=JdbcType.BIGINT)
+            @Result(column = "executor_timeout", property = "executorTimeout", jdbcType = JdbcType.INTEGER),
+            @Result(column = "executor_fail_retry_count", property = "executorFailRetryCount", jdbcType = JdbcType.TINYINT),
+            @Result(column = "trigger_status", property = "triggerStatus", jdbcType = JdbcType.TINYINT),
+            @Result(column = "trigger_last_time", property = "triggerLastTime", jdbcType = JdbcType.BIGINT),
+            @Result(column = "trigger_next_time", property = "triggerNextTime", jdbcType = JdbcType.BIGINT)
     })
     List<JobInfo> selectMany(SelectStatementProvider selectStatement);
 
@@ -100,17 +100,17 @@ public interface JobInfoMapper {
     default int insert(JobInfo record) {
         return MyBatis3Utils.insert(this::insert, record, jobInfo, c ->
                 c.map(id).toProperty("id")
-                        .map(groupId).toProperty("groupId")
-            .map(cron).toProperty("cron")
-            .map(desc).toProperty("desc")
-            .map(addTime).toProperty("addTime")
-            .map(updateTime).toProperty("updateTime")
-            .map(author).toProperty("author")
-            .map(alarmEmail).toProperty("alarmEmail")
-            .map(executorRouteStrategy).toProperty("executorRouteStrategy")
-            .map(executorHandler).toProperty("executorHandler")
-            .map(executorParam).toProperty("executorParam")
-            .map(executorBlockStrategy).toProperty("executorBlockStrategy")
+                        .map(groupName).toProperty("groupName")
+                        .map(cron).toProperty("cron")
+                        .map(description).toProperty("description")
+                        .map(createTime).toProperty("createTime")
+                        .map(updateTime).toProperty("updateTime")
+                        .map(author).toProperty("author")
+                        .map(alarmEmail).toProperty("alarmEmail")
+                        .map(executorRouteStrategy).toProperty("executorRouteStrategy")
+                        .map(executorHandler).toProperty("executorHandler")
+                        .map(executorParam).toProperty("executorParam")
+                        .map(executorBlockStrategy).toProperty("executorBlockStrategy")
             .map(executorTimeout).toProperty("executorTimeout")
             .map(executorFailRetryCount).toProperty("executorFailRetryCount")
             .map(triggerStatus).toProperty("triggerStatus")
@@ -123,17 +123,17 @@ public interface JobInfoMapper {
     default int insertMultiple(Collection<JobInfo> records) {
         return MyBatis3Utils.insertMultiple(this::insertMultiple, records, jobInfo, c ->
                 c.map(id).toProperty("id")
-                        .map(groupId).toProperty("groupId")
-            .map(cron).toProperty("cron")
-            .map(desc).toProperty("desc")
-            .map(addTime).toProperty("addTime")
-            .map(updateTime).toProperty("updateTime")
-            .map(author).toProperty("author")
-            .map(alarmEmail).toProperty("alarmEmail")
-            .map(executorRouteStrategy).toProperty("executorRouteStrategy")
-            .map(executorHandler).toProperty("executorHandler")
-            .map(executorParam).toProperty("executorParam")
-            .map(executorBlockStrategy).toProperty("executorBlockStrategy")
+                        .map(groupName).toProperty("groupName")
+                        .map(cron).toProperty("cron")
+                        .map(description).toProperty("description")
+                        .map(createTime).toProperty("createTime")
+                        .map(updateTime).toProperty("updateTime")
+                        .map(author).toProperty("author")
+                        .map(alarmEmail).toProperty("alarmEmail")
+                        .map(executorRouteStrategy).toProperty("executorRouteStrategy")
+                        .map(executorHandler).toProperty("executorHandler")
+                        .map(executorParam).toProperty("executorParam")
+                        .map(executorBlockStrategy).toProperty("executorBlockStrategy")
             .map(executorTimeout).toProperty("executorTimeout")
             .map(executorFailRetryCount).toProperty("executorFailRetryCount")
             .map(triggerStatus).toProperty("triggerStatus")
@@ -146,17 +146,17 @@ public interface JobInfoMapper {
     default int insertSelective(JobInfo record) {
         return MyBatis3Utils.insert(this::insert, record, jobInfo, c ->
                 c.map(id).toPropertyWhenPresent("id", record::getId)
-                        .map(groupId).toPropertyWhenPresent("groupId", record::getGroupId)
-            .map(cron).toPropertyWhenPresent("cron", record::getCron)
-            .map(desc).toPropertyWhenPresent("desc", record::getDesc)
-            .map(addTime).toPropertyWhenPresent("addTime", record::getAddTime)
-            .map(updateTime).toPropertyWhenPresent("updateTime", record::getUpdateTime)
-            .map(author).toPropertyWhenPresent("author", record::getAuthor)
-            .map(alarmEmail).toPropertyWhenPresent("alarmEmail", record::getAlarmEmail)
-            .map(executorRouteStrategy).toPropertyWhenPresent("executorRouteStrategy", record::getExecutorRouteStrategy)
-            .map(executorHandler).toPropertyWhenPresent("executorHandler", record::getExecutorHandler)
-            .map(executorParam).toPropertyWhenPresent("executorParam", record::getExecutorParam)
-            .map(executorBlockStrategy).toPropertyWhenPresent("executorBlockStrategy", record::getExecutorBlockStrategy)
+                        .map(groupName).toPropertyWhenPresent("groupName", record::getGroupName)
+                        .map(cron).toPropertyWhenPresent("cron", record::getCron)
+                        .map(description).toPropertyWhenPresent("description", record::getDescription)
+                        .map(createTime).toPropertyWhenPresent("createTime", record::getCreateTime)
+                        .map(updateTime).toPropertyWhenPresent("updateTime", record::getUpdateTime)
+                        .map(author).toPropertyWhenPresent("author", record::getAuthor)
+                        .map(alarmEmail).toPropertyWhenPresent("alarmEmail", record::getAlarmEmail)
+                        .map(executorRouteStrategy).toPropertyWhenPresent("executorRouteStrategy", record::getExecutorRouteStrategy)
+                        .map(executorHandler).toPropertyWhenPresent("executorHandler", record::getExecutorHandler)
+                        .map(executorParam).toPropertyWhenPresent("executorParam", record::getExecutorParam)
+                        .map(executorBlockStrategy).toPropertyWhenPresent("executorBlockStrategy", record::getExecutorBlockStrategy)
             .map(executorTimeout).toPropertyWhenPresent("executorTimeout", record::getExecutorTimeout)
             .map(executorFailRetryCount).toPropertyWhenPresent("executorFailRetryCount", record::getExecutorFailRetryCount)
             .map(triggerStatus).toPropertyWhenPresent("triggerStatus", record::getTriggerStatus)
@@ -195,10 +195,10 @@ public interface JobInfoMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     static UpdateDSL<UpdateModel> updateAllColumns(JobInfo record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(id).equalTo(record::getId)
-                .set(groupId).equalTo(record::getGroupId)
+                .set(groupName).equalTo(record::getGroupName)
                 .set(cron).equalTo(record::getCron)
-                .set(desc).equalTo(record::getDesc)
-                .set(addTime).equalTo(record::getAddTime)
+                .set(description).equalTo(record::getDescription)
+                .set(createTime).equalTo(record::getCreateTime)
                 .set(updateTime).equalTo(record::getUpdateTime)
                 .set(author).equalTo(record::getAuthor)
                 .set(alarmEmail).equalTo(record::getAlarmEmail)
@@ -216,10 +216,10 @@ public interface JobInfoMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     static UpdateDSL<UpdateModel> updateSelectiveColumns(JobInfo record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(id).equalToWhenPresent(record::getId)
-                .set(groupId).equalToWhenPresent(record::getGroupId)
+                .set(groupName).equalToWhenPresent(record::getGroupName)
                 .set(cron).equalToWhenPresent(record::getCron)
-                .set(desc).equalToWhenPresent(record::getDesc)
-                .set(addTime).equalToWhenPresent(record::getAddTime)
+                .set(description).equalToWhenPresent(record::getDescription)
+                .set(createTime).equalToWhenPresent(record::getCreateTime)
                 .set(updateTime).equalToWhenPresent(record::getUpdateTime)
                 .set(author).equalToWhenPresent(record::getAuthor)
                 .set(alarmEmail).equalToWhenPresent(record::getAlarmEmail)
@@ -237,10 +237,10 @@ public interface JobInfoMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int updateByPrimaryKey(JobInfo record) {
         return update(c ->
-                c.set(groupId).equalTo(record::getGroupId)
-            .set(cron).equalTo(record::getCron)
-            .set(desc).equalTo(record::getDesc)
-            .set(addTime).equalTo(record::getAddTime)
+                c.set(groupName).equalTo(record::getGroupName)
+                        .set(cron).equalTo(record::getCron)
+                        .set(description).equalTo(record::getDescription)
+                        .set(createTime).equalTo(record::getCreateTime)
             .set(updateTime).equalTo(record::getUpdateTime)
             .set(author).equalTo(record::getAuthor)
             .set(alarmEmail).equalTo(record::getAlarmEmail)
@@ -260,10 +260,10 @@ public interface JobInfoMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int updateByPrimaryKeySelective(JobInfo record) {
         return update(c ->
-                c.set(groupId).equalToWhenPresent(record::getGroupId)
-            .set(cron).equalToWhenPresent(record::getCron)
-            .set(desc).equalToWhenPresent(record::getDesc)
-            .set(addTime).equalToWhenPresent(record::getAddTime)
+                c.set(groupName).equalToWhenPresent(record::getGroupName)
+                        .set(cron).equalToWhenPresent(record::getCron)
+                        .set(description).equalToWhenPresent(record::getDescription)
+                        .set(createTime).equalToWhenPresent(record::getCreateTime)
             .set(updateTime).equalToWhenPresent(record::getUpdateTime)
             .set(author).equalToWhenPresent(record::getAuthor)
             .set(alarmEmail).equalToWhenPresent(record::getAlarmEmail)

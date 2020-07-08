@@ -15,16 +15,16 @@ public final class JobInfoDynamicSqlSupport {
     public static final SqlColumn<Integer> id = jobInfo.id;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<Integer> groupId = jobInfo.groupId;
+    public static final SqlColumn<String> groupName = jobInfo.groupName;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final SqlColumn<String> cron = jobInfo.cron;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<String> desc = jobInfo.desc;
+    public static final SqlColumn<String> description = jobInfo.description;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<Date> addTime = jobInfo.addTime;
+    public static final SqlColumn<Date> createTime = jobInfo.createTime;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final SqlColumn<Date> updateTime = jobInfo.updateTime;
@@ -51,7 +51,7 @@ public final class JobInfoDynamicSqlSupport {
     public static final SqlColumn<Integer> executorTimeout = jobInfo.executorTimeout;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<Integer> executorFailRetryCount = jobInfo.executorFailRetryCount;
+    public static final SqlColumn<Byte> executorFailRetryCount = jobInfo.executorFailRetryCount;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final SqlColumn<Byte> triggerStatus = jobInfo.triggerStatus;
@@ -66,13 +66,13 @@ public final class JobInfoDynamicSqlSupport {
     public static final class JobInfo extends SqlTable {
         public final SqlColumn<Integer> id = column("id", JDBCType.INTEGER);
 
-        public final SqlColumn<Integer> groupId = column("group_id", JDBCType.INTEGER);
+        public final SqlColumn<String> groupName = column("group_name", JDBCType.VARCHAR);
 
         public final SqlColumn<String> cron = column("cron", JDBCType.VARCHAR);
 
-        public final SqlColumn<String> desc = column("desc", JDBCType.VARCHAR);
+        public final SqlColumn<String> description = column("description", JDBCType.VARCHAR);
 
-        public final SqlColumn<Date> addTime = column("add_time", JDBCType.TIMESTAMP);
+        public final SqlColumn<Date> createTime = column("create_time", JDBCType.TIMESTAMP);
 
         public final SqlColumn<Date> updateTime = column("update_time", JDBCType.TIMESTAMP);
 
@@ -90,7 +90,7 @@ public final class JobInfoDynamicSqlSupport {
 
         public final SqlColumn<Integer> executorTimeout = column("executor_timeout", JDBCType.INTEGER);
 
-        public final SqlColumn<Integer> executorFailRetryCount = column("executor_fail_retry_count", JDBCType.INTEGER);
+        public final SqlColumn<Byte> executorFailRetryCount = column("executor_fail_retry_count", JDBCType.TINYINT);
 
         public final SqlColumn<Byte> triggerStatus = column("trigger_status", JDBCType.TINYINT);
 
