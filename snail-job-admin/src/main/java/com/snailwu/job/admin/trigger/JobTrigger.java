@@ -24,6 +24,8 @@ import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 import static org.mybatis.dynamic.sql.SqlBuilder.select;
 
 /**
+ * 指定任务进行调度
+ *
  * @author 吴庆龙
  * @date 2020/6/17 1:56 下午
  */
@@ -33,7 +35,7 @@ public class JobTrigger {
     /**
      * 触发 Job
      */
-    public static void trigger(int jobId, TriggerTypeEnum triggerType, int failRetryCount, String executorParam) {
+    public static void trigger(int jobId, int failRetryCount, String executorParam) {
         // 查询任务信息
         Optional<JobInfo> jobInfoOptional = AdminConfig.getInstance().getJobInfoMapper().selectOne(
                 select(JobInfoDynamicSqlSupport.jobInfo.allColumns())
@@ -68,13 +70,11 @@ public class JobTrigger {
         int finalFailRetryCount = failRetryCount > 0 ? failRetryCount : jobInfo.getExecutorFailRetryCount();
 
         // 处理
-        processTrigger(addresses, jobInfo, finalFailRetryCount, triggerType);
+        processTrigger(addresses, jobInfo, finalFailRetryCount);
     }
 
-    private static void processTrigger(String addresses, JobInfo jobInfo, int finalFailRetryCount,
-                                       TriggerTypeEnum triggerType) {
-        ExecutorRouteStrategyEnum routeStrategy = ExecutorRouteStrategyEnum.match(jobInfo.getExecutorRouteStrategy(),
-                ExecutorRouteStrategyEnum.RANDOM);
+    private static void processTrigger(String addresses, JobInfo jobInfo, int finalFailRetryCount) {
+        ExecutorRouteStrategyEnum routeStrategy = ExecutorRouteStrategyEnum.match(jobInfo.getExecutorRouteStrategy());
 
         // 1 保存日志
         JobLog jobLog = new JobLog();

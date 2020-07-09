@@ -43,9 +43,14 @@ public class WebConfig implements WebMvcConfigurer, ApplicationContextAware {
         registry.addFormatter(dateFormatter());
     }
 
+    /**
+     * 返回实体时，SpringMVC 进行格式化
+     */
     @Bean
     public DateFormatter dateFormatter() {
-        return new DateFormatter();
+        DateFormatter dateFormatter = new DateFormatter();
+        dateFormatter.setPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        return dateFormatter;
     }
 
     /* **************************************************************** */

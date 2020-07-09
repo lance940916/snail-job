@@ -24,8 +24,6 @@ public class AdminConfig implements InitializingBean, DisposableBean {
         return instance;
     }
 
-
-
     // ---------------------- XxlJobScheduler ----------------------
 
     private SnailJobScheduler snailJobScheduler;
