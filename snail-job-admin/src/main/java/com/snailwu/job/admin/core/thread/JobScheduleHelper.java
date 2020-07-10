@@ -8,17 +8,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import static com.snailwu.job.admin.mapper.JobInfoDynamicSqlSupport.*;
+import static com.snailwu.job.core.enums.TriggerStatus.START;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
 /**
+ * 定时任务调度类
+ * 扫描数据库里的定时任务，将马上要进行调度的任务加入到 key 为 秒，val 为任务集合的 Map 中
+ * 根据秒获取对应的任务集合，进行任务的调度
+ *
  * @author 吴庆龙
  * @date 2020/7/9 2:40 下午
  */
@@ -32,68 +34,101 @@ public class JobScheduleHelper {
     }
 
     private Thread scheduleThread;
-    private volatile boolean stopFlag = false;
+    private Thread ringThread;
+    private volatile boolean scheduleStopFlag = false;
+    private volatile boolean ringStopFlag = false;
 
+    /**
+     * 提前 5 秒加载数据
+     */
     private static final long PRE_READ_MS = 5000;
-    private static final Map<Integer, List<Integer>> ringData = new ConcurrentHashMap<>();
 
+    /**
+     * 缓存将要执行的任务
+     * key: 秒
+     * val: 任务ID集合
+     */
+    private static final Map<Integer, List<Integer>> ringDataMap = new ConcurrentHashMap<>();
+
+    /**
+     * 启动线程
+     */
     public void start() {
+        // 扫描任务线程
         scheduleThread = new Thread(() -> {
             // 对齐整秒
-            long sleepTs = 1000 - System.currentTimeMillis() % 1000;
             try {
-                TimeUnit.MILLISECONDS.sleep(sleepTs);
+                TimeUnit.MILLISECONDS.sleep(1000 - System.currentTimeMillis() % 1000);
             } catch (InterruptedException e) {
                 log.error("对齐整秒，休眠异常", e);
             }
             log.info("初始化 Schedule Thread 成功");
 
-            // 一次性读取出来的数量. ThreadPool-Size
-            int preReadCount = (200 + 100) * 20;
-            while (!stopFlag) {
+            // 一次取多少个任务，最大支持多少个任务并发执行
+            int jobLimit = (200 + 100) * 20;
+
+            while (!scheduleStopFlag) {
                 long startTs = System.currentTimeMillis();
 
-                // TODO 获取一个分布式锁，用来控制只有一个调度中心进行任务调度
+                // TODO 使用数据库锁进行分布式事物的调度
 
+                boolean preReadSuccess = false;
                 try {
-                    // 1 预读取任务
+                    // 当前时间
                     long nowTimeTs = System.currentTimeMillis();
+
+                    // 预读取任务
                     List<JobInfo> jobInfoList = AdminConfig.getInstance().getJobInfoMapper().selectMany(
                             select(jobInfo.allColumns())
                                     .from(jobInfo)
                                     .where(triggerStatus, isEqualTo((byte) 1))
                                     .and(triggerNextTime, isLessThanOrEqualTo(nowTimeTs + PRE_READ_MS))
-                                    .limit(preReadCount)
+                                    .limit(jobLimit)
                                     .build().render(RenderingStrategies.MYBATIS3)
                     );
                     // 预读取是否成功
-                    boolean preReadSuccess = !jobInfoList.isEmpty();
+                    preReadSuccess = !jobInfoList.isEmpty();
 
+                    // 遍历任务，进行调度
                     for (JobInfo info : jobInfoList) {
-                        if (nowTimeTs > info.getTriggerNextTime() + PRE_READ_MS) {
-                            // 错过了任务的执行时间：忽略并刷新任务的下次触发时间
-                            log.warn("定时器错过执行任务. jobId:{}", info.getId());
+                        if (info.getTriggerNextTime() + PRE_READ_MS < nowTimeTs) {
+                            // 还没有达到任务的执行时间
+                            log.warn("还未达到任务的执行时间. jobId:{}", info.getId());
+
+                            // 计算任务下次的执行时间
                             refreshNextValidTime(info, new Date());
 
-                        } else if (nowTimeTs > info.getTriggerNextTime()) {
-                            // 任务执行时间过时了 <= 5秒：直接执行并刷新任务的下次触发时间
-                            JobTriggerPoolHelper.getInstance().addTriggerPool(info.getId(), -1, info.getExecutorParam());
+                        } else if (info.getTriggerNextTime() < nowTimeTs) {
+                            // 任务的执行时间在 nowTimeTs-PRE_READ_MS 到 nowTimeTs 之间
 
+                            // 添加任务
+                            JobTriggerPoolHelper.getInstance().add(info.getId(), -1, info.getExecutorParam());
+
+                            // 计算任务下次的执行时间
                             refreshNextValidTime(info, new Date());
 
-                            // 下次触发时间在 5 秒内
-                            if (info.getTriggerStatus() == 1 && nowTimeTs + PRE_READ_MS > info.getTriggerNextTime()) {
+                            // 计算任务的下次触发时间是否在 5 秒内
+                            if (START.getValue().equals(info.getTriggerStatus())
+                                    && nowTimeTs + PRE_READ_MS > info.getTriggerNextTime()) {
+
+                                // 距离任务的触发时间还有多少秒
                                 int ringSecond = (int) ((info.getTriggerNextTime() / 1000) % 60);
 
+                                //
                                 pushTimeRing(ringSecond, info.getId());
 
+                                // 计算任务下次的执行时间
                                 refreshNextValidTime(info, new Date(info.getTriggerNextTime()));
                             }
                         } else {
+                            // 任务执行时间 > nowTimeTs，任务执行时间比当前时间大了
+
+                            // 距离任务的触发时间还有多少秒
                             int ringSecond = (int) ((info.getTriggerNextTime() / 1000) % 60);
 
                             pushTimeRing(ringSecond, info.getId());
 
+                            // 计算任务下次的执行时间
                             refreshNextValidTime(info, new Date(info.getTriggerNextTime()));
                         }
                     }
@@ -110,16 +145,76 @@ public class JobScheduleHelper {
                         );
                     }
                 } catch (ParseException e) {
-                    if (!stopFlag) {
+                    if (!scheduleStopFlag) {
                         log.error("JobScheduleHelper Thread Error.", e);
                     }
                 }
+                long costTs = System.currentTimeMillis() - startTs;
+                log.info("本次调度耗时: {}", costTs);
 
-
+                // 调度时间小于 1 秒，那大于 1 秒呢？？？
+                if (costTs < 1000) {
+                    // 对齐整秒
+                    try {
+                        TimeUnit.MILLISECONDS.sleep((preReadSuccess ? 1000 : PRE_READ_MS) - System.currentTimeMillis() % 1000);
+                    } catch (InterruptedException e) {
+                        if (!scheduleStopFlag) {
+                            log.error("对齐整秒，休眠异常", e);
+                        }
+                    }
+                }
             }
         });
+        scheduleThread.setDaemon(true);
+        scheduleThread.setName("ScheduleThread");
+        scheduleThread.start();
+
+        // 执行调度任务线程
+        ringThread = new Thread(() -> {
+            // 对齐整秒
+            try {
+                TimeUnit.MILLISECONDS.sleep(1000 - System.currentTimeMillis() % 1000);
+            } catch (InterruptedException e) {
+                log.error("对齐整秒，休眠异常", e);
+            }
+
+            while (!ringStopFlag) {
+                int nowSecond = Calendar.getInstance().get(Calendar.SECOND);
+
+                // 获取本秒以及前一秒的所有 jobId
+                List<Integer> jobIdList = new ArrayList<>();
+                for (int i = 0; i < 2; i++) {
+                    List<Integer> list = ringDataMap.remove((nowSecond + 60 - i) % 60);
+                    if (list != null && !list.isEmpty()) {
+                        jobIdList.addAll(list);
+                    }
+                }
+
+                // 进行调度
+                for (Integer jobId : jobIdList) {
+                    // 不指定 executorParam 使用 JobInfo 中的， failRetryCount 同理
+                    JobTriggerPoolHelper.getInstance().add(jobId, -1, null);
+                }
+                jobIdList.clear();
+
+                // 对齐整秒
+                try {
+                    TimeUnit.MILLISECONDS.sleep(1000 - System.currentTimeMillis() % 1000);
+                } catch (InterruptedException e) {
+                    if (!ringStopFlag) {
+                        log.error("对齐整秒，休眠异常", e);
+                    }
+                }
+            }
+        });
+        ringThread.setDaemon(true);
+        ringThread.setName("RingThread");
+        ringThread.start();
     }
 
+    /**
+     * 计算任务下次的执行时间
+     */
     private void refreshNextValidTime(JobInfo info, Date fromDate) throws ParseException {
         Date nextValidDate = new CronExpression(info.getCron()).getNextValidTimeAfter(fromDate);
         if (nextValidDate != null) {
@@ -132,9 +227,14 @@ public class JobScheduleHelper {
         }
     }
 
+    /**
+     * 加入到执行队列中
+     */
     private void pushTimeRing(int ringSecond, int jobId) {
-        List<Integer> ringList = ringData.computeIfAbsent(ringSecond, k -> new ArrayList<>());
+        List<Integer> ringList = ringDataMap.computeIfAbsent(ringSecond, k -> new ArrayList<>());
         ringList.add(jobId);
     }
 
+    public void stop() {
+    }
 }
