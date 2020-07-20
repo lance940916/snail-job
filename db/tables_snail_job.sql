@@ -76,8 +76,8 @@ CREATE TABLE IF NOT EXISTS `job_log`
     `trigger_msg`               TEXT         NULL COMMENT '调度-日志',
 
     `exec_time`                 DATETIME     NULL COMMENT '执行-时间',
-    `exec_code`                 INT(11)      NOT NULL COMMENT '执行-结果',
-    `exec_log`                  TEXT COMMENT '执行-日志',
+    `exec_code`                 INT(11)      NOT NULL DEFAULT 0 COMMENT '执行-结果',
+    `exec_msg`                  TEXT         NULL COMMENT '执行-日志',
 
     `alarm_status`              TINYINT      NOT NULL DEFAULT '0' COMMENT '告警状态：0-默认、1-无需告警、2-告警成功、3-告警失败',
     PRIMARY KEY (`id`)

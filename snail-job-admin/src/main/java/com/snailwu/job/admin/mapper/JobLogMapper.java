@@ -29,7 +29,7 @@ import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 @Mapper
 public interface JobLogMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    BasicColumn[] selectList = BasicColumn.columnList(id, jobId, groupName, executorAddress, executorHandler, executorParam, executorFailRetryCount, triggerTime, triggerCode, execTime, execCode, alarmStatus, triggerMsg, execLog);
+    BasicColumn[] selectList = BasicColumn.columnList(id, jobId, groupName, executorAddress, executorHandler, executorParam, executorFailRetryCount, triggerTime, triggerCode, execTime, execCode, alarmStatus, triggerMsg, execMsg);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type = SqlProviderAdapter.class, method = "select")
@@ -68,7 +68,7 @@ public interface JobLogMapper {
             @Result(column = "exec_code", property = "execCode", jdbcType = JdbcType.INTEGER),
             @Result(column = "alarm_status", property = "alarmStatus", jdbcType = JdbcType.TINYINT),
             @Result(column = "trigger_msg", property = "triggerMsg", jdbcType = JdbcType.LONGVARCHAR),
-            @Result(column = "exec_log", property = "execLog", jdbcType = JdbcType.LONGVARCHAR)
+            @Result(column = "exec_msg", property = "execMsg", jdbcType = JdbcType.LONGVARCHAR)
     })
     List<JobLog> selectMany(SelectStatementProvider selectStatement);
 
@@ -109,7 +109,7 @@ public interface JobLogMapper {
                         .map(execCode).toProperty("execCode")
                         .map(alarmStatus).toProperty("alarmStatus")
                         .map(triggerMsg).toProperty("triggerMsg")
-                        .map(execLog).toProperty("execLog")
+                        .map(execMsg).toProperty("execMsg")
         );
     }
 
@@ -129,7 +129,7 @@ public interface JobLogMapper {
                         .map(execCode).toProperty("execCode")
                         .map(alarmStatus).toProperty("alarmStatus")
                         .map(triggerMsg).toProperty("triggerMsg")
-                        .map(execLog).toProperty("execLog")
+                        .map(execMsg).toProperty("execMsg")
         );
     }
 
@@ -149,7 +149,7 @@ public interface JobLogMapper {
                         .map(execCode).toPropertyWhenPresent("execCode", record::getExecCode)
                         .map(alarmStatus).toPropertyWhenPresent("alarmStatus", record::getAlarmStatus)
                         .map(triggerMsg).toPropertyWhenPresent("triggerMsg", record::getTriggerMsg)
-                        .map(execLog).toPropertyWhenPresent("execLog", record::getExecLog)
+                        .map(execMsg).toPropertyWhenPresent("execMsg", record::getExecMsg)
         );
     }
 
@@ -195,7 +195,7 @@ public interface JobLogMapper {
                 .set(execCode).equalTo(record::getExecCode)
                 .set(alarmStatus).equalTo(record::getAlarmStatus)
                 .set(triggerMsg).equalTo(record::getTriggerMsg)
-                .set(execLog).equalTo(record::getExecLog);
+                .set(execMsg).equalTo(record::getExecMsg);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -213,7 +213,7 @@ public interface JobLogMapper {
                 .set(execCode).equalToWhenPresent(record::getExecCode)
                 .set(alarmStatus).equalToWhenPresent(record::getAlarmStatus)
                 .set(triggerMsg).equalToWhenPresent(record::getTriggerMsg)
-                .set(execLog).equalToWhenPresent(record::getExecLog);
+                .set(execMsg).equalToWhenPresent(record::getExecMsg);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -231,7 +231,7 @@ public interface JobLogMapper {
                         .set(execCode).equalTo(record::getExecCode)
                         .set(alarmStatus).equalTo(record::getAlarmStatus)
                         .set(triggerMsg).equalTo(record::getTriggerMsg)
-                        .set(execLog).equalTo(record::getExecLog)
+                        .set(execMsg).equalTo(record::getExecMsg)
                         .where(id, isEqualTo(record::getId))
         );
     }
@@ -251,7 +251,7 @@ public interface JobLogMapper {
                         .set(execCode).equalToWhenPresent(record::getExecCode)
                         .set(alarmStatus).equalToWhenPresent(record::getAlarmStatus)
                         .set(triggerMsg).equalToWhenPresent(record::getTriggerMsg)
-                        .set(execLog).equalToWhenPresent(record::getExecLog)
+                        .set(execMsg).equalToWhenPresent(record::getExecMsg)
                         .where(id, isEqualTo(record::getId))
         );
     }

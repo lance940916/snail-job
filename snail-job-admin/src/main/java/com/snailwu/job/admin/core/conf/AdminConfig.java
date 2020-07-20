@@ -1,5 +1,6 @@
 package com.snailwu.job.admin.core.conf;
 
+import com.snailwu.job.admin.core.alarm.JobAlarmComposite;
 import com.snailwu.job.admin.core.scheduler.SnailJobScheduler;
 import com.snailwu.job.admin.mapper.*;
 import org.slf4j.Logger;
@@ -56,6 +57,9 @@ public class AdminConfig implements InitializingBean, DisposableBean {
     @Resource
     private JobLogReportMapper jobLogReportMapper;
 
+    @Resource
+    private JobAlarmComposite jobAlarmComposite;
+
     public JobExecutorMapper getJobExecutorMapper() {
         return jobExecutorMapper;
     }
@@ -78,5 +82,9 @@ public class AdminConfig implements InitializingBean, DisposableBean {
 
     public JobLogReportMapper getJobLogReportMapper() {
         return jobLogReportMapper;
+    }
+
+    public JobAlarmComposite getJobAlarmComposite() {
+        return jobAlarmComposite;
     }
 }

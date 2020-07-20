@@ -51,7 +51,7 @@ public final class JobLogDynamicSqlSupport {
     public static final SqlColumn<String> triggerMsg = jobLog.triggerMsg;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<String> execLog = jobLog.execLog;
+    public static final SqlColumn<String> execMsg = jobLog.execMsg;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final class JobLog extends SqlTable {
@@ -81,7 +81,7 @@ public final class JobLogDynamicSqlSupport {
 
         public final SqlColumn<String> triggerMsg = column("trigger_msg", JDBCType.LONGVARCHAR);
 
-        public final SqlColumn<String> execLog = column("exec_log", JDBCType.LONGVARCHAR);
+        public final SqlColumn<String> execMsg = column("exec_msg", JDBCType.LONGVARCHAR);
 
         public JobLog() {
             super("job_log");

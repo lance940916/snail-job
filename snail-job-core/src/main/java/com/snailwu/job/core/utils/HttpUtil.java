@@ -32,6 +32,8 @@ import java.util.Map;
 public class HttpUtil {
     private static final Logger log = LoggerFactory.getLogger(HttpUtil.class);
 
+    public static final String SNAIL_JOB_ACCESS_TOKEN = "SNAIL-JOB-ACCESS-TOKEN";
+
     private static final HttpClient httpClient;
 
     /**

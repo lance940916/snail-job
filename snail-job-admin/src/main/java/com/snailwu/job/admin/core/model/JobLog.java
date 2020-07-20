@@ -44,7 +44,7 @@ public class JobLog {
     private String triggerMsg;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String execLog;
+    private String execMsg;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public Long getId() {
@@ -177,12 +177,12 @@ public class JobLog {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getExecLog() {
-        return execLog;
+    public String getExecMsg() {
+        return execMsg;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setExecLog(String execLog) {
-        this.execLog = execLog;
+    public void setExecMsg(String execMsg) {
+        this.execMsg = execMsg;
     }
 }
