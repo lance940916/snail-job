@@ -10,6 +10,7 @@ import com.snailwu.job.core.biz.model.ResultT;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
 import java.util.Optional;
@@ -21,6 +22,7 @@ import static org.mybatis.dynamic.sql.SqlBuilder.select;
  * @author 吴庆龙
  * @date 2020/7/20 5:43 下午
  */
+@Component
 public class EmailAlarm implements JobAlarm {
     public static final Logger log = LoggerFactory.getLogger(EmailAlarm.class);
 
@@ -52,6 +54,7 @@ public class EmailAlarm implements JobAlarm {
         String content = MessageFormat.format(loadEmailJobAlarmTemplate(),
                 groupName, jobInfo.getId(), jobInfo.getDescription(), alarmContent);
 
+        // TODO 发送邮件
 
         return false;
     }

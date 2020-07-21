@@ -4,12 +4,11 @@ import com.github.pagehelper.PageInterceptor;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.annotation.Resource;
@@ -22,6 +21,11 @@ import java.util.Properties;
  */
 @Configuration
 @PropertySource("classpath:db.properties")
+@ComponentScan({
+        "com.snailwu.job.admin.service",
+        "com.snailwu.job.admin.core.alarm",
+        "com.snailwu.job.admin.core.conf",
+})
 public class RootConfig {
 
     @Resource

@@ -39,12 +39,11 @@ public class JobAlarmComposite implements ApplicationContextAware, InitializingB
     }
 
     public boolean alarm(JobInfo jobInfo, JobLog jobLog) {
-        boolean result = false;
         if (alarmList == null || alarmList.isEmpty()) {
-            return result;
+            return false;
         }
 
-        result = true;
+        boolean result = true;
         for (JobAlarm jobAlarm : alarmList) {
             boolean resultItem = false;
             try {
