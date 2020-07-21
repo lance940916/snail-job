@@ -56,7 +56,6 @@ public class AdminConfig implements InitializingBean, DisposableBean {
     private JobLogMapper jobLogMapper;
     @Resource
     private JobLogReportMapper jobLogReportMapper;
-
     @Resource
     private JobAlarmComposite jobAlarmComposite;
 
