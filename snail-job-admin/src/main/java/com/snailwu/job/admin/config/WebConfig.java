@@ -8,14 +8,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.DateFormatter;
+import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.thymeleaf.spring5.SpringTemplateEngine;
-import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
-import org.thymeleaf.spring5.view.ThymeleafViewResolver;
-import org.thymeleaf.templatemode.TemplateMode;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
-import java.nio.charset.StandardCharsets;
+import static freemarker.template.Configuration.VERSION_2_3_30;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author 吴庆龙
@@ -33,11 +33,6 @@ public class WebConfig implements WebMvcConfigurer, ApplicationContextAware {
         this.applicationContext = applicationContext;
     }
 
-    /* ******************************************************************* */
-    /*  GENERAL CONFIGURATION ARTIFACTS                                    */
-    /*  Static Resources, i18n Messages, Formatters (Conversion Service)   */
-    /* ******************************************************************* */
-
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addFormatter(dateFormatter());
@@ -53,38 +48,33 @@ public class WebConfig implements WebMvcConfigurer, ApplicationContextAware {
         return dateFormatter;
     }
 
-    /* **************************************************************** */
-    /*  THYMELEAF-SPECIFIC ARTIFACTS                                    */
-    /*  TemplateResolver <- TemplateEngine <- ViewResolver              */
-    /* **************************************************************** */
     @Bean
-    public SpringResourceTemplateResolver templateResolver() {
-        SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
-        resolver.setApplicationContext(this.applicationContext);
-        resolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        resolver.setTemplateMode(TemplateMode.HTML);
-        resolver.setCacheable(false);
-        resolver.setPrefix("/WEB-INF/");
-        resolver.setSuffix(".html");
-        return resolver;
+    public FreeMarkerViewResolver viewResolver() {
+        FreeMarkerViewResolver viewResolver = new FreeMarkerViewResolver();
+        viewResolver.setApplicationContext(applicationContext);
+        viewResolver.setSuffix(".ftl");
+        viewResolver.setCache(false);
+        return viewResolver;
     }
 
     @Bean
-    public SpringTemplateEngine templateEngine() {
-        SpringTemplateEngine templateEngine = new SpringTemplateEngine();
-        templateEngine.setTemplateResolver(templateResolver());
-        templateEngine.setEnableSpringELCompiler(true);
-        return templateEngine;
+    public FreeMarkerConfigurer freeMarkerConfigurer() {
+        freemarker.template.Configuration configuration = new freemarker.template.Configuration(VERSION_2_3_30);
+        configuration.setNumberFormat("#.##");
+        configuration.setDateTimeFormat("yyyy-MM-dd HH:mm:ss");
+        configuration.setDateFormat("yyyy-MM-dd");
+        configuration.setTimeFormat("HH:mm:ss");
+        configuration.setOutputEncoding(UTF_8.name());
+
+        FreeMarkerConfigurer configurer = new FreeMarkerConfigurer();
+        configurer.setTemplateLoaderPath("classpath:/WEB-INF/freemarker/");
+        configurer.setDefaultEncoding(UTF_8.name());
+        configurer.setConfiguration(configuration);
+        return configurer;
     }
 
-    @Bean
-    public ThymeleafViewResolver thymeleafViewResolver() {
-        ThymeleafViewResolver resolver = new ThymeleafViewResolver();
-        resolver.setApplicationContext(this.applicationContext);
-        resolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        resolver.setTemplateEngine(templateEngine());
-        resolver.setCache(false);
-        return resolver;
+    @Override
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+        configurer.enable();
     }
-
 }

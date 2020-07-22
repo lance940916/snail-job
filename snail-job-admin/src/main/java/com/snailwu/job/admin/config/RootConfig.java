@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInterceptor;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +27,7 @@ import java.util.Properties;
         "com.snailwu.job.admin.core.alarm",
         "com.snailwu.job.admin.core.conf",
 })
+@MapperScan("com.snailwu.job.admin.mapper")
 public class RootConfig {
 
     @Resource
@@ -76,9 +78,6 @@ public class RootConfig {
     public org.apache.ibatis.session.Configuration myBatisConfiguration() {
         org.apache.ibatis.session.Configuration mbConfig = new org.apache.ibatis.session.Configuration();
         mbConfig.setLogPrefix("mybatis-");
-
-        // Mapper 包
-        mbConfig.addMappers("com.snailwu.job.admin.dao");
 
         // 增加分页拦截器
         mbConfig.addInterceptor(pageInterceptor());

@@ -140,6 +140,13 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- FreeMarker -->
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>2.3.30</version>
+        </dependency>
+
         <!-- Thymeleaf -->
         <dependency>
             <groupId>org.thymeleaf</groupId>

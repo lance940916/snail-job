@@ -4,7 +4,6 @@ import com.snailwu.job.core.biz.AdminBiz;
 import com.snailwu.job.core.biz.model.CallbackParam;
 import com.snailwu.job.core.biz.model.RegistryParam;
 import com.snailwu.job.core.biz.model.ResultT;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -23,7 +22,7 @@ import static com.snailwu.job.core.utils.HttpUtil.SNAIL_JOB_ACCESS_TOKEN;
 public class JobApiController {
     @Resource
     private AdminBiz adminBiz;
-    @Value("#{snail.job.access-token}")
+
     private String adminAccessToken;
 
     @PostMapping("/callback")
@@ -40,6 +39,9 @@ public class JobApiController {
     public ResultT<String> registry(
             @RequestHeader(name = SNAIL_JOB_ACCESS_TOKEN, required = false) String clientAccessToken,
             @RequestBody RegistryParam registryParam) {
+        if (adminAccessToken.equals(clientAccessToken)) {
+            return new ResultT<>(ResultT.FAIL_CODE, "AccessToken错误");
+        }
         return adminBiz.registry(registryParam);
     }
 
@@ -47,6 +49,9 @@ public class JobApiController {
     public ResultT<String> registryRemove(
             @RequestHeader(name = SNAIL_JOB_ACCESS_TOKEN, required = false) String clientAccessToken,
             @RequestBody RegistryParam registryParam) {
+        if (adminAccessToken.equals(clientAccessToken)) {
+            return new ResultT<>(ResultT.FAIL_CODE, "AccessToken错误");
+        }
         return adminBiz.registryRemove(registryParam);
     }
 }
