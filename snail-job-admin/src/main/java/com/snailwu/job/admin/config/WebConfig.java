@@ -6,15 +6,16 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.format.FormatterRegistry;
-import org.springframework.format.datetime.DateFormatter;
+import org.springframework.http.CacheControl;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
-import static freemarker.template.Configuration.VERSION_2_3_30;
+import java.time.Duration;
+
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
@@ -33,43 +34,37 @@ public class WebConfig implements WebMvcConfigurer, ApplicationContextAware {
         this.applicationContext = applicationContext;
     }
 
+    /**
+     * 静态资源
+     */
     @Override
-    public void addFormatters(FormatterRegistry registry) {
-        registry.addFormatter(dateFormatter());
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/static/**")
+                .addResourceLocations("classpath:/static/")
+                .setCacheControl(CacheControl.maxAge(Duration.ofDays(1)));
     }
 
     /**
-     * 返回实体时，SpringMVC 进行格式化
+     * 配置 FreeMarker VideoResolver
      */
-    @Bean
-    public DateFormatter dateFormatter() {
-        DateFormatter dateFormatter = new DateFormatter();
-        dateFormatter.setPattern("yyyy-MM-dd HH:mm:ss.SSS");
-        return dateFormatter;
-    }
-
     @Bean
     public FreeMarkerViewResolver viewResolver() {
         FreeMarkerViewResolver viewResolver = new FreeMarkerViewResolver();
         viewResolver.setApplicationContext(applicationContext);
+        viewResolver.setContentType("text/html;charset=UTF-8");
         viewResolver.setSuffix(".ftl");
         viewResolver.setCache(false);
         return viewResolver;
     }
 
+    /**
+     * 配置 FreeMarker
+     */
     @Bean
-    public FreeMarkerConfigurer freeMarkerConfigurer() {
-        freemarker.template.Configuration configuration = new freemarker.template.Configuration(VERSION_2_3_30);
-        configuration.setNumberFormat("#.##");
-        configuration.setDateTimeFormat("yyyy-MM-dd HH:mm:ss");
-        configuration.setDateFormat("yyyy-MM-dd");
-        configuration.setTimeFormat("HH:mm:ss");
-        configuration.setOutputEncoding(UTF_8.name());
-
+    public FreeMarkerConfigurer freemarkerConfig() {
         FreeMarkerConfigurer configurer = new FreeMarkerConfigurer();
-        configurer.setTemplateLoaderPath("classpath:/WEB-INF/freemarker/");
+        configurer.setTemplateLoaderPath("classpath:/templates/");
         configurer.setDefaultEncoding(UTF_8.name());
-        configurer.setConfiguration(configuration);
         return configurer;
     }
 
