@@ -7,7 +7,7 @@ import com.snailwu.job.core.biz.model.KillParam;
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.biz.model.TriggerParam;
 import com.snailwu.job.core.thread.ExecutorNodeRegistryThread;
-import com.snailwu.job.core.utils.JsonUtil;
+import com.snailwu.job.core.utils.JobJsonUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -144,13 +144,13 @@ public class EmbedServer {
                     case "/beat":  // 心跳监测
                         return executorBiz.beat();
                     case "/idleBeat":  // 执行器是否忙碌
-                        IdleBeatParam idleBeatParam = JsonUtil.readValue(requestData, IdleBeatParam.class);
+                        IdleBeatParam idleBeatParam = JobJsonUtil.readValue(requestData, IdleBeatParam.class);
                         return executorBiz.idleBeat(idleBeatParam);
                     case "/run":  // 执行任务
-                        TriggerParam triggerParam = JsonUtil.readValue(requestData, TriggerParam.class);
+                        TriggerParam triggerParam = JobJsonUtil.readValue(requestData, TriggerParam.class);
                         return executorBiz.run(triggerParam);
                     case "/kill":  // 终止任务
-                        KillParam killParam = JsonUtil.readValue(requestData, KillParam.class);
+                        KillParam killParam = JobJsonUtil.readValue(requestData, KillParam.class);
                         return executorBiz.kill(killParam);
                     case "/log":  // 执行器信息
                         return ResultT.SUCCESS;
@@ -167,7 +167,7 @@ public class EmbedServer {
          */
         private void doResponse(ChannelHandlerContext ctx, FullHttpRequest msg, Object result) {
             // 转 JSON
-            String responseJson = JsonUtil.writeValueAsString(result);
+            String responseJson = JobJsonUtil.writeValueAsString(result);
             ByteBuf contentBuf;
             if (StringUtil.isNullOrEmpty(responseJson)) {
                 log.warn("返回空数据");

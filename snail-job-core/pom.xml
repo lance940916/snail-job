@@ -17,6 +17,22 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.test.skip>true</maven.test.skip>
+
+        <!-- Junit -->
+        <junit.version>4.13</junit.version>
+
+        <!-- Jackson -->
+        <jackson.version>2.11.0</jackson.version>
+
+        <!-- Log -->
+        <slfj.version>1.7.25</slfj.version>
+        <log4j.version>2.12.1</log4j.version>
+
+        <!-- Netty -->
+        <netty.version>4.1.50.Final</netty.version>
+
+        <!-- Spring Context -->
+        <spring.version>5.2.6.RELEASE</spring.version>
     </properties>
 
     <dependencies>
@@ -24,24 +40,24 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>2.11.0</version>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.11.0</version>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>2.11.0</version>
+            <version>${jackson.version}</version>
         </dependency>
 
         <!-- Junit -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -49,36 +65,37 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
+            <version>${slfj.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
-            <version>2.12.1</version>
+            <version>${log4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.12.1</version>
+            <version>${log4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <version>2.12.1</version>
+            <version>${log4j.version}</version>
         </dependency>
 
         <!-- Netty -->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
-            <version>4.1.50.Final</version>
+            <version>${netty.version}</version>
         </dependency>
 
-        <!-- HttpClient -->
+        <!-- Spring Context -->
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.12</version>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Apache Common -->
@@ -86,14 +103,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.10</version>
-        </dependency>
-
-        <!-- Spring Context -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>5.2.6.RELEASE</version>
-            <scope>provided</scope>
         </dependency>
 
     </dependencies>

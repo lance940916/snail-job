@@ -54,13 +54,6 @@
             <version>2.11.0</version>
         </dependency>
 
-        <!-- HttpClient -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.12</version>
-        </dependency>
-
         <!-- Commons -->
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -131,6 +124,16 @@
             <artifactId>spring-orm</artifactId>
             <version>5.2.6.RELEASE</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>5.2.6.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+            <version>5.2.6.RELEASE</version>
+        </dependency>
 
         <!--servlet-api-->
         <dependency>
@@ -145,18 +148,6 @@
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
             <version>2.3.30</version>
-        </dependency>
-
-        <!-- Thymeleaf -->
-        <dependency>
-            <groupId>org.thymeleaf</groupId>
-            <artifactId>thymeleaf</artifactId>
-            <version>3.0.11.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.thymeleaf</groupId>
-            <artifactId>thymeleaf-spring5</artifactId>
-            <version>3.0.11.RELEASE</version>
         </dependency>
 
         <!-- HikariCP -->
@@ -200,13 +191,6 @@
             <groupId>org.mybatis.dynamic-sql</groupId>
             <artifactId>mybatis-dynamic-sql</artifactId>
             <version>1.1.4</version>
-        </dependency>
-
-        <!-- Flyway -->
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-            <version>6.4.3</version>
         </dependency>
 
     </dependencies>

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.snailwu.job.core.exception.JonRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,8 +18,8 @@ import java.util.TimeZone;
  * @author 吴庆龙
  * @date 2020/5/22 3:11 下午
  */
-public class JsonUtil {
-    private static final Logger log = LoggerFactory.getLogger(JsonUtil.class);
+public class JobJsonUtil {
+    private static final Logger log = LoggerFactory.getLogger(JobJsonUtil.class);
 
     /**
      * ObjectMapper
@@ -35,39 +36,29 @@ public class JsonUtil {
      * @return JSON格式数据
      */
     public static String writeValueAsString(Object value) {
-        if (value == null) {
-            log.error("传入的对象为 null");
-            return null;
-        }
         try {
             return mapper.writeValueAsString(value);
         } catch (JsonProcessingException e) {
             log.error("序列化对象异常", e);
+            throw new JonRuntimeException(e);
         }
-        return null;
     }
 
     public static byte[] writeValueAsBytes(Object value) {
-        if (value == null) {
-            return null;
-        }
         try {
             return mapper.writeValueAsBytes(value);
         } catch (JsonProcessingException e) {
             log.error("序列化对象异常", e);
+            throw new JonRuntimeException(e);
         }
-        return null;
     }
 
     public static void writeToFile(File resultFile, Object value) {
-        if (value == null) {
-            log.error("待序列化的对象为 null");
-            return;
-        }
         try {
             mapper.writeValue(resultFile, value);
         } catch (IOException e) {
             log.error("序列化对象异常", e);
+            throw new JonRuntimeException(e);
         }
     }
 
@@ -75,9 +66,9 @@ public class JsonUtil {
         try {
             return mapper.readValue(content, typeReference);
         } catch (IOException e) {
-            log.error("Fail to convert json[{}] to bean[{}]", content, typeReference, e);
+            log.error("反序列化对象异常", e);
+            throw new JonRuntimeException(e);
         }
-        return null;
     }
 
     public static <T> T readValue(String content, Class<T> valueType) {
@@ -85,8 +76,8 @@ public class JsonUtil {
             return mapper.readValue(content, valueType);
         } catch (IOException e) {
             log.error("反序列化对象异常", e);
+            throw new JonRuntimeException(e);
         }
-        return null;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.snailwu.job.admin.core.scheduler;
 
+import com.snailwu.job.admin.core.conf.AdminConfig;
 import com.snailwu.job.core.biz.ExecutorBiz;
 import com.snailwu.job.core.biz.client.ExecutorBizClient;
 import org.slf4j.Logger;
@@ -42,7 +43,7 @@ public class SnailJobScheduler {
             return executorBiz;
         }
 
-        executorBiz = new ExecutorBizClient(address);
+        executorBiz = new ExecutorBizClient(address, AdminConfig.getInstance().getAccessToken());
         EXECUTOR_BIZ_REPOSITORY.put(address, executorBiz);
         return null;
     }

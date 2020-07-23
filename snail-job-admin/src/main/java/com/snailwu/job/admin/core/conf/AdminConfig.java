@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -23,6 +24,13 @@ public class AdminConfig implements InitializingBean, DisposableBean {
 
     public static AdminConfig getInstance() {
         return instance;
+    }
+
+    @Value("${xxl.job.accessToken}")
+    private String accessToken;
+
+    public String getAccessToken() {
+        return accessToken;
     }
 
     // ---------------------- XxlJobScheduler ----------------------

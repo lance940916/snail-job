@@ -6,7 +6,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.CacheControl;
+import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -15,6 +17,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
 import java.time.Duration;
+import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -24,7 +27,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 @Configuration
 @EnableWebMvc
-@ComponentScan("com.snailwu.job.admin.controller")
+@ComponentScan(basePackages = "com.snailwu.job.admin.controller")
+// 要想对Controller方法做切入，需要在WebConfig中加@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class WebConfig implements WebMvcConfigurer, ApplicationContextAware {
 
     private ApplicationContext applicationContext;
@@ -32,6 +37,11 @@ public class WebConfig implements WebMvcConfigurer, ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+    @Override
+    public void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> handlers) {
+        handlers.forEach(System.out::println);
     }
 
     /**

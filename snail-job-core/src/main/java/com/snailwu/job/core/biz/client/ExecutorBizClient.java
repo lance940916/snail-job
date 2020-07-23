@@ -1,10 +1,11 @@
 package com.snailwu.job.core.biz.client;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.snailwu.job.core.biz.ExecutorBiz;
-import com.snailwu.job.core.biz.model.*;
-import com.snailwu.job.core.utils.HttpUtil;
-import com.snailwu.job.core.utils.JsonUtil;
+import com.snailwu.job.core.biz.model.IdleBeatParam;
+import com.snailwu.job.core.biz.model.KillParam;
+import com.snailwu.job.core.biz.model.ResultT;
+import com.snailwu.job.core.biz.model.TriggerParam;
+import com.snailwu.job.core.utils.JobHttpUtil;
 
 /**
  * @author 吴庆龙
@@ -14,42 +15,43 @@ public class ExecutorBizClient implements ExecutorBiz {
 
     private final String address;
 
-    public ExecutorBizClient(String address) {
+    /**
+     * AccessToken
+     */
+    private final String accessToken;
+
+    /**
+     * 超时时间,秒
+     */
+    private final int timeout = 3;
+
+    public ExecutorBizClient(String address, String accessToken) {
         if (!address.endsWith("/")) {
             address = address + "/";
         }
         this.address = address;
+
+        this.accessToken = accessToken;
     }
 
     @Override
     public ResultT<String> beat() {
-        String result = HttpUtil.post(address + "beat", "");
-        return JsonUtil.readValue(result, new TypeReference<ResultT<String>>() {
-        });
+        return JobHttpUtil.postBody(address + "beat", accessToken, null, timeout, String.class);
     }
 
     @Override
     public ResultT<String> idleBeat(IdleBeatParam idleBeatParam) {
-        String content = JsonUtil.writeValueAsString(idleBeatParam);
-        String result = HttpUtil.post(address + "ideaBeat", content);
-        return JsonUtil.readValue(result, new TypeReference<ResultT<String>>() {
-        });
+        return JobHttpUtil.postBody(address + "ideaBeat", accessToken, idleBeatParam, timeout, String.class);
     }
 
     @Override
     public ResultT<String> run(TriggerParam triggerParam) {
-        String content = JsonUtil.writeValueAsString(triggerParam);
-        String result = HttpUtil.post(address + "run", content);
-        return JsonUtil.readValue(result, new TypeReference<ResultT<String>>() {
-        });
+        return JobHttpUtil.postBody(address + "run", accessToken, triggerParam, timeout, String.class);
     }
 
     @Override
     public ResultT<String> kill(KillParam killParam) {
-        String content = JsonUtil.writeValueAsString(killParam);
-        String result = HttpUtil.post(address + "kill", content);
-        return JsonUtil.readValue(result, new TypeReference<ResultT<String>>() {
-        });
+        return JobHttpUtil.postBody(address + "kill", accessToken, killParam, timeout, String.class);
     }
 
 }

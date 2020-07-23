@@ -16,19 +16,4 @@ public class IndexController {
         return "index";
     }
 
-    @RequestMapping("/group")
-    public String group(Model model) {
-        return "group/group.index";
-    }
-
-    @RequestMapping("/job")
-    public String job(Model model) {
-        return "job/job.index";
-    }
-
-    @RequestMapping("/log")
-    public String log(Model model) {
-        return "log/log.index";
-    }
-
 }

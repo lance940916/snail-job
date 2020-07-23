@@ -1,12 +1,10 @@
 package com.snailwu.job.core.biz.client;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.snailwu.job.core.biz.AdminBiz;
 import com.snailwu.job.core.biz.model.CallbackParam;
 import com.snailwu.job.core.biz.model.RegistryParam;
 import com.snailwu.job.core.biz.model.ResultT;
-import com.snailwu.job.core.utils.HttpUtil;
-import com.snailwu.job.core.utils.JsonUtil;
+import com.snailwu.job.core.utils.JobHttpUtil;
 
 import java.util.List;
 
@@ -21,34 +19,37 @@ public class AdminBizClient implements AdminBiz {
      */
     private final String adminAddress;
 
-    public AdminBizClient(String adminAddress) {
+    /**
+     * AccessToken
+     */
+    private final String accessToken;
+
+    /**
+     * 超时时间,秒
+     */
+    private final int timeout = 3;
+
+    public AdminBizClient(String adminAddress, String accessToken) {
         if (!adminAddress.endsWith("/")) {
             adminAddress = adminAddress + "/";
         }
         this.adminAddress = adminAddress;
+
+        this.accessToken = accessToken;
     }
 
     @Override
     public ResultT<String> callback(List<CallbackParam> callbackParamList) {
-        String content = JsonUtil.writeValueAsString(callbackParamList);
-        String result = HttpUtil.post(adminAddress + "api/callback", content);
-        return JsonUtil.readValue(result, new TypeReference<ResultT<String>>() {
-        });
+        return JobHttpUtil.postBody(adminAddress + "api/callback", accessToken, callbackParamList, timeout, String.class);
     }
 
     @Override
     public ResultT<String> registry(RegistryParam registryParam) {
-        String content = JsonUtil.writeValueAsString(registryParam);
-        String result = HttpUtil.post(adminAddress + "api/registry", content);
-        return JsonUtil.readValue(result, new TypeReference<ResultT<String>>() {
-        });
+        return JobHttpUtil.postBody(adminAddress + "api/registry", accessToken, registryParam, timeout, String.class);
     }
 
     @Override
     public ResultT<String> registryRemove(RegistryParam registryParam) {
-        String content = JsonUtil.writeValueAsString(registryParam);
-        String result = HttpUtil.post(adminAddress + "api/registryRemove", content);
-        return JsonUtil.readValue(result, new TypeReference<ResultT<String>>() {
-        });
+        return JobHttpUtil.postBody(adminAddress + "api/registryRemove", accessToken, registryParam, timeout, String.class);
     }
 }

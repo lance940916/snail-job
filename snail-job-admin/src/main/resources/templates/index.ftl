@@ -2,6 +2,7 @@
 <html lang="zh_CN">
 <head>
     <#import "./common/common.macro.ftl" as netCommon />
+
     <@netCommon.commonHead />
     <@netCommon.commonStyle />
 </head>
@@ -20,6 +21,10 @@
             <h1>任务数量: 8</h1>
             <h1>执行器数量: 8</h1>
             <h1>调度次数: 8</h1>
+
+            <hr>
+            上下文: ${springMacroRequestContext.contextPath}
+            <br>
 
         </div>
     </div>

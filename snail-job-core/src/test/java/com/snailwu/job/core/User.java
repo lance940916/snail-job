@@ -1,6 +1,6 @@
 package com.snailwu.job.core;
 
-import com.snailwu.job.core.utils.JsonUtil;
+import com.snailwu.job.core.utils.JobJsonUtil;
 
 /**
  * @author 吴庆龙
@@ -40,6 +40,6 @@ public class User {
         user.setxVal(111);
         user.setXxVal(222);
         user.setyVal("abc");
-        System.out.println(JsonUtil.writeValueAsString(user));
+        System.out.println(JobJsonUtil.writeValueAsString(user));
     }
 }

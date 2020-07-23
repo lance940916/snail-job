@@ -2,7 +2,6 @@ package com.snailwu.job.core.executor;
 
 import com.snailwu.job.core.biz.AdminBiz;
 import com.snailwu.job.core.biz.client.AdminBizClient;
-import com.snailwu.job.core.executor.model.ExecutorConfiguration;
 import com.snailwu.job.core.handler.IJobHandler;
 import com.snailwu.job.core.server.EmbedServer;
 import com.snailwu.job.core.thread.JobThread;
@@ -21,6 +20,72 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SnailJobExecutor {
     public static final Logger log = LoggerFactory.getLogger(SnailJobExecutor.class);
+
+    /**
+     * 调度中心的地址
+     * 具体到 Context 根目录, 如: http://localhost:8080/job-admin
+     */
+    private String adminAddress;
+
+    /**
+     * 本机的外网 IP 地址
+     */
+    private String ip;
+
+    /**
+     * 本机与调度中心通讯的端口
+     */
+    private int port = 9999;
+
+    /**
+     * 执行器组 Name
+     */
+    private String groupName;
+
+    /**
+     * AccessToken
+     */
+    private String accessToken;
+
+    public String getAdminAddress() {
+        return adminAddress;
+    }
+
+    public void setAdminAddress(String adminAddress) {
+        this.adminAddress = adminAddress;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
 
     /**
      * 与调度中心通信
@@ -43,20 +108,11 @@ public class SnailJobExecutor {
     private static final ConcurrentHashMap<Integer, JobThread> JOB_THREAD_REPOSITORY = new ConcurrentHashMap<>();
 
     /**
-     * 配置参数
-     */
-    private final ExecutorConfiguration executorConfiguration;
-
-    public SnailJobExecutor(ExecutorConfiguration executorConfiguration) {
-        this.executorConfiguration = executorConfiguration;
-    }
-
-    /**
      * 启动
      */
     public void start() {
         // 实例化 AdminClient 实例
-        initAdminBiz(executorConfiguration.getAdminAddress());
+        initAdminBiz(adminAddress, accessToken);
 
         // 启动回调任务执行结果线程
         TriggerCallbackThread.getInstance().start();
@@ -76,14 +132,14 @@ public class SnailJobExecutor {
     /**
      * 实例化调度中心Client，用来发起请求给调度中心
      */
-    private void initAdminBiz(String adminAddress) {
+    private void initAdminBiz(String adminAddress, String accessToken) {
         if (StringUtils.isBlank(adminAddress)) {
             log.warn("[SnailJob]-没有配置调度中心地址!!!");
             return;
         }
 
         // 实例化调度中心
-        adminBiz = new AdminBizClient(adminAddress.trim());
+        adminBiz = new AdminBizClient(adminAddress.trim(), accessToken);
     }
 
     public static AdminBiz getAdminBiz() {
@@ -97,13 +153,11 @@ public class SnailJobExecutor {
      */
     private void startEmbedServer() {
         // 组装 Address
-        String ip = executorConfiguration.getIp();
-        int port = executorConfiguration.getPort();
         String executorAddress = "http://" + ip + ":" + port;
 
         // 启动 Netty Server，与 Admin 进行通信
         embedServer = new EmbedServer();
-        embedServer.start(port, executorAddress, executorConfiguration.getGroupName());
+        embedServer.start(port, executorAddress, groupName);
     }
 
     /**
