@@ -1,3 +1,4 @@
+<#assign contextPath="${springMacroRequestContext.contextPath}" >
 <!DOCTYPE html>
 <html lang="zh_CN">
 <head>
@@ -19,13 +20,21 @@
         <!-- 内容主体区域 -->
         <div style="padding: 15px;">
 
-            <h1>任务数量: 8</h1>
-            <h1>执行器数量: 8</h1>
-            <h1>调度次数: 8</h1>
-
-            <hr>
-            上下文: ${springMacroRequestContext.contextPath}
-            <br>
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>系统任务状态</legend>
+            </fieldset>
+            <table class="layui-table" lay-size="lg">
+                <tbody>
+                <tr>
+                    <td style="width: 100px;font-size: large;font-weight: bold;">任务数量</td>
+                    <td>${status.totalJobAmount}</td>
+                    <td style="width: 100px;font-size: large;font-weight: bold;">执行器数量</td>
+                    <td>${status.totalGroupAmount}</td>
+                    <td style="width: 100px;font-size: large;font-weight: bold;">调度次数</td>
+                    <td>${status.totalInvokeTimes}</td>
+                </tr>
+                </tbody>
+            </table>
 
         </div>
     </div>
@@ -35,10 +44,9 @@
 </div>
 <@netCommon.commonScript />
 <script>
-    //JavaScript代码区域
-    layui.use('element', function () {
+    // 如何避免别人通过直接请求接口获取数据
+    layui.use(['element', 'jquery'], function () {
         let element = layui.element;
-
 
     });
 </script>

@@ -1,13 +1,11 @@
 package com.snailwu.job.admin.controller;
 
-import com.snailwu.job.admin.core.model.JobGroup;
 import com.snailwu.job.admin.service.GroupService;
-import com.snailwu.job.core.biz.model.ResultT;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @author 吴庆龙
@@ -20,11 +18,19 @@ public class GroupController {
     @Resource
     private GroupService groupService;
 
+    @GetMapping
+    public String index(Model model,
+                        @RequestParam(name = "page_num", required = false, defaultValue = "1") Integer pageNum,
+                        @RequestParam(name = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+//        PageInfo<JobGroup> list = groupService.list(pageNum, pageSize);
+//        model.addAttribute("groupList", list);
+        return "group/group.index";
+    }
+
     /**
      * 新增
      */
     @PostMapping("/save")
-    @ResponseBody
     public String save() {
         return "";
     }
@@ -33,38 +39,24 @@ public class GroupController {
      * 更新
      */
     @DeleteMapping("/update")
-    @ResponseBody
-    public ResultT<String> update() {
-        return ResultT.SUCCESS;
+    public String update() {
+        return "";
     }
 
     /**
      * 删除
      */
     @DeleteMapping("/delete")
-    @ResponseBody
-    public ResultT<String> delete() {
-        return ResultT.SUCCESS;
+    public String delete() {
+        return "";
     }
 
     /**
      * 查询
      */
     @GetMapping("/get")
-    @ResponseBody
-    public ResultT<JobGroup> get() {
-
-        return new ResultT<>(null);
-    }
-
-    /**
-     * 列表
-     */
-    @GetMapping("/list")
-    @ResponseBody
-    public ResultT<List<JobGroup>> list() {
-
-        return new ResultT<>(null);
+    public String get() {
+        return "";
     }
 
 }
