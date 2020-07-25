@@ -6,8 +6,6 @@ package com.snailwu.job.admin.controller;
  */
 public class JobController {
 
-
-
     /**
      * 新增
      */

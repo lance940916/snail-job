@@ -21,14 +21,6 @@ public class GroupController {
     private GroupService groupService;
 
     /**
-     * 主页
-     */
-    @RequestMapping
-    public String index() {
-        return "group/group.index";
-    }
-
-    /**
      * 新增
      */
     @PostMapping("/save")
