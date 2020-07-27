@@ -4,6 +4,7 @@ import com.snailwu.job.core.biz.model.ResultT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author 吴庆龙
  * @date 2020/7/25 8:17
  */
-@RestControllerAdvice
+@RestControllerAdvice(annotations = RestController.class)
 public class GlobalRestfulExceptionHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalRestfulExceptionHandler.class);
 
