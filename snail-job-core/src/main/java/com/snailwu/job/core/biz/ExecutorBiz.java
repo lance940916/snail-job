@@ -2,8 +2,8 @@ package com.snailwu.job.core.biz;
 
 import com.snailwu.job.core.biz.model.IdleBeatParam;
 import com.snailwu.job.core.biz.model.KillParam;
-import com.snailwu.job.core.biz.model.TriggerParam;
 import com.snailwu.job.core.biz.model.ResultT;
+import com.snailwu.job.core.biz.model.TriggerParam;
 
 /**
  * 执行器需要的方法

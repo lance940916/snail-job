@@ -1,7 +1,7 @@
 package com.snailwu.job.admin.core.model;
 
-import java.util.Date;
 import javax.annotation.Generated;
+import java.util.Date;
 
 public class JobLogReport {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")

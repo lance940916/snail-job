@@ -1,7 +1,5 @@
 package com.snailwu.job.core.biz.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * @author 吴庆龙
  * @date 2020/5/25 12:00 下午
