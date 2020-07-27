@@ -178,7 +178,7 @@ public class SnailJobExecutor {
      */
     public static void registryJobHandler(String name, IJobHandler jobHandler) {
         JOB_HANDLER_REPOSITORY.put(name, jobHandler);
-        LOGGER.info("[SnailJob]注册 JobHandler 成功. name:{}, handler:{}", name, jobHandler);
+        LOGGER.info("[SnailJob]-注册JobHandler成功. name:{}, handler:{}", name, jobHandler);
     }
 
     /**
@@ -197,7 +197,7 @@ public class SnailJobExecutor {
     public static JobThread registryJobThread(int jobId, IJobHandler handler, String removeOldReason) {
         JobThread jobThread = new JobThread(jobId, handler);
         jobThread.start();
-        LOGGER.info("[SnailJob]注册 JobThread 成功. jobId:{}, handler:{}", jobId, handler);
+        LOGGER.info("[SnailJob]-注册JobThread成功. jobId:{}, handler:{}", jobId, handler);
 
         JobThread oldJobThread = JOB_THREAD_REPOSITORY.put(jobId, jobThread);
         if (oldJobThread != null) {

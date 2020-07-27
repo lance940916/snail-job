@@ -157,7 +157,7 @@ public class JobThread extends Thread {
                     } else { // 没有超时时间的，直接执行
                         executeResult = jobHandler.execute(triggerParam.getExecutorParams());
                     }
-                    LOGGER.info("任务执行完成");
+                    LOGGER.info("[SnailJob]-任务执行完成");
                 } else {
                     // 30 次获取操作后，没有任务可以处理，则自动销毁线程
                     if (idleTimes > 30 && jobQueue.size() == 0) {
