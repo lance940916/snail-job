@@ -6,7 +6,7 @@ import com.snailwu.job.core.biz.model.IdleBeatParam;
 import com.snailwu.job.core.biz.model.KillParam;
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.biz.model.TriggerParam;
-import com.snailwu.job.core.thread.ExecutorNodeRegistryThread;
+import com.snailwu.job.core.thread.ExecutorRegistryThread;
 import com.snailwu.job.core.utils.JobJsonUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
@@ -17,7 +17,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.timeout.IdleStateHandler;
-import io.netty.util.internal.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +33,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * @date 2020/5/22 11:21 上午
  */
 public class EmbedServer {
-    public static final Logger log = LoggerFactory.getLogger(EmbedServer.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(EmbedServer.class);
 
     private ExecutorBiz executorBiz;
     private Thread serverThread;
@@ -68,7 +67,7 @@ public class EmbedServer {
             try {
                 // 执行完 bind 之后就可以接受连接了
                 ChannelFuture future = bootstrap.bind(httpPort).sync();
-                log.info("Netty 服务启动成功. 监听端口:{}", httpPort);
+                LOGGER.info("[SnailJob]-嵌入式服务启动成功. 监听端口:{}", httpPort);
 
                 // 注册节点到调度中心
                 startRegistry(groupName, executorAddress);
@@ -77,14 +76,14 @@ public class EmbedServer {
                 future.channel().closeFuture().sync();
             } catch (InterruptedException e) {
                 // 服务端主动进行中断，也就是 stop
-                log.info("Netty 服务停止运行");
+                LOGGER.info("[SnailJob]-嵌入式服务停止运行");
             } finally {
                 workerGroup.shutdownGracefully();
                 bossGroup.shutdownGracefully();
             }
         });
         serverThread.setDaemon(true);
-        serverThread.setName("EmbedServer");
+        serverThread.setName("JobEmbedServer");
         serverThread.start();
     }
 
@@ -97,14 +96,14 @@ public class EmbedServer {
         }
 
         stopRegistry();
-        log.info("停止注册节点守护线程");
+        LOGGER.info("[SnailJob]-停止注册节点守护线程");
     }
 
     /**
      * Netty 的 Http 请求处理器
      */
     public static class EmbedHttpServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
-        private static final Logger log = LoggerFactory.getLogger(EmbedHttpServerHandler.class);
+        private static final Logger LOGGER = LoggerFactory.getLogger(EmbedHttpServerHandler.class);
 
         private final ExecutorBiz executorBiz;
 
@@ -114,28 +113,37 @@ public class EmbedServer {
 
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) {
+            long requestId = System.currentTimeMillis();
+
             String uri = msg.uri();
             HttpMethod method = msg.method();
             String requestData = msg.content().toString(StandardCharsets.UTF_8);
-            log.info("请求方法: {} 请求地址:{} 请求体:{}", method.name(), uri, requestData);
+            LOGGER.info("[SnailJob]-{}-请求方法: {} 请求地址:{} 请求体:{}", requestId, method.name(), uri, requestData);
 
-            // 处理请求
-            Object result = doService(method, uri, requestData);
+            // 请求处理
+            ResultT<String> result = doService(method, uri, requestData);
 
-            // 响应请求
-            doResponse(ctx, msg, result);
+            // 请求响应
+            String responseJson = "";
+            try {
+                responseJson = JobJsonUtil.writeValueAsString(result);
+            } catch (Exception e) {
+                LOGGER.error("[SnailJob]-序列化JSON异常");
+            }
+            doResponse(ctx, msg, responseJson);
+            LOGGER.info("[SnailJob]-{}-请求响应: {}", requestId, responseJson);
         }
 
         /**
          * 处理客户端的请求
          */
-        private Object doService(HttpMethod httpMethod, String uri, String requestData) {
+        private ResultT<String> doService(HttpMethod httpMethod, String uri, String requestData) {
             // 校验
             if (HttpMethod.POST != httpMethod) {
-                return new ResultT<String>(ResultT.FAIL_CODE, "invalid request, HttpMethod not support.");
+                return new ResultT<>(ResultT.FAIL_CODE, "错误的请求,HttpMethod不支持.");
             }
             if (uri == null || uri.trim().length() == 0) {
-                return new ResultT<String>(ResultT.FAIL_CODE, "invalid request, uri-mapping empty.");
+                return new ResultT<>(ResultT.FAIL_CODE, "错误的请求,请求地址为空.");
             }
 
             // 映射 uri
@@ -155,26 +163,18 @@ public class EmbedServer {
                     case "/log":  // 执行器信息
                         return ResultT.SUCCESS;
                     default:
-                        return new ResultT<String>(ResultT.FAIL_CODE, "invalid request, uri-mapping(" + uri + ") not found.");
+                        return new ResultT<>(ResultT.FAIL_CODE, "错误的请求,请求地址(" + uri + ")不存在.");
                 }
             } catch (Exception e) {
-                return new ResultT<String>(ResultT.FAIL_CODE, "invalid request. msg:" + e.getMessage());
+                return new ResultT<>(ResultT.FAIL_CODE, "错误的请求.错误信息:" + e.getMessage());
             }
         }
 
         /**
-         * 对客户端进行响应
+         * 请求响应
          */
-        private void doResponse(ChannelHandlerContext ctx, FullHttpRequest msg, Object result) {
-            // 转 JSON
-            String responseJson = JobJsonUtil.writeValueAsString(result);
-            ByteBuf contentBuf;
-            if (StringUtil.isNullOrEmpty(responseJson)) {
-                log.warn("返回空数据");
-                contentBuf = Unpooled.EMPTY_BUFFER;
-            } else {
-                contentBuf = Unpooled.copiedBuffer(responseJson, StandardCharsets.UTF_8);
-            }
+        private void doResponse(ChannelHandlerContext ctx, FullHttpRequest msg, String content) {
+            ByteBuf contentBuf = Unpooled.copiedBuffer(content, StandardCharsets.UTF_8);
 
             // 构造 response
             DefaultFullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, contentBuf);
@@ -188,23 +188,21 @@ public class EmbedServer {
                 response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
             }
             ctx.writeAndFlush(response);
-            log.info("响应结束");
         }
-
     }
 
     /**
      * 注册节点到调度中心
      */
     private void startRegistry(String appName, String address) {
-        ExecutorNodeRegistryThread.getInstance().start(appName, address);
+        ExecutorRegistryThread.start(appName, address);
     }
 
     /**
      * 从调度中心移除节点
      */
     private void stopRegistry() {
-        ExecutorNodeRegistryThread.getInstance().stop();
+        ExecutorRegistryThread.stop();
     }
 
 }

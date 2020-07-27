@@ -1,6 +1,7 @@
 package com.snailwu.job.core.executor.impl;
 
 import com.snailwu.job.core.biz.model.ResultT;
+import com.snailwu.job.core.exception.SnailJobException;
 import com.snailwu.job.core.executor.SnailJobExecutor;
 import com.snailwu.job.core.handler.annotation.SnailJob;
 import com.snailwu.job.core.handler.impl.MethodJobHandler;
@@ -25,7 +26,7 @@ import java.util.Map;
  */
 public class SnailJobSpringExecutor extends SnailJobExecutor
         implements ApplicationContextAware, SmartInitializingSingleton, DisposableBean {
-    public static final Logger log = LoggerFactory.getLogger(SnailJobSpringExecutor.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(SnailJobSpringExecutor.class);
 
     /**
      * Spring 上下文
@@ -34,60 +35,67 @@ public class SnailJobSpringExecutor extends SnailJobExecutor
 
     @Override
     public void afterSingletonsInstantiated() {
-        // 初始化所有的 JobHandler
+        // 扫描所有的 JobHandler
         initJobHandlerMethodRepository();
 
         super.start();
     }
 
     /**
-     * 获取所有的 JobHandler 并注册到 Map 中
+     * 扫描项目中的 JobHandler 并进行注册
      */
     private void initJobHandlerMethodRepository() {
         if (applicationContext == null) {
+            LOGGER.error("[SnailJob]Spring applicationContext 为 NULL");
             return;
         }
 
+        // 获取 Spring 中的对象
         String[] beanNames = applicationContext.getBeanNamesForType(Object.class, false, true);
         for (String beanName : beanNames) {
+            // 扫描 bean 中含有 SnailJob 注解的方法
             Object bean = applicationContext.getBean(beanName);
-            Map<Method, SnailJob> methodSnailJobMap = MethodIntrospector.selectMethods(bean.getClass(),
+            Map<Method, SnailJob> methodJobMap = MethodIntrospector.selectMethods(
+                    bean.getClass(),
                     new MethodIntrospector.MetadataLookup<SnailJob>() {
                         @Override
                         public SnailJob inspect(Method method) {
                             return AnnotatedElementUtils.findMergedAnnotation(method, SnailJob.class);
                         }
-                    });
-            if (methodSnailJobMap.isEmpty()) {
+                    }
+            );
+            if (methodJobMap.isEmpty()) {
                 continue;
             }
 
-            for (Map.Entry<Method, SnailJob> methodSnailJobEntry : methodSnailJobMap.entrySet()) {
-                Method method = methodSnailJobEntry.getKey();
-                SnailJob snailJob = methodSnailJobEntry.getValue();
+            for (Map.Entry<Method, SnailJob> entry : methodJobMap.entrySet()) {
+                Method method = entry.getKey();
+                SnailJob snailJob = entry.getValue();
 
                 String jobHandlerName = snailJob.value();
                 if (jobHandlerName.trim().length() == 0) {
-                    throw new RuntimeException("method-jobHandler name invalid, " +
-                            "for[" + bean.getClass() + "#" + method.getName() + "] .");
+                    throw new SnailJobException("[SnailJob]JobHandler的Name无效, " +
+                            "for[" + bean.getClass() + "#" + method.getName() + "]");
                 }
                 if (loadJobHandler(jobHandlerName) != null) {
-                    throw new RuntimeException("snail-job jobHandler[" + jobHandlerName + "] name conflicts");
+                    throw new RuntimeException("[SnailJob]JobHandler的Name存在冲突, " +
+                            "for[" + jobHandlerName + "]");
                 }
 
-                // execute method
+                // 检验方法的参数. 1:只有一个参数; 2:参数必须是String类型的; 3:返回值必须是 ResultT 类型
                 if (!(method.getParameterTypes().length == 1 && method.getParameterTypes()[0].isAssignableFrom(String.class))) {
-                    throw new RuntimeException("snail-job method-jobHandler param-classType invalid, " +
-                            "for[" + bean.getClass() + "#" + method.getName() + "] , " +
-                            "The correct method format like \" public ReturnT<String> execute(String param) \" .");
+                    throw new RuntimeException("[SnailJob]JobHandler的方法入参无效, " +
+                            "for[" + bean.getClass() + "#" + method.getName() + "], " +
+                            "格式如:\" public ReturnT<String> execute(String param) \".");
                 }
                 if (!method.getReturnType().isAssignableFrom(ResultT.class)) {
-                    throw new RuntimeException("snail-job method-jobHandler return-classType invalid, " +
-                            "for[" + bean.getClass() + "#" + method.getName() + "] , " +
-                            "The correct method format like \" public ReturnT<String> execute(String param) \" .");
+                    throw new RuntimeException("[SnailJob]JobHandler的方法返回值无效, " +
+                            "for[" + bean.getClass() + "#" + method.getName() + "], " +
+                            "格式如:\" public ReturnT<String> execute(String param) \".");
                 }
                 method.setAccessible(true);
 
+                // 初始化 & 销毁方法
                 Method initMethod = null;
                 Method destroyMethod = null;
                 if (snailJob.init().trim().length() > 0) {
@@ -95,8 +103,8 @@ public class SnailJobSpringExecutor extends SnailJobExecutor
                         initMethod = bean.getClass().getDeclaredMethod(snailJob.init());
                         initMethod.setAccessible(true);
                     } catch (NoSuchMethodException e) {
-                        throw new RuntimeException("snail-job method-jobHandler initMethod invalid, " +
-                                "for[" + bean.getClass() + "#" + method.getName() + "] .");
+                        throw new RuntimeException("[SnailJob]初始化方法无效, " +
+                                "for[" + bean.getClass() + "#" + method.getName() + "].");
                     }
                 }
                 if (snailJob.destroy().trim().length() > 0) {
@@ -104,8 +112,8 @@ public class SnailJobSpringExecutor extends SnailJobExecutor
                         destroyMethod = bean.getClass().getDeclaredMethod(snailJob.destroy());
                         destroyMethod.setAccessible(true);
                     } catch (NoSuchMethodException e) {
-                        throw new RuntimeException("snail-job method-jobHandler initMethod invalid, " +
-                                "for[" + bean.getClass() + "#" + method.getName() + "] .");
+                        throw new RuntimeException("[SnailJob]销毁方法无效, " +
+                                "for[" + bean.getClass() + "#" + method.getName() + "].");
                     }
                 }
 
@@ -121,12 +129,8 @@ public class SnailJobSpringExecutor extends SnailJobExecutor
         SnailJobSpringExecutor.applicationContext = applicationContext;
     }
 
-    public static ApplicationContext getApplicationContext() {
-        return applicationContext;
-    }
-
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         super.stop();
     }
 }

@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 报警集
+ *
  * @author 吴庆龙
  * @date 2020/7/20 5:25 下午
  */
@@ -26,7 +28,7 @@ public class JobAlarmComposite implements ApplicationContextAware, InitializingB
     private List<JobAlarm> alarmList;
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         Map<String, JobAlarm> jobAlarmMap = applicationContext.getBeansOfType(JobAlarm.class);
         if (!jobAlarmMap.isEmpty()) {
             alarmList = new ArrayList<>(jobAlarmMap.values());

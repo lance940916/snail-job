@@ -19,6 +19,8 @@ import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 import static org.mybatis.dynamic.sql.SqlBuilder.select;
 
 /**
+ * 邮件报警
+ *
  * @author 吴庆龙
  * @date 2020/7/20 5:43 下午
  */

@@ -6,7 +6,6 @@ import com.snailwu.job.core.handler.IJobHandler;
 import com.snailwu.job.core.server.EmbedServer;
 import com.snailwu.job.core.thread.JobThread;
 import com.snailwu.job.core.thread.TriggerCallbackThread;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2020/5/25 2:32 下午
  */
 public class SnailJobExecutor {
-    public static final Logger log = LoggerFactory.getLogger(SnailJobExecutor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SnailJobExecutor.class);
 
     /**
      * 调度中心的地址
@@ -34,8 +33,9 @@ public class SnailJobExecutor {
 
     /**
      * 本机与调度中心通讯的端口
+     * 默认 7479
      */
-    private int port = 9999;
+    private int port = 7479;
 
     /**
      * 执行器组 Name
@@ -98,12 +98,12 @@ public class SnailJobExecutor {
     private EmbedServer embedServer;
 
     /**
-     * 缓存扫描到的 JobHandler
+     * 存储 JobHandler
      */
     private static final ConcurrentHashMap<String, IJobHandler> JOB_HANDLER_REPOSITORY = new ConcurrentHashMap<>();
 
     /**
-     * 缓存 JobThread
+     * 存储 JobThread
      */
     private static final ConcurrentHashMap<Integer, JobThread> JOB_THREAD_REPOSITORY = new ConcurrentHashMap<>();
 
@@ -133,8 +133,8 @@ public class SnailJobExecutor {
      * 实例化调度中心Client，用来发起请求给调度中心
      */
     private void initAdminBiz(String adminAddress, String accessToken) {
-        if (StringUtils.isBlank(adminAddress)) {
-            log.warn("[SnailJob]-没有配置调度中心地址!!!");
+        if (adminAddress == null || adminAddress.trim().length() == 0) {
+            LOGGER.warn("[SnailJob]没有配置调度中心地址.");
             return;
         }
 
@@ -149,7 +149,7 @@ public class SnailJobExecutor {
     // -------------------------------- 启动停止 Netty
 
     /**
-     * 启动执行器的服务端
+     * 启动执行器的内嵌服务端
      */
     private void startEmbedServer() {
         // 组装 Address
@@ -167,7 +167,7 @@ public class SnailJobExecutor {
         try {
             embedServer.stop();
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -175,11 +175,10 @@ public class SnailJobExecutor {
 
     /**
      * 注册 JobHandler
-     * 如果已经存在同名的 handler，则进行覆盖，并返回旧的 handler
      */
-    public static IJobHandler registryJobHandler(String name, IJobHandler jobHandler) {
-        log.info("[SnailJob]-注册 JobHandler 成功. name:{}, handler:{}", name, jobHandler);
-        return JOB_HANDLER_REPOSITORY.put(name, jobHandler);
+    public static void registryJobHandler(String name, IJobHandler jobHandler) {
+        JOB_HANDLER_REPOSITORY.put(name, jobHandler);
+        LOGGER.info("[SnailJob]注册 JobHandler 成功. name:{}, handler:{}", name, jobHandler);
     }
 
     /**
@@ -198,7 +197,7 @@ public class SnailJobExecutor {
     public static JobThread registryJobThread(int jobId, IJobHandler handler, String removeOldReason) {
         JobThread jobThread = new JobThread(jobId, handler);
         jobThread.start();
-        log.info("[SnailJob]-注册 JobThread 成功. jobId:{}, handler:{}", jobId, handler);
+        LOGGER.info("[SnailJob]注册 JobThread 成功. jobId:{}, handler:{}", jobId, handler);
 
         JobThread oldJobThread = JOB_THREAD_REPOSITORY.put(jobId, jobThread);
         if (oldJobThread != null) {
@@ -211,14 +210,12 @@ public class SnailJobExecutor {
     /**
      * 移除并停止 JobThread
      */
-    public static JobThread removeJobThread(int jobId, String removeOldReason) {
+    public static void removeJobThread(int jobId, String removeOldReason) {
         JobThread jobThread = JOB_THREAD_REPOSITORY.remove(jobId);
         if (jobThread != null) {
             jobThread.toStop(removeOldReason);
             jobThread.interrupt();
-            return jobThread;
         }
-        return null;
     }
 
     /**

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.snailwu.job.core.exception.JonRuntimeException;
+import com.snailwu.job.core.exception.SnailJobException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,7 @@ public class JobJsonUtil {
             return mapper.writeValueAsString(value);
         } catch (JsonProcessingException e) {
             LOGGER.error("序列化对象异常", e);
-            throw new JonRuntimeException(e);
+            throw new SnailJobException(e);
         }
     }
 
@@ -51,7 +51,7 @@ public class JobJsonUtil {
             return mapper.writeValueAsBytes(value);
         } catch (JsonProcessingException e) {
             LOGGER.error("序列化对象异常", e);
-            throw new JonRuntimeException(e);
+            throw new SnailJobException(e);
         }
     }
 
@@ -60,7 +60,7 @@ public class JobJsonUtil {
             mapper.writeValue(resultFile, value);
         } catch (IOException e) {
             LOGGER.error("序列化对象异常", e);
-            throw new JonRuntimeException(e);
+            throw new SnailJobException(e);
         }
     }
 
@@ -69,7 +69,7 @@ public class JobJsonUtil {
             return mapper.readValue(content, typeReference);
         } catch (IOException e) {
             LOGGER.error("反序列化对象异常", e);
-            throw new JonRuntimeException(e);
+            throw new SnailJobException(e);
         }
     }
 
@@ -78,7 +78,7 @@ public class JobJsonUtil {
             return mapper.readValue(content, valueType);
         } catch (IOException e) {
             LOGGER.error("反序列化对象异常", e);
-            throw new JonRuntimeException(e);
+            throw new SnailJobException(e);
         }
     }
 
