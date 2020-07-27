@@ -57,6 +57,13 @@
                         <button class="layui-btn layui-btn-normal layui-btn-sm">
                             查看<span class="layui-badge layui-bg-gray">2</span>
                         </button>
+                        <div id="online-host">
+                            <ul>
+                                <li>http://localhost:8080</li>
+                                <li>http://localhost:8080</li>
+                                <li>http://localhost:8080</li>
+                            </ul>
+                        </div>
                     </td>
                     <td>
                         <button type="button" class="layui-btn">编辑</button>
@@ -75,8 +82,14 @@
 <@netCommon.commonScript />
 <script>
     //JavaScript代码区域
-    layui.use('element', function () {
+    layui.use(['element', 'layer'], function () {
         let element = layui.element;
+        let layer = layui.layer;
+
+        layer.open({
+            title: '在线主机',
+            content: 'http://localhost:8080'
+        })
 
 
     });

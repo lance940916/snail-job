@@ -1,12 +1,12 @@
 package com.snailwu.job.admin.controller.aspect;
 
+import com.snailwu.job.admin.config.PropConfig;
 import com.snailwu.job.core.biz.model.ResultT;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -28,8 +28,7 @@ import static com.snailwu.job.core.utils.JobHttpUtil.JOB_ACCESS_TOKEN;
 public class ApiAccessTokenAspect {
     private static final Logger log = LoggerFactory.getLogger(ApiAccessTokenAspect.class);
 
-    @Value("${access-token:}")
-    private String adminAccessToken;
+    private final String adminAccessToken = PropConfig.getInstance().getRequiredEnv("snail.job.access-token");
 
     @Around("execution(* com.snailwu.job.admin.controller.ApiController.*(..))")
     public Object beforeAccess(ProceedingJoinPoint joinPoint) throws Throwable {

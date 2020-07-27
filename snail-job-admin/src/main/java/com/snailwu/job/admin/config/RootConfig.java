@@ -6,7 +6,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.*;
-import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.annotation.Resource;
@@ -18,7 +17,9 @@ import java.util.Properties;
  * @date 2020/5/22 1:41 下午
  */
 @Configuration
-@PropertySource("classpath:db.properties")
+@Import({
+        PropConfig.class
+})
 @ComponentScan({
         "com.snailwu.job.admin.service",
         "com.snailwu.job.admin.core.alarm",
@@ -29,23 +30,23 @@ import java.util.Properties;
 public class RootConfig {
 
     @Resource
-    private Environment env;
+    private PropConfig propConfig;
 
     /* ---------- 数据源 ---------- */
     @Bean
     public DataSource dataSource() {
         HikariDataSource dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl(env.getRequiredProperty("hikari.url"));
-        dataSource.setUsername(env.getRequiredProperty("hikari.username"));
-        dataSource.setPassword(env.getRequiredProperty("hikari.password"));
-        dataSource.setDriverClassName(env.getRequiredProperty("hikari.driver-class-name"));
-        dataSource.setConnectionTimeout(env.getRequiredProperty("hikari.connection-timeout", Long.class));
-        dataSource.setIdleTimeout(env.getRequiredProperty("hikari.idle-timeout", Long.class));
-        dataSource.setConnectionTestQuery(env.getRequiredProperty("hikari.connection-test-query"));
-        dataSource.setMinimumIdle(env.getRequiredProperty("hikari.minimum-idle", Integer.class));
-        dataSource.setMaximumPoolSize(env.getRequiredProperty("hikari.maximum-pool-size", Integer.class));
-        dataSource.setPoolName(env.getRequiredProperty("hikari.pool-name"));
-        dataSource.setMaxLifetime(env.getRequiredProperty("hikari.max-life-time", Long.class));
+        dataSource.setJdbcUrl(propConfig.getRequiredEnv("hikari.url"));
+        dataSource.setUsername(propConfig.getRequiredEnv("hikari.username"));
+        dataSource.setPassword(propConfig.getRequiredEnv("hikari.password"));
+        dataSource.setDriverClassName(propConfig.getRequiredEnv("hikari.driver-class-name"));
+        dataSource.setConnectionTimeout(propConfig.getRequiredEnv("hikari.connection-timeout", Long.class));
+        dataSource.setIdleTimeout(propConfig.getRequiredEnv("hikari.idle-timeout", Long.class));
+        dataSource.setConnectionTestQuery(propConfig.getRequiredEnv("hikari.connection-test-query"));
+        dataSource.setMinimumIdle(propConfig.getRequiredEnv("hikari.minimum-idle", Integer.class));
+        dataSource.setMaximumPoolSize(propConfig.getRequiredEnv("hikari.maximum-pool-size", Integer.class));
+        dataSource.setPoolName(propConfig.getRequiredEnv("hikari.pool-name"));
+        dataSource.setMaxLifetime(propConfig.getRequiredEnv("hikari.max-life-time", Long.class));
         return dataSource;
     }
 
