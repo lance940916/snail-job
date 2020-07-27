@@ -86,12 +86,6 @@
         let element = layui.element;
         let layer = layui.layer;
 
-        layer.open({
-            title: '在线主机',
-            content: 'http://localhost:8080'
-        })
-
-
     });
 </script>
 </body>

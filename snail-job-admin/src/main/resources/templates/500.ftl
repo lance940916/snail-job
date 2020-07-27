@@ -21,6 +21,8 @@
         <div style="padding: 15px;">
 
             <h1>500 服务器内部错误</h1>
+            <hr>
+            <h1>错误消息: ${errorMsg}</h1>
 
         </div>
     </div>

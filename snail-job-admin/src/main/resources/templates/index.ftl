@@ -27,11 +27,17 @@
                 <tbody>
                 <tr>
                     <td style="width: 100px;font-size: large;font-weight: bold;">任务数量</td>
-                    <td>${status.totalJobAmount}</td>
+                    <td>
+                        <span id="total-job-amount"></span>
+                    </td>
                     <td style="width: 100px;font-size: large;font-weight: bold;">执行器数量</td>
-                    <td>${status.totalGroupAmount}</td>
+                    <td>
+                        <span id="total-executor-amount"></span>
+                    </td>
                     <td style="width: 100px;font-size: large;font-weight: bold;">调度次数</td>
-                    <td>${status.totalInvokeTimes}</td>
+                    <td>
+                        <span id="total-trigger-amount"></span>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -47,6 +53,11 @@
     // 如何避免别人通过直接请求接口获取数据
     layui.use(['element', 'jquery'], function () {
         let element = layui.element;
+        let $ = layui.jquery;
+
+        $('#total-job-amount').text(8);
+        $('#total-executor-amount').text(3);
+        $('#total-trigger-amount').text(23);
 
     });
 </script>
