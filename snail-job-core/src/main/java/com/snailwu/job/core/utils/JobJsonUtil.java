@@ -15,11 +15,13 @@ import java.io.IOException;
 import java.util.TimeZone;
 
 /**
+ * 使用 Jackson 记性 JSON 数据的序列化反序列化
+ *
  * @author 吴庆龙
  * @date 2020/5/22 3:11 下午
  */
 public class JobJsonUtil {
-    private static final Logger log = LoggerFactory.getLogger(JobJsonUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JobJsonUtil.class);
 
     /**
      * ObjectMapper
@@ -39,7 +41,7 @@ public class JobJsonUtil {
         try {
             return mapper.writeValueAsString(value);
         } catch (JsonProcessingException e) {
-            log.error("序列化对象异常", e);
+            LOGGER.error("序列化对象异常", e);
             throw new JonRuntimeException(e);
         }
     }
@@ -48,7 +50,7 @@ public class JobJsonUtil {
         try {
             return mapper.writeValueAsBytes(value);
         } catch (JsonProcessingException e) {
-            log.error("序列化对象异常", e);
+            LOGGER.error("序列化对象异常", e);
             throw new JonRuntimeException(e);
         }
     }
@@ -57,7 +59,7 @@ public class JobJsonUtil {
         try {
             mapper.writeValue(resultFile, value);
         } catch (IOException e) {
-            log.error("序列化对象异常", e);
+            LOGGER.error("序列化对象异常", e);
             throw new JonRuntimeException(e);
         }
     }
@@ -66,7 +68,7 @@ public class JobJsonUtil {
         try {
             return mapper.readValue(content, typeReference);
         } catch (IOException e) {
-            log.error("反序列化对象异常", e);
+            LOGGER.error("反序列化对象异常", e);
             throw new JonRuntimeException(e);
         }
     }
@@ -75,7 +77,7 @@ public class JobJsonUtil {
         try {
             return mapper.readValue(content, valueType);
         } catch (IOException e) {
-            log.error("反序列化对象异常", e);
+            LOGGER.error("反序列化对象异常", e);
             throw new JonRuntimeException(e);
         }
     }

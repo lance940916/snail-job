@@ -16,12 +16,13 @@ import java.security.cert.X509Certificate;
 
 /**
  * HttpClient
+ * 使用原生的 HttpConnection 进行接口的请求
  *
  * @author 吴庆龙
  * @date 2020/5/22 4:38 下午
  */
 public class JobHttpUtil {
-    private static final Logger log = LoggerFactory.getLogger(JobHttpUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JobHttpUtil.class);
 
     /**
      * Header 中的Token
@@ -97,11 +98,11 @@ public class JobHttpUtil {
                 T resultT = JobJsonUtil.readValue(resultJson, clazz);
                 return new ResultT<>(resultT);
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
                 return new ResultT<>(ResultT.FAIL_CODE, "解析响应JSON异常");
             }
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             return new ResultT<>(ResultT.FAIL_CODE, "发起HTTP请求异常");
         } finally {
             if (connection != null) {
@@ -134,7 +135,7 @@ public class JobHttpUtil {
             SSLSocketFactory factory = sc.getSocketFactory();
             connection.setSSLSocketFactory(factory);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         connection.setHostnameVerifier((hostname, session) -> true);
     }

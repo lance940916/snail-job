@@ -24,14 +24,9 @@ public class ExecutorBizImpl implements ExecutorBiz {
 
     @Override
     public ResultT<String> idleBeat(IdleBeatParam idleBeatParam) {
-        boolean isRunningOrHasQueue = false;
         JobThread jobThread = SnailJobExecutor.loadJobThread(idleBeatParam.getJobId());
         if (jobThread != null && jobThread.isRunningOrHasQueue()) {
-            isRunningOrHasQueue = true;
-        }
-
-        if (isRunningOrHasQueue) {
-            return new ResultT<>(ResultT.FAIL_CODE, "job thread is running or has trigger queue.");
+            return new ResultT<>(ResultT.FAIL_CODE, "执行器忙碌.");
         }
         return ResultT.SUCCESS;
     }
@@ -45,10 +40,10 @@ public class ExecutorBizImpl implements ExecutorBiz {
         // 移除原因
         String removeOldReason = null;
 
-        // 与已存在的线程对比线程内的 jobHandler，如果不一样，则动态替换 handler，下次就生效了。
+        // 与已存在的线程对比线程内的 jobHandler，如果不一样，则动态替换 handler。立即生效
         IJobHandler newJobHandler = SnailJobExecutor.loadJobHandler(triggerParam.getExecutorHandler());
         if (jobThread != null && jobHandler != newJobHandler) {
-            removeOldReason = "更换了 JobHandler，将旧的 Thread 终止掉。";
+            removeOldReason = "JobHandler发生变更";
             jobThread = null;
             jobHandler = null;
         }
@@ -65,8 +60,8 @@ public class ExecutorBizImpl implements ExecutorBiz {
             jobThread = SnailJobExecutor.registryJobThread(triggerParam.getJobId(), jobHandler, removeOldReason);
         }
 
-        // 添加到队列中
-        return jobThread.pushTriggerQueue(triggerParam);
+        // 最后 添加任务到队列中等待执行
+        return jobThread.addLogQueue(triggerParam);
     }
 
     @Override

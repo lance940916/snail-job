@@ -7,26 +7,24 @@ SHOW TABLES;
 DROP TABLE IF EXISTS `job_executor`;
 CREATE TABLE IF NOT EXISTS `job_executor`
 (
-    `id`            INT(11)     NOT NULL AUTO_INCREMENT,
-    `group_name`    VARCHAR(32) NOT NULL COMMENT '要执行的任务组名',
-    `address`       VARCHAR(64) NOT NULL COMMENT '执行器地址',
-    `registry_type` TINYINT     NOT NULL COMMENT '执行器地址类型：0=自动注册、1=手动录入',
-    `update_time`   DATETIME    NULL COMMENT '更新时间',
+    `id`          INT(11)     NOT NULL AUTO_INCREMENT,
+    `group_name`  VARCHAR(32) NOT NULL COMMENT '所属任务组',
+    `address`     VARCHAR(64) NOT NULL COMMENT '执行器地址',
+    `update_time` DATETIME    NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),
     INDEX `idx_g_a` (`group_name`, `address`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
--- 执行器组信息
+-- 任务组信息
 DROP TABLE IF EXISTS `job_group`;
 CREATE TABLE IF NOT EXISTS `job_group`
 (
     `id`           INT(11)      NOT NULL AUTO_INCREMENT,
-    `title`        VARCHAR(32)  NOT NULL COMMENT '组的标题',
+    `title`        VARCHAR(64)  NOT NULL COMMENT '组的标题',
     `name`         VARCHAR(32)  NOT NULL COMMENT '任务组名称，唯一不重复',
-    `type`         VARCHAR(32)  NOT NULL COMMENT '类型',
-    `address_list` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '执行器节点地址列表，多地址用逗号分隔',
-    `description`  VARCHAR(128) NOT NULL COMMENT '任务组描述',
+    `type`         VARCHAR(32)  NOT NULL COMMENT '注册类型.自动注册=0;手动注册=1',
+    `address_list` VARCHAR(512) NOT NULL COMMENT '执行器节点地址列表，多地址用逗号分隔',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
@@ -68,17 +66,17 @@ CREATE TABLE IF NOT EXISTS `job_log`
     `job_id`                    INT(11)      NOT NULL COMMENT '任务，主键ID',
     `group_name`                VARCHAR(32)  NOT NULL COMMENT '任务组名',
 
-    `executor_address`          VARCHAR(255) NULL COMMENT '执行器地址，本次执行的地址',
+    `executor_address`          VARCHAR(255) NULL COMMENT '本次执行的地址',
     `executor_handler`          VARCHAR(255) NULL COMMENT '执行器任务handler',
     `executor_param`            VARCHAR(512) NULL COMMENT '执行器任务参数',
-    `executor_fail_retry_count` TINYINT      NOT NULL DEFAULT 0 COMMENT '失败重试次数',
+    `executor_fail_retry_count` TINYINT      NOT NULL DEFAULT 0 COMMENT '当前失败重试次数',
 
     `trigger_time`              DATETIME     NULL COMMENT '调度-时间',
     `trigger_code`              INT(11)      NULL COMMENT '调度-结果',
     `trigger_msg`               TEXT         NULL COMMENT '调度-日志',
 
     `exec_time`                 DATETIME     NULL COMMENT '执行-时间',
-    `exec_code`                 INT(11)      NOT NULL DEFAULT 0 COMMENT '执行-结果',
+    `exec_code`                 INT(11)      NULL COMMENT '执行-结果',
     `exec_msg`                  TEXT         NULL COMMENT '执行-日志',
 
     `alarm_status`              TINYINT      NOT NULL DEFAULT '0' COMMENT '告警状态：0-默认、1-无需告警、2-告警成功、3-告警失败',

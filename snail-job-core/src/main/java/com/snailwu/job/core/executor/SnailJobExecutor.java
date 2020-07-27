@@ -115,7 +115,7 @@ public class SnailJobExecutor {
         initAdminBiz(adminAddress, accessToken);
 
         // 启动回调任务执行结果线程
-        TriggerCallbackThread.getInstance().start();
+        TriggerCallbackThread.start();
 
         // 启动 Netty 服务，并将节点注册到调度中心
         startEmbedServer();
@@ -125,7 +125,7 @@ public class SnailJobExecutor {
      * 停止
      */
     public void stop() {
-        TriggerCallbackThread.getInstance().stop();
+        TriggerCallbackThread.stop();
         stopEmbedServer();
     }
 
