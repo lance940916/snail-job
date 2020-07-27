@@ -29,36 +29,38 @@ import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 @Mapper
 public interface JobGroupMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    BasicColumn[] selectList = BasicColumn.columnList(id, name, addressList, description);
+    BasicColumn[] selectList = BasicColumn.columnList(id, title, name, type, addressList, description);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
+    @SelectProvider(type=SqlProviderAdapter.class, method="select")
     long count(SelectStatementProvider selectStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @DeleteProvider(type = SqlProviderAdapter.class, method = "delete")
+    @DeleteProvider(type=SqlProviderAdapter.class, method="delete")
     int delete(DeleteStatementProvider deleteStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @InsertProvider(type = SqlProviderAdapter.class, method = "insert")
+    @InsertProvider(type=SqlProviderAdapter.class, method="insert")
     int insert(InsertStatementProvider<JobGroup> insertStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @InsertProvider(type = SqlProviderAdapter.class, method = "insertMultiple")
+    @InsertProvider(type=SqlProviderAdapter.class, method="insertMultiple")
     int insertMultiple(MultiRowInsertStatementProvider<JobGroup> multipleInsertStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
+    @SelectProvider(type=SqlProviderAdapter.class, method="select")
     @ResultMap("JobGroupResult")
     Optional<JobGroup> selectOne(SelectStatementProvider selectStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
-    @Results(id = "JobGroupResult", value = {
-            @Result(column = "id", property = "id", jdbcType = JdbcType.INTEGER, id = true),
-            @Result(column = "name", property = "name", jdbcType = JdbcType.VARCHAR),
-            @Result(column = "address_list", property = "addressList", jdbcType = JdbcType.VARCHAR),
-            @Result(column = "description", property = "description", jdbcType = JdbcType.VARCHAR)
+    @SelectProvider(type=SqlProviderAdapter.class, method="select")
+    @Results(id="JobGroupResult", value = {
+        @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
+        @Result(column="title", property="title", jdbcType=JdbcType.VARCHAR),
+        @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
+        @Result(column="type", property="type", jdbcType=JdbcType.VARCHAR),
+        @Result(column="address_list", property="addressList", jdbcType=JdbcType.VARCHAR),
+        @Result(column="description", property="description", jdbcType=JdbcType.VARCHAR)
     })
     List<JobGroup> selectMany(SelectStatementProvider selectStatement);
 
@@ -86,30 +88,36 @@ public interface JobGroupMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int insert(JobGroup record) {
         return MyBatis3Utils.insert(this::insert, record, jobGroup, c ->
-                c.map(id).toProperty("id")
-                        .map(name).toProperty("name")
-                        .map(addressList).toProperty("addressList")
-                        .map(description).toProperty("description")
+            c.map(id).toProperty("id")
+            .map(title).toProperty("title")
+            .map(name).toProperty("name")
+            .map(type).toProperty("type")
+            .map(addressList).toProperty("addressList")
+            .map(description).toProperty("description")
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int insertMultiple(Collection<JobGroup> records) {
         return MyBatis3Utils.insertMultiple(this::insertMultiple, records, jobGroup, c ->
-                c.map(id).toProperty("id")
-                        .map(name).toProperty("name")
-                        .map(addressList).toProperty("addressList")
-                        .map(description).toProperty("description")
+            c.map(id).toProperty("id")
+            .map(title).toProperty("title")
+            .map(name).toProperty("name")
+            .map(type).toProperty("type")
+            .map(addressList).toProperty("addressList")
+            .map(description).toProperty("description")
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int insertSelective(JobGroup record) {
         return MyBatis3Utils.insert(this::insert, record, jobGroup, c ->
-                c.map(id).toPropertyWhenPresent("id", record::getId)
-                        .map(name).toPropertyWhenPresent("name", record::getName)
-                        .map(addressList).toPropertyWhenPresent("addressList", record::getAddressList)
-                        .map(description).toPropertyWhenPresent("description", record::getDescription)
+            c.map(id).toPropertyWhenPresent("id", record::getId)
+            .map(title).toPropertyWhenPresent("title", record::getTitle)
+            .map(name).toPropertyWhenPresent("name", record::getName)
+            .map(type).toPropertyWhenPresent("type", record::getType)
+            .map(addressList).toPropertyWhenPresent("addressList", record::getAddressList)
+            .map(description).toPropertyWhenPresent("description", record::getDescription)
         );
     }
 
@@ -131,7 +139,7 @@ public interface JobGroupMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default Optional<JobGroup> selectByPrimaryKey(Integer id_) {
         return selectOne(c ->
-                c.where(id, isEqualTo(id_))
+            c.where(id, isEqualTo(id_))
         );
     }
 
@@ -143,7 +151,9 @@ public interface JobGroupMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     static UpdateDSL<UpdateModel> updateAllColumns(JobGroup record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(id).equalTo(record::getId)
+                .set(title).equalTo(record::getTitle)
                 .set(name).equalTo(record::getName)
+                .set(type).equalTo(record::getType)
                 .set(addressList).equalTo(record::getAddressList)
                 .set(description).equalTo(record::getDescription);
     }
@@ -151,7 +161,9 @@ public interface JobGroupMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     static UpdateDSL<UpdateModel> updateSelectiveColumns(JobGroup record, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(id).equalToWhenPresent(record::getId)
+                .set(title).equalToWhenPresent(record::getTitle)
                 .set(name).equalToWhenPresent(record::getName)
+                .set(type).equalToWhenPresent(record::getType)
                 .set(addressList).equalToWhenPresent(record::getAddressList)
                 .set(description).equalToWhenPresent(record::getDescription);
     }
@@ -159,20 +171,24 @@ public interface JobGroupMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int updateByPrimaryKey(JobGroup record) {
         return update(c ->
-                c.set(name).equalTo(record::getName)
-                        .set(addressList).equalTo(record::getAddressList)
-                        .set(description).equalTo(record::getDescription)
-                        .where(id, isEqualTo(record::getId))
+            c.set(title).equalTo(record::getTitle)
+            .set(name).equalTo(record::getName)
+            .set(type).equalTo(record::getType)
+            .set(addressList).equalTo(record::getAddressList)
+            .set(description).equalTo(record::getDescription)
+            .where(id, isEqualTo(record::getId))
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int updateByPrimaryKeySelective(JobGroup record) {
         return update(c ->
-                c.set(name).equalToWhenPresent(record::getName)
-                        .set(addressList).equalToWhenPresent(record::getAddressList)
-                        .set(description).equalToWhenPresent(record::getDescription)
-                        .where(id, isEqualTo(record::getId))
+            c.set(title).equalToWhenPresent(record::getTitle)
+            .set(name).equalToWhenPresent(record::getName)
+            .set(type).equalToWhenPresent(record::getType)
+            .set(addressList).equalToWhenPresent(record::getAddressList)
+            .set(description).equalToWhenPresent(record::getDescription)
+            .where(id, isEqualTo(record::getId))
         );
     }
 }

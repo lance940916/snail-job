@@ -7,7 +7,13 @@ public class JobGroup {
     private Integer id;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    private String title;
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private String name;
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    private String type;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private String addressList;
@@ -26,6 +32,16 @@ public class JobGroup {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public String getTitle() {
+        return title;
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public String getName() {
         return name;
     }
@@ -33,6 +49,16 @@ public class JobGroup {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public String getType() {
+        return type;
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public void setType(String type) {
+        this.type = type;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")

@@ -22,7 +22,9 @@ DROP TABLE IF EXISTS `job_group`;
 CREATE TABLE IF NOT EXISTS `job_group`
 (
     `id`           INT(11)      NOT NULL AUTO_INCREMENT,
+    `title`        VARCHAR(32)  NOT NULL COMMENT '组的标题',
     `name`         VARCHAR(32)  NOT NULL COMMENT '任务组名称，唯一不重复',
+    `type`         VARCHAR(32)  NOT NULL COMMENT '类型',
     `address_list` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '执行器节点地址列表，多地址用逗号分隔',
     `description`  VARCHAR(128) NOT NULL COMMENT '任务组描述',
     PRIMARY KEY (`id`)

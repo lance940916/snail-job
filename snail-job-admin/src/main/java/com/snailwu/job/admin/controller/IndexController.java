@@ -19,7 +19,6 @@ public class IndexController {
         vo.setTotalGroupAmount(2);
         vo.setTotalInvokeTimes(10);
         model.addAttribute("status", vo);
-
         return "index";
     }
 
