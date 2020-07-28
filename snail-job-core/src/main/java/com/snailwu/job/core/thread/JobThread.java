@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.*;
@@ -80,10 +81,11 @@ public class JobThread extends Thread {
     /**
      * 添加任务到任务队列中
      */
-    public ResultT<String> addLogQueue(TriggerParam triggerParam) {
+    public ResultT<String> addJobQueue(TriggerParam triggerParam) {
+        // 校验是否有重复的
         if (logIdSet.contains(triggerParam.getLogId())) {
-            LOGGER.info("[SnailJob]-执行任务-队列中已有重复的任务, logId:{}", triggerParam.getLogId());
-            return new ResultT<>(ResultT.FAIL_CODE, "repeat trigger job, logId:" + triggerParam.getLogId());
+            LOGGER.info("[SnailJob]-执行任务-队列中已有重复的任务.logId:{}", triggerParam.getLogId());
+            return new ResultT<>(ResultT.FAIL_CODE, "重复的任务调度.logId:" + triggerParam.getLogId());
         }
         logIdSet.add(triggerParam.getLogId());
 
@@ -105,20 +107,18 @@ public class JobThread extends Thread {
         try {
             jobHandler.init();
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("执行任务初始方法异常.原因:{}", e.getMessage());
         }
 
         // 线程启动后不断轮训队列，有任务就执行，没有任务则累加次数达到 30 次就将该线程停止
         while (!stopFlag) {
-            // 没有运行任务
-            runningFlag = false;
             // 累加无任务次数
             idleTimes++;
 
             // 任务参数
             TriggerParam triggerParam = null;
             // 任务执行结果
-            ResultT<String> executeResult = null;
+            ResultT<String> execResult = null;
 
             try {
                 // 从队列中获取任务
@@ -131,6 +131,7 @@ public class JobThread extends Thread {
                     // 日志集合中移除
                     logIdSet.remove(triggerParam.getLogId());
 
+                    // 进行方法的调用
                     if (triggerParam.getExecutorTimeout() > 0) { // 有超时时间的
                         // 启动线程
                         final TriggerParam triggerParamTmp = triggerParam;
@@ -145,18 +146,19 @@ public class JobThread extends Thread {
 
                         // 获取执行结果，有超时时间
                         try {
-                            executeResult = futureTask.get(triggerParam.getExecutorTimeout(), TimeUnit.SECONDS);
+                            execResult = futureTask.get(triggerParam.getExecutorTimeout(), TimeUnit.SECONDS);
                         } catch (TimeoutException e) {
-                            LOGGER.error("[SnailJob]-任务执行超时, jobId:{}", jobId);
-                            executeResult = new ResultT<>(ResultT.FAIL_CODE, "任务执行超时");
+                            LOGGER.error("[SnailJob]-任务执行超时.jobId:{}", jobId);
+                            execResult = new ResultT<>(ResultT.FAIL_CODE, "任务执行超时");
                         } finally {
                             // 发生异常时，终止线程的挂起操作，让线程自行结束
                             // 线程内如果用 while(true) 的话，interrupt 方法不能停止线程
                             futureThead.interrupt();
                         }
                     } else { // 没有超时时间的，直接执行
-                        executeResult = jobHandler.execute(triggerParam.getExecutorParams());
+                        execResult = jobHandler.execute(triggerParam.getExecutorParams());
                     }
+                    runningFlag = false;
                     LOGGER.info("[SnailJob]-任务执行完成");
                 } else {
                     // 30 次获取操作后，没有任务可以处理，则自动销毁线程
@@ -167,26 +169,27 @@ public class JobThread extends Thread {
             } catch (Exception e) {
                 if (stopFlag) {
                     // 线程停止时抛出的异常忽略
-                    LOGGER.info("[SnailJob]-任务执行线程停止, 原因:{}", stopReason);
+                    LOGGER.info("[SnailJob]-任务执行线程停止.原因:{}", stopReason);
                 } else {
                     // 线程未停止时抛出了异常需要打印
-                    LOGGER.error("[SnailJob]-任务执行线程异常结束.", e);
+                    LOGGER.error("[SnailJob]-任务执行线程异常结束.原因:{}", e.getMessage());
                 }
             } finally {
-                if (triggerParam != null) {
+                // 进行任务执行结果的回调
+                if (triggerParam != null && execResult != null) {
                     CallbackParam callbackParam = new CallbackParam();
                     callbackParam.setLogId(triggerParam.getLogId());
-                    callbackParam.setLogDateTime(triggerParam.getLogDateTime());
+                    callbackParam.setExecTime(new Date());
                     if (!stopFlag) {
-                        callbackParam.setExecuteResult(executeResult);
-                        TriggerCallbackThread.addCallbackQueue(callbackParam);
+                        // 线程正常执行返回结果
+                        callbackParam.setExecCode(execResult.getCode());
+                        callbackParam.setExecMsg(execResult.getMsg());
                     } else {
-                        // 线程被杀死了
-                        ResultT<String> stopResult = new ResultT<>(ResultT.FAIL_CODE,
-                                stopReason + "[job running, killed]");
-                        callbackParam.setExecuteResult(stopResult);
-                        TriggerCallbackThread.addCallbackQueue(callbackParam);
+                        // 线程返回被中断的结果
+                        callbackParam.setExecCode(ResultT.FAIL_CODE);
+                        callbackParam.setExecMsg(stopReason + "-[线程被中断]");
                     }
+                    ResultCallbackThread.addCallbackQueue(callbackParam);
                 }
             }
         }
@@ -195,10 +198,12 @@ public class JobThread extends Thread {
         while (jobQueue.size() > 0) {
             TriggerParam triggerParam = jobQueue.poll();
             if (triggerParam != null) {
-                ResultT<String> resultT = new ResultT<>(ResultT.FAIL_CODE,
-                        stopReason + " [job not executed, in the job queue, killed.]");
-                CallbackParam callbackParam = new CallbackParam(triggerParam.getLogId(), triggerParam.getLogDateTime(), resultT);
-                TriggerCallbackThread.addCallbackQueue(callbackParam);
+                CallbackParam callbackParam = new CallbackParam();
+                callbackParam.setLogId(triggerParam.getLogId());
+                callbackParam.setExecTime(new Date());
+                callbackParam.setExecCode(ResultT.FAIL_CODE);
+                callbackParam.setExecMsg(stopReason + "-[Job没有被执行,在队列中,线程被中断]");
+                ResultCallbackThread.addCallbackQueue(callbackParam);
             }
         }
 
@@ -206,14 +211,14 @@ public class JobThread extends Thread {
         try {
             jobHandler.destroy();
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("执行任务销毁方法异常.原因:{}", e.getMessage());
         }
     }
 
     /**
-     * Thread.interrupt 只支持终止线程的阻塞状态(wait、join、sleep)，
-     * 在阻塞出抛出 InterruptedException 异常,但是并不会终止运行的线程本身；
-     * 所以需要注意，此处彻底销毁本线程，需要通过共享变量方式；
+     * Thread.interrupt 只支持终止线程的阻塞状态(wait、join、sleep)
+     * 在阻塞出抛出 InterruptedException 异常,但是并不会终止运行的线程本身
+     * 所以需要注意，此处彻底销毁本线程，需要通过共享变量方式
      */
     public void toStop(String stopReason) {
         this.stopFlag = true;

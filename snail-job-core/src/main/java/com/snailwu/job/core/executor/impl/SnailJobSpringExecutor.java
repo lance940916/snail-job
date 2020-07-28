@@ -72,7 +72,7 @@ public class SnailJobSpringExecutor extends SnailJobExecutor
                 Method method = entry.getKey();
                 SnailJob snailJob = entry.getValue();
 
-                String jobHandlerName = snailJob.value();
+                String jobHandlerName = snailJob.name();
                 if (jobHandlerName.trim().length() == 0) {
                     throw new SnailJobException("[SnailJob]-JobHandler的Name无效, " +
                             "for[" + bean.getClass() + "#" + method.getName() + "]");

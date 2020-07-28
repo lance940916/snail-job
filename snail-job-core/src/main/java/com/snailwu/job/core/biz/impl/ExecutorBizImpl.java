@@ -61,7 +61,7 @@ public class ExecutorBizImpl implements ExecutorBiz {
         }
 
         // 最后 添加任务到队列中等待执行
-        return jobThread.addLogQueue(triggerParam);
+        return jobThread.addJobQueue(triggerParam);
     }
 
     @Override

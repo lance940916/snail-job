@@ -67,16 +67,16 @@ public class EmbedServer {
             try {
                 // 执行完 bind 之后就可以接受连接了
                 ChannelFuture future = bootstrap.bind(httpPort).sync();
-                LOGGER.info("[SnailJob]-嵌入式服务启动成功. 监听端口:{}", httpPort);
+                LOGGER.info("[SnailJob]-嵌入式Http服务启动成功. 监听端口:{}", httpPort);
 
-                // 注册节点到调度中心
+                // 启动注册节点线程
                 startRegistry(groupName, executorAddress);
 
                 // 主线程 wait，等待服务端链路关闭，子线程开始监听接受请求
                 future.channel().closeFuture().sync();
             } catch (InterruptedException e) {
                 // 服务端主动进行中断，也就是 stop
-                LOGGER.info("[SnailJob]-嵌入式服务停止运行");
+                LOGGER.info("[SnailJob]-嵌入式Http服务停止运行");
             } finally {
                 workerGroup.shutdownGracefully();
                 bossGroup.shutdownGracefully();
@@ -91,12 +91,13 @@ public class EmbedServer {
      * 停止 Netty 服务
      */
     public void stop() {
+        // 停止 Netty
         if (serverThread != null && serverThread.isAlive()) {
             serverThread.interrupt();
         }
 
+        // 停止注册节点线程
         stopRegistry();
-        LOGGER.info("[SnailJob]-停止注册节点守护线程");
     }
 
     /**
@@ -113,12 +114,10 @@ public class EmbedServer {
 
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) {
-            long requestId = System.currentTimeMillis();
-
             String uri = msg.uri();
             HttpMethod method = msg.method();
             String requestData = msg.content().toString(StandardCharsets.UTF_8);
-            LOGGER.info("[SnailJob]-{}-请求方法: {} 请求地址:{} 请求体:{}", requestId, method.name(), uri, requestData);
+            LOGGER.info("[SnailJob]-请求方法: {} 请求地址:{} 请求体:{}", method.name(), uri, requestData);
 
             // 请求处理
             ResultT<String> result = doService(method, uri, requestData);
@@ -131,7 +130,7 @@ public class EmbedServer {
                 LOGGER.error("[SnailJob]-序列化JSON异常");
             }
             doResponse(ctx, msg, responseJson);
-            LOGGER.info("[SnailJob]-{}-请求响应: {}", requestId, responseJson);
+            LOGGER.info("[SnailJob]-请求响应: {}", responseJson);
         }
 
         /**
@@ -188,18 +187,19 @@ public class EmbedServer {
                 response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
             }
             ctx.writeAndFlush(response);
+            ctx.close();
         }
     }
 
     /**
-     * 注册节点到调度中心
+     * 启动注册线程
      */
-    private void startRegistry(String appName, String address) {
-        ExecutorRegistryThread.start(appName, address);
+    private void startRegistry(String groupName, String executorAddress) {
+        ExecutorRegistryThread.start(groupName, executorAddress);
     }
 
     /**
-     * 从调度中心移除节点
+     * 停止注册线程
      */
     private void stopRegistry() {
         ExecutorRegistryThread.stop();

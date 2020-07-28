@@ -1,22 +1,28 @@
 package com.snailwu.job.core.biz.model;
 
+import java.util.Date;
+
 /**
+ * 回调任务执行结果
+ *
  * @author 吴庆龙
  * @date 2020/5/25 2:39 下午
  */
 public class CallbackParam {
 
     private long logId;
-    private long logDateTime;
-    private ResultT<String> executeResult;
+    private Date execTime;
+    private int execCode;
+    private String execMsg;
 
     public CallbackParam() {
     }
 
-    public CallbackParam(long logId, long logDateTime, ResultT<String> executeResult) {
+    public CallbackParam(long logId, Date execTime, int execCode, String execMsg) {
         this.logId = logId;
-        this.logDateTime = logDateTime;
-        this.executeResult = executeResult;
+        this.execTime = execTime;
+        this.execCode = execCode;
+        this.execMsg = execMsg;
     }
 
     public long getLogId() {
@@ -27,19 +33,27 @@ public class CallbackParam {
         this.logId = logId;
     }
 
-    public long getLogDateTime() {
-        return logDateTime;
+    public Date getExecTime() {
+        return execTime;
     }
 
-    public void setLogDateTime(long logDateTime) {
-        this.logDateTime = logDateTime;
+    public void setExecTime(Date execTime) {
+        this.execTime = execTime;
     }
 
-    public ResultT<String> getExecuteResult() {
-        return executeResult;
+    public int getExecCode() {
+        return execCode;
     }
 
-    public void setExecuteResult(ResultT<String> executeResult) {
-        this.executeResult = executeResult;
+    public void setExecCode(int execCode) {
+        this.execCode = execCode;
+    }
+
+    public String getExecMsg() {
+        return execMsg;
+    }
+
+    public void setExecMsg(String execMsg) {
+        this.execMsg = execMsg;
     }
 }

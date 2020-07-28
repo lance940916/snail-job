@@ -5,7 +5,7 @@ import com.snailwu.job.core.biz.client.AdminBizClient;
 import com.snailwu.job.core.handler.IJobHandler;
 import com.snailwu.job.core.server.EmbedServer;
 import com.snailwu.job.core.thread.JobThread;
-import com.snailwu.job.core.thread.TriggerCallbackThread;
+import com.snailwu.job.core.thread.ResultCallbackThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,7 +115,7 @@ public class SnailJobExecutor {
         initAdminBiz(adminAddress, accessToken);
 
         // 启动回调任务执行结果线程
-        TriggerCallbackThread.start();
+        ResultCallbackThread.start();
 
         // 启动 Netty 服务，并将节点注册到调度中心
         startEmbedServer();
@@ -125,7 +125,7 @@ public class SnailJobExecutor {
      * 停止
      */
     public void stop() {
-        TriggerCallbackThread.stop();
+        ResultCallbackThread.stop();
         stopEmbedServer();
     }
 

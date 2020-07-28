@@ -105,7 +105,6 @@ public class JobTrigger {
         triggerParam.setExecutorBlockStrategy(jobInfo.getExecutorBlockStrategy());
         triggerParam.setExecutorTimeout(jobInfo.getExecutorTimeout());
         triggerParam.setLogId(jobLog.getId());
-        triggerParam.setLogDateTime(jobLog.getTriggerTime().getTime());
 
         // 3 选择一个执行器
         String address = null;

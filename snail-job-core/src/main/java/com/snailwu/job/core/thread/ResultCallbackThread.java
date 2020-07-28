@@ -17,8 +17,8 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author 吴庆龙
  * @date 2020/5/26 4:43 下午
  */
-public class TriggerCallbackThread {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TriggerCallbackThread.class);
+public class ResultCallbackThread {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResultCallbackThread.class);
 
     /**
      * 回调队列
@@ -30,13 +30,13 @@ public class TriggerCallbackThread {
      */
     public static void addCallbackQueue(CallbackParam callbackParam) {
         CALLBACK_QUEUE.add(callbackParam);
-        LOGGER.info("[SnailJob]-回调线程-添加任务到队列.logId:{}", callbackParam.getLogId());
+        LOGGER.info("[SnailJob]-回调线程-添加到队列.logId:{}", callbackParam.getLogId());
     }
 
     /**
      * 回调线程
      */
-    private static Thread triggerCallbackThread;
+    private static Thread callbackThread;
 
     /**
      * 回调线程终止标志
@@ -48,12 +48,13 @@ public class TriggerCallbackThread {
      */
     public static void start() {
         if (SnailJobExecutor.getAdminBiz() == null) {
-            LOGGER.warn("[SnailJob]-回调线程-启动失败. 没有配置调度中心地址");
+            LOGGER.warn("[SnailJob]-回调线程-启动失败.没有配置调度中心地址");
             return;
         }
 
-        triggerCallbackThread = new Thread(() -> {
+        callbackThread = new Thread(() -> {
             while (!stopFlag) {
+                // 每次都是批量进行回调
                 try {
                     // 从队列中获取回调参数（回调任务）
                     CallbackParam callbackParam = CALLBACK_QUEUE.take();
@@ -70,8 +71,10 @@ public class TriggerCallbackThread {
                 } catch (InterruptedException e) {
                     if (!stopFlag) {
                         // 没有主动进行中断，发生异常
-                        LOGGER.error(e.getMessage(), e);
+                        LOGGER.error("回调线程被终端并且stopFlag = false");
                     }
+                } catch (Exception e) {
+                    LOGGER.error("回调任务发生异常.原因:{}", e.getMessage());
                 }
             }
 
@@ -83,9 +86,10 @@ public class TriggerCallbackThread {
             }
         });
 
-        triggerCallbackThread.setDaemon(true);
-        triggerCallbackThread.setName("TriggerCallbackThread");
-        triggerCallbackThread.start();
+        callbackThread.setDaemon(true);
+        callbackThread.setName("ResultCallbackThread");
+        callbackThread.start();
+        LOGGER.info("任务执行结果回调线程启动成功");
 
         // TODO 重试线程
     }
@@ -96,15 +100,16 @@ public class TriggerCallbackThread {
     private static void doCallback(List<CallbackParam> callbackParamList) {
         AdminBiz adminBiz = SnailJobExecutor.getAdminBiz();
         try {
-            ResultT<String> resultT = adminBiz.callback(callbackParamList);
-            if (resultT != null && ResultT.SUCCESS_CODE == resultT.getCode()) {
+            ResultT<String> result = adminBiz.callback(callbackParamList);
+            if (ResultT.SUCCESS_CODE == result.getCode()) {
                 LOGGER.info("[SnailJob]-回调线程-回调成功");
             } else {
-                LOGGER.error("[SnailJob]-回调线程-回调失败");
+                LOGGER.error("[SnailJob]-回调线程-回调失败.原因:{}", result.getMsg());
             }
         } catch (Exception e) {
-            LOGGER.error("[SnailJob]-回调线程-回调异常", e);
+            LOGGER.error("[SnailJob]-回调线程-回调异常.原因:{}", e.getMessage());
         }
+
         // TODO 失败重试
     }
 
@@ -113,15 +118,10 @@ public class TriggerCallbackThread {
      */
     public static void stop() {
         stopFlag = true;
-
-        if (triggerCallbackThread != null) {
-            triggerCallbackThread.interrupt();
-            try {
-                triggerCallbackThread.join();
-            } catch (InterruptedException e) {
-                LOGGER.error(e.getMessage(), e);
-            }
+        if (callbackThread != null) {
+            callbackThread.interrupt();
         }
+        LOGGER.info("任务执行结果回调线程停止成功");
     }
 
 }

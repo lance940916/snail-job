@@ -15,9 +15,8 @@ public class TriggerParam {
     private String executorBlockStrategy;
     private Integer executorTimeout;
 
-    // 任务对应的日志 ID 和 时间
+    // 任务对应的日志 ID 和 时间。用于进行回调，填充日志
     private Long logId;
-    private Long logDateTime;
 
     public Integer getJobId() {
         return jobId;
@@ -65,14 +64,6 @@ public class TriggerParam {
 
     public void setLogId(Long logId) {
         this.logId = logId;
-    }
-
-    public Long getLogDateTime() {
-        return logDateTime;
-    }
-
-    public void setLogDateTime(Long logDateTime) {
-        this.logDateTime = logDateTime;
     }
 
 }

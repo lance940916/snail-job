@@ -31,7 +31,9 @@ public class JobHttpUtil {
 
     /**
      * 发起 Http Post 请求
+     * 返回值一定不是 null
      */
+    @SuppressWarnings("unchecked")
     public static <T> ResultT<T> postBody(String url, String accessToken, Object bodyObj, int timeout, Class<T> clazz) {
         if (url == null || !url.startsWith("http")) {
             return new ResultT<>(ResultT.FAIL_CODE, "请求地址不正确");
@@ -42,7 +44,7 @@ public class JobHttpUtil {
             URL realUrl = new URL(url);
             connection = (HttpURLConnection) realUrl.openConnection();
 
-            // 信任 Https
+            // 信任所有主机
             boolean useHttps = url.startsWith("https");
             if (useHttps) {
                 HttpsURLConnection https = (HttpsURLConnection) connection;
@@ -81,7 +83,7 @@ public class JobHttpUtil {
             // 校验状态码
             int statusCode = connection.getResponseCode();
             if (statusCode != 200) {
-                return new ResultT<>(ResultT.FAIL_CODE, "Job发送Http请求失败,状态码:" + statusCode + ",URL:" + url);
+                return new ResultT<>(ResultT.FAIL_CODE, "请求失败.statusCode:[" + statusCode + "],URL:[" + url + "]");
             }
 
             // 读取响应内容
@@ -93,17 +95,16 @@ public class JobHttpUtil {
             }
             String resultJson = sb.toString();
 
-            // 解析 Json
+            // 解析 Json, Http返回的是 Result<?> 的json
             try {
-                T resultT = JobJsonUtil.readValue(resultJson, clazz);
-                return new ResultT<>(resultT);
+                return JobJsonUtil.readValue(resultJson, ResultT.class, clazz);
             } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
+                LOGGER.error("解析JSON异常.URL:[{}],响应内容:{}", url, resultJson);
                 return new ResultT<>(ResultT.FAIL_CODE, "解析响应JSON异常");
             }
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            return new ResultT<>(ResultT.FAIL_CODE, "发起HTTP请求异常");
+            LOGGER.error("HTTP请求异常.URL:[{}],异常信息:{}", url, e.getMessage());
+            return new ResultT<>(ResultT.FAIL_CODE, "HTTP请求异常");
         } finally {
             if (connection != null) {
                 connection.disconnect();

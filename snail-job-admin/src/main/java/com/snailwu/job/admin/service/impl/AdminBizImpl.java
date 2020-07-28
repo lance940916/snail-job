@@ -42,6 +42,7 @@ public class AdminBizImpl implements AdminBiz {
     @Override
     public ResultT<String> callback(List<CallbackParam> callbackParamList) {
         for (CallbackParam callbackParam : callbackParamList) {
+            // 查询任务日志
             JobLog jobLog = jobLogMapper.selectOne(
                     select(JobLogDynamicSqlSupport.jobLog.allColumns())
                             .from(JobLogDynamicSqlSupport.jobLog)
@@ -58,34 +59,38 @@ public class AdminBizImpl implements AdminBiz {
             // 更新 JobLog 执行结果
             JobLog updateJobLog = new JobLog();
             updateJobLog.setId(jobLog.getId());
-            updateJobLog.setExecTime(new Date());
-            updateJobLog.setExecCode(callbackParam.getExecuteResult().getCode());
-            updateJobLog.setExecMsg(callbackParam.getExecuteResult().getMsg());
+            updateJobLog.setExecTime(callbackParam.getExecTime());
+            updateJobLog.setExecCode(callbackParam.getExecCode());
+            updateJobLog.setExecMsg(callbackParam.getExecMsg());
             AdminConfig.getInstance().getJobLogMapper().updateByPrimaryKeySelective(updateJobLog);
-            log.info("回调成功. 任务执行结果: {}", callbackParam.getExecuteResult().getCode());
+            log.info("回调成功. 任务执行结果: {}", callbackParam.getExecCode());
         }
         return ResultT.SUCCESS;
     }
 
     @Override
     public ResultT<String> registry(RegistryParam registryParam) {
-        // 更新数据库
-        long jobExecutorCount = jobExecutorMapper.count(
-                select(count(JobExecutorDynamicSqlSupport.id))
+        JobExecutor jobExecutor = jobExecutorMapper.selectOne(
+                select(JobExecutorDynamicSqlSupport.id)
                         .from(JobExecutorDynamicSqlSupport.jobExecutor)
                         .where(JobExecutorDynamicSqlSupport.groupName, isEqualTo(registryParam.getGroupName()))
                         .and(JobExecutorDynamicSqlSupport.address, isEqualTo(registryParam.getExecutorAddress()))
                         .build().render(RenderingStrategies.MYBATIS3)
-        );
-
-        // 数据不存在，插入数据
-        if (jobExecutorCount == 0) {
+        ).orElse(null);
+        if (jobExecutor == null) {
+            // insert
             JobExecutor executor = new JobExecutor();
             executor.setGroupName(registryParam.getGroupName());
             executor.setAddress(registryParam.getExecutorAddress());
             executor.setRegistryType(RegistryType.AUTO.getValue());
             executor.setUpdateTime(new Date());
             jobExecutorMapper.insertSelective(executor);
+        } else {
+            // update
+            JobExecutor executor = new JobExecutor();
+            executor.setId(jobExecutor.getId());
+            executor.setUpdateTime(new Date());
+            jobExecutorMapper.updateByPrimaryKeySelective(executor);
         }
         return ResultT.SUCCESS;
     }
