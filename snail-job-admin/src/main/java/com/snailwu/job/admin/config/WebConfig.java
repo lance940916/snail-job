@@ -1,5 +1,6 @@
 package com.snailwu.job.admin.config;
 
+import com.snailwu.job.admin.controller.interceptor.RequestIdInterceptor;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
+import javax.annotation.Resource;
 import java.time.Duration;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -29,6 +31,9 @@ public class WebConfig implements WebMvcConfigurer, ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
+    @Resource
+    private RequestIdInterceptor requestIdInterceptor;
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
@@ -40,6 +45,11 @@ public class WebConfig implements WebMvcConfigurer, ApplicationContextAware {
         registry.addViewController("/group").setViewName("group/group.index");
         registry.addViewController("/job").setViewName("job/job.index");
         registry.addViewController("/log").setViewName("log/log.index");
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(requestIdInterceptor).addPathPatterns("/**");
     }
 
     /**

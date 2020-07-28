@@ -26,7 +26,7 @@ import static com.snailwu.job.core.utils.JobHttpUtil.JOB_ACCESS_TOKEN;
 @Aspect
 @Component
 public class ApiAccessTokenAspect {
-    private static final Logger log = LoggerFactory.getLogger(ApiAccessTokenAspect.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApiAccessTokenAspect.class);
 
     private final String adminAccessToken = PropConfig.getInstance().getRequiredEnv("snail.job.access-token");
 
@@ -39,7 +39,8 @@ public class ApiAccessTokenAspect {
             return joinPoint.proceed();
         }
         String uri = request.getRequestURI();
-        log.error("{}-AccessToken错误", uri);
+
+        LOGGER.error("[SnailJob]-{}-AccessToken错误", uri);
         return new ResultT<>(ResultT.FAIL_CODE, "AccessToken错误");
     }
 
