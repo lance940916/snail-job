@@ -26,15 +26,17 @@ public class ExecutorBizImpl implements ExecutorBiz {
     public ResultT<String> idleBeat(IdleBeatParam idleBeatParam) {
         JobThread jobThread = SnailJobExecutor.loadJobThread(idleBeatParam.getJobId());
         if (jobThread != null && jobThread.isRunningOrHasQueue()) {
-            return new ResultT<>(ResultT.FAIL_CODE, "执行器忙碌.");
+            return new ResultT<>(ResultT.FAIL_CODE, "执行器忙碌");
         }
         return ResultT.SUCCESS;
     }
 
     @Override
     public ResultT<String> run(TriggerParam triggerParam) {
+        Integer jobId = triggerParam.getJobId();
+
         // 通过 jobId, 获取执行线程，获取执行方法。如果任务执行了一次后，这里就可以获取到了
-        JobThread jobThread = SnailJobExecutor.loadJobThread(triggerParam.getJobId());
+        JobThread jobThread = SnailJobExecutor.loadJobThread(jobId);
         IJobHandler jobHandler = jobThread != null ? jobThread.getJobHandler() : null;
 
         // 移除原因
@@ -52,12 +54,12 @@ public class ExecutorBizImpl implements ExecutorBiz {
             // 更换为新的 handler
             jobHandler = newJobHandler;
             if (jobHandler == null) {
-                return new ResultT<>(ResultT.FAIL_CODE, "job handler [" + triggerParam.getExecutorHandler() + "] not found.");
+                return new ResultT<>(ResultT.FAIL_CODE, "没有找到对应的JobHandler-[" + triggerParam.getExecutorHandler() + "]");
             }
         }
 
         if (jobThread == null) {
-            jobThread = SnailJobExecutor.registryJobThread(triggerParam.getJobId(), jobHandler, removeOldReason);
+            jobThread = SnailJobExecutor.registryJobThread(jobId, jobHandler, removeOldReason);
         }
 
         // 最后 添加任务到队列中等待执行
@@ -66,11 +68,18 @@ public class ExecutorBizImpl implements ExecutorBiz {
 
     @Override
     public ResultT<String> kill(KillParam killParam) {
+        // 获取调度线程
         JobThread jobThread = SnailJobExecutor.loadJobThread(killParam.getJobId());
+        if (jobThread == null) {
+            return new ResultT<>(ResultT.SUCCESS_CODE, "调度线程为空.");
+        }
+
+
+
         if (jobThread != null) {
-            SnailJobExecutor.removeJobThread(killParam.getJobId(), "scheduling center kill job.");
+            SnailJobExecutor.removeJobThread(killParam.getJobId(), "调度中心终止任务.");
             return ResultT.SUCCESS;
         }
-        return new ResultT<>(ResultT.SUCCESS_CODE, "job thread already killed.");
+        return new ResultT<>(ResultT.SUCCESS_CODE, "任务被终止.");
     }
 }

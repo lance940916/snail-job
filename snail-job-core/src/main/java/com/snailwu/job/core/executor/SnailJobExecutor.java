@@ -197,7 +197,7 @@ public class SnailJobExecutor {
     public static JobThread registryJobThread(int jobId, IJobHandler handler, String removeOldReason) {
         JobThread jobThread = new JobThread(jobId, handler);
         jobThread.start();
-        LOGGER.info("[SnailJob]-注册JobThread成功. jobId:{}, handler:{}", jobId, handler);
+        LOGGER.info("[SnailJob]-注册JobThread成功.jobId:{},handler:{}", jobId, handler);
 
         JobThread oldJobThread = JOB_THREAD_REPOSITORY.put(jobId, jobThread);
         if (oldJobThread != null) {

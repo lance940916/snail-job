@@ -7,6 +7,7 @@ package com.snailwu.job.core.biz.model;
 public class KillParam {
 
     private int jobId;
+    private int logId;
 
     public KillParam() {
     }
@@ -21,5 +22,10 @@ public class KillParam {
 
     public void setJobId(int jobId) {
         this.jobId = jobId;
+    }
+
+    public KillParam(int jobId, int logId) {
+        this.jobId = jobId;
+        this.logId = logId;
     }
 }

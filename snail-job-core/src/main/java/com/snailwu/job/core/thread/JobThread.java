@@ -95,6 +95,22 @@ public class JobThread extends Thread {
     }
 
     /**
+     * 将任务从队列中移除
+     */
+    public ResultT<String> removeJobQueue(TriggerParam triggerParam) {
+        // 校验是否有重复的
+        if (logIdSet.contains(triggerParam.getLogId())) {
+            LOGGER.info("[SnailJob]-执行任务-队列中已有重复的任务.logId:{}", triggerParam.getLogId());
+            return new ResultT<>(ResultT.FAIL_CODE, "重复的任务调度.logId:" + triggerParam.getLogId());
+        }
+        logIdSet.add(triggerParam.getLogId());
+
+        // 添加到执行队列
+        jobQueue.add(triggerParam);
+        return ResultT.SUCCESS;
+    }
+
+    /**
      * 该 JobThread 是否忙碌
      */
     public boolean isRunningOrHasQueue() {
