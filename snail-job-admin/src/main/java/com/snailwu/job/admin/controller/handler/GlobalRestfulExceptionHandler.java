@@ -25,7 +25,7 @@ public class GlobalRestfulExceptionHandler {
         String uri = request.getRequestURI();
         // 异常信息
         String message = e.getMessage();
-        LOGGER.error("[SnailJob]-请求:[{}]发生异常:{}", uri, message);
+        LOGGER.error("[SnailJob]-Rest请求:[{}]发生异常:{}", uri, message);
         return new ResultT<>(ResultT.FAIL_CODE, e.getMessage());
     }
 

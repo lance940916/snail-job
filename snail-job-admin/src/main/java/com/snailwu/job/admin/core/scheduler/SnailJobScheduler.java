@@ -1,6 +1,8 @@
 package com.snailwu.job.admin.core.scheduler;
 
 import com.snailwu.job.admin.core.conf.AdminConfig;
+import com.snailwu.job.admin.core.thread.ExecutorRegistryMonitorHelper;
+import com.snailwu.job.admin.core.thread.JobScheduleHelper;
 import com.snailwu.job.core.biz.ExecutorBiz;
 import com.snailwu.job.core.biz.client.ExecutorBizClient;
 import org.slf4j.Logger;
@@ -19,7 +21,11 @@ public class SnailJobScheduler {
      * 初始化
      */
     public void init() {
-//        ExecutorRegistryMonitorHelper.getInstance().start();
+        // 定时整理注册节点到 group 中
+        ExecutorRegistryMonitorHelper.start();
+
+        // 启动任务扫描类
+        JobScheduleHelper.start();
     }
 
     /**

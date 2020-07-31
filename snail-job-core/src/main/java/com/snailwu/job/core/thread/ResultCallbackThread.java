@@ -91,7 +91,7 @@ public class ResultCallbackThread {
         callbackThread.start();
         LOGGER.info("任务执行结果回调线程启动成功");
 
-        // TODO 重试线程
+        // TODO 回调重试线程
     }
 
     /**
@@ -109,8 +109,6 @@ public class ResultCallbackThread {
         } catch (Exception e) {
             LOGGER.error("[SnailJob]-回调线程-回调异常.原因:{}", e.getMessage());
         }
-
-        // TODO 失败重试
     }
 
     /**

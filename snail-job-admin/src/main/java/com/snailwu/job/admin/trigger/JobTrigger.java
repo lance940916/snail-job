@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 import static org.mybatis.dynamic.sql.SqlBuilder.select;
@@ -39,38 +38,36 @@ public class JobTrigger {
      */
     public static void trigger(int jobId, TriggerTypeEnum triggerType, int failRetryCount, String executorParam) {
         // 查询任务信息
-        Optional<JobInfo> jobInfoOptional = AdminConfig.getInstance().getJobInfoMapper().selectOne(
+        JobInfo jobInfo = AdminConfig.getInstance().getJobInfoMapper().selectOne(
                 select(JobInfoDynamicSqlSupport.jobInfo.allColumns())
                         .from(JobInfoDynamicSqlSupport.jobInfo)
                         .where(JobInfoDynamicSqlSupport.id, isEqualTo(jobId))
                         .build().render(RenderingStrategies.MYBATIS3)
-        );
-        if (!jobInfoOptional.isPresent()) {
-            log.error("jobId:{} 无此数据", jobId);
+        ).orElse(null);
+        if (jobInfo == null) {
+            log.error("找不到该任务.jobId:{}", jobId);
             return;
         }
-        JobInfo jobInfo = jobInfoOptional.get();
         if (executorParam != null) {
             jobInfo.setExecutorParam(executorParam);
         }
 
         // 查询任务分组信息
-        Optional<JobGroup> jobGroupOptional = AdminConfig.getInstance().getJobGroupMapper().selectOne(
+        JobGroup jobGroup = AdminConfig.getInstance().getJobGroupMapper().selectOne(
                 select(JobGroupDynamicSqlSupport.jobGroup.addressList)
                         .from(JobGroupDynamicSqlSupport.jobGroup)
                         .where(JobGroupDynamicSqlSupport.name, isEqualTo(jobInfo.getGroupName()))
                         .build().render(RenderingStrategies.MYBATIS3)
-        );
-        if (!jobGroupOptional.isPresent()) {
+        ).orElse(null);
+        if (jobGroup == null) {
             log.warn("执行器不存在. {}", jobInfo.getGroupName());
             return;
         }
-        JobGroup jobGroup = jobGroupOptional.get();
 
         // 任务调度地址集合
         String groupAddresses = jobGroup.getAddressList();
 
-        // 失败重试次数
+        // 失败重试次数（如果参数大于，则使用参数的值）
         int finalFailRetryCount = failRetryCount >= 0 ? failRetryCount : jobInfo.getExecutorFailRetryCount();
 
         // 进行调度

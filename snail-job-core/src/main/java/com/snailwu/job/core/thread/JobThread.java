@@ -40,6 +40,7 @@ public class JobThread extends Thread {
 
     /**
      * Job 对应的日志表的 ID
+     * 做任务去重使用
      */
     private final Set<Long> logIdSet;
 
@@ -98,11 +99,6 @@ public class JobThread extends Thread {
      * 将任务从队列中移除
      */
     public ResultT<String> removeJobQueue(TriggerParam triggerParam) {
-        // 校验是否有重复的
-        if (logIdSet.contains(triggerParam.getLogId())) {
-            LOGGER.info("[SnailJob]-执行任务-队列中已有重复的任务.logId:{}", triggerParam.getLogId());
-            return new ResultT<>(ResultT.FAIL_CODE, "重复的任务调度.logId:" + triggerParam.getLogId());
-        }
         logIdSet.add(triggerParam.getLogId());
 
         // 添加到执行队列
@@ -139,41 +135,15 @@ public class JobThread extends Thread {
             try {
                 // 从队列中获取任务
                 triggerParam = jobQueue.poll(3L, TimeUnit.SECONDS);
-                if (triggerParam != null) { // 有任务需要执行
-                    // 设置为运行任务中
+                if (triggerParam != null) {
+                    // 执行任务
                     runningFlag = true;
-                    // 重置无任务次数
                     idleTimes = 0;
-                    // 日志集合中移除
                     logIdSet.remove(triggerParam.getLogId());
 
                     // 进行方法的调用
-                    if (triggerParam.getExecutorTimeout() > 0) { // 有超时时间的
-                        // 启动线程
-                        final TriggerParam triggerParamTmp = triggerParam;
-                        FutureTask<ResultT<String>> futureTask = new FutureTask<>(new Callable<ResultT<String>>() {
-                            @Override
-                            public ResultT<String> call() throws Exception {
-                                return jobHandler.execute(triggerParamTmp.getExecutorParams());
-                            }
-                        });
-                        Thread futureThead = new Thread(futureTask);
-                        futureThead.start();
+                    execResult = doInvoke(triggerParam);
 
-                        // 获取执行结果，有超时时间
-                        try {
-                            execResult = futureTask.get(triggerParam.getExecutorTimeout(), TimeUnit.SECONDS);
-                        } catch (TimeoutException e) {
-                            LOGGER.error("[SnailJob]-任务执行超时.jobId:{}", jobId);
-                            execResult = new ResultT<>(ResultT.FAIL_CODE, "任务执行超时");
-                        } finally {
-                            // 发生异常时，终止线程的挂起操作，让线程自行结束
-                            // 线程内如果用 while(true) 的话，interrupt 方法不能停止线程
-                            futureThead.interrupt();
-                        }
-                    } else { // 没有超时时间的，直接执行
-                        execResult = jobHandler.execute(triggerParam.getExecutorParams());
-                    }
                     runningFlag = false;
                     LOGGER.info("[SnailJob]-任务执行完成");
                 } else {
@@ -196,15 +166,8 @@ public class JobThread extends Thread {
                     CallbackParam callbackParam = new CallbackParam();
                     callbackParam.setLogId(triggerParam.getLogId());
                     callbackParam.setExecTime(new Date());
-                    if (!stopFlag) {
-                        // 线程正常执行返回结果
-                        callbackParam.setExecCode(execResult.getCode());
-                        callbackParam.setExecMsg(execResult.getMsg());
-                    } else {
-                        // 线程返回被中断的结果
-                        callbackParam.setExecCode(ResultT.FAIL_CODE);
-                        callbackParam.setExecMsg(stopReason + "-[线程被中断]");
-                    }
+                    callbackParam.setExecCode(execResult.getCode());
+                    callbackParam.setExecMsg(execResult.getMsg());
                     ResultCallbackThread.addCallbackQueue(callbackParam);
                 }
             }
@@ -228,6 +191,38 @@ public class JobThread extends Thread {
             jobHandler.destroy();
         } catch (Exception e) {
             LOGGER.error("执行任务销毁方法异常.原因:{}", e.getMessage());
+        }
+    }
+
+    /**
+     * 执行方法
+     */
+    private ResultT<String> doInvoke(TriggerParam triggerParam) throws Exception {
+        if (triggerParam.getExecutorTimeout() > 0) { // 有超时时间的
+            // 启动线程
+            final TriggerParam triggerParamTmp = triggerParam;
+            FutureTask<ResultT<String>> futureTask = new FutureTask<>(new Callable<ResultT<String>>() {
+                @Override
+                public ResultT<String> call() throws Exception {
+                    return jobHandler.execute(triggerParamTmp.getExecutorParams());
+                }
+            });
+            Thread futureThead = new Thread(futureTask);
+            futureThead.start();
+
+            // 获取执行结果，有超时时间
+            try {
+                return futureTask.get(triggerParam.getExecutorTimeout(), TimeUnit.SECONDS);
+            } catch (TimeoutException e) {
+                LOGGER.error("[SnailJob]-任务执行超时.jobId:{}", jobId);
+                return new ResultT<>(ResultT.FAIL_CODE, "任务执行超时");
+            } finally {
+                // 发生异常时，终止线程的挂起操作，让线程自行结束
+                // 线程内如果用 while(true) 的话，interrupt 方法不能停止线程
+                futureThead.interrupt();
+            }
+        } else { // 没有超时时间的，直接执行
+            return jobHandler.execute(triggerParam.getExecutorParams());
         }
     }
 

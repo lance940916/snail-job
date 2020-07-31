@@ -37,7 +37,8 @@ public class ExecutorBizImpl implements ExecutorBiz {
 
         // 通过 jobId, 获取执行线程，获取执行方法。如果任务执行了一次后，这里就可以获取到了
         JobThread jobThread = SnailJobExecutor.loadJobThread(jobId);
-        IJobHandler jobHandler = jobThread != null ? jobThread.getJobHandler() : null;
+        // 获取 JobHandler
+        IJobHandler jobHandler = jobThread == null ? null : jobThread.getJobHandler();
 
         // 移除原因
         String removeOldReason = null;
@@ -45,19 +46,13 @@ public class ExecutorBizImpl implements ExecutorBiz {
         // 与已存在的线程对比线程内的 jobHandler，如果不一样，则动态替换 handler。立即生效
         IJobHandler newJobHandler = SnailJobExecutor.loadJobHandler(triggerParam.getExecutorHandler());
         if (jobThread != null && jobHandler != newJobHandler) {
-            removeOldReason = "JobHandler发生变更";
+            removeOldReason = "Job对应的JobHandler发生变更";
             jobThread = null;
-            jobHandler = null;
-        }
-
-        if (jobHandler == null) {
-            // 更换为新的 handler
             jobHandler = newJobHandler;
-            if (jobHandler == null) {
-                return new ResultT<>(ResultT.FAIL_CODE, "没有找到对应的JobHandler-[" + triggerParam.getExecutorHandler() + "]");
-            }
         }
-
+        if (jobHandler == null) {
+            return new ResultT<>(ResultT.FAIL_CODE, "没有找到对应的JobHandler-[" + triggerParam.getExecutorHandler() + "]");
+        }
         if (jobThread == null) {
             jobThread = SnailJobExecutor.registryJobThread(jobId, jobHandler, removeOldReason);
         }
@@ -73,13 +68,7 @@ public class ExecutorBizImpl implements ExecutorBiz {
         if (jobThread == null) {
             return new ResultT<>(ResultT.SUCCESS_CODE, "调度线程为空.");
         }
-
-
-
-        if (jobThread != null) {
-            SnailJobExecutor.removeJobThread(killParam.getJobId(), "调度中心终止任务.");
-            return ResultT.SUCCESS;
-        }
-        return new ResultT<>(ResultT.SUCCESS_CODE, "任务被终止.");
+        SnailJobExecutor.removeJobThread(killParam.getJobId(), "调度中心终止任务.");
+        return new ResultT<>(ResultT.SUCCESS_CODE, "调度线程被终止.");
     }
 }
