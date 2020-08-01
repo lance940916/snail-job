@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static com.snailwu.job.admin.constant.SysConstants.DATE_TIME_PATTERN;
+import static com.snailwu.job.admin.constant.JobConstants.DATE_TIME_PATTERN;
 import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 import static org.mybatis.dynamic.sql.SqlBuilder.select;
 

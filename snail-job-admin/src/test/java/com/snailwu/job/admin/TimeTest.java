@@ -1,8 +1,11 @@
 package com.snailwu.job.admin;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.util.concurrent.TimeUnit;
+
+import static com.snailwu.job.admin.constant.JobConstants.DATE_TIME_PATTERN;
 
 /**
  * @author 吴庆龙
@@ -11,30 +14,24 @@ import java.util.concurrent.TimeUnit;
 public class TimeTest {
     public static void main(String[] args) throws InterruptedException {
 
-//        long nowTimeTs = System.currentTimeMillis();
+        long preReadMs = 5000;
 
-//        TimeUnit.MILLISECONDS.sleep(1000 - System.currentTimeMillis() % 1000);
-//        System.out.println(System.currentTimeMillis());
-//
-//        TimeUnit.MILLISECONDS.sleep(1000 - System.currentTimeMillis() % 1000);
-//        System.out.println(System.currentTimeMillis());
-//
-//        TimeUnit.MILLISECONDS.sleep(1000 - System.currentTimeMillis() % 1000);
-//        System.out.println(System.currentTimeMillis());
+        while (true) {
+            long startTs = System.currentTimeMillis();
+            System.out.println("当前时间:" + DateFormatUtils.format(startTs, DATE_TIME_PATTERN));
 
-        long ts = System.currentTimeMillis();
-//        System.out.println(DateFormatUtils.format(ts, "yyyy-MM-dd HH:mm:ss,SSS"));
-//        int invokeSecond = (int) ((ts / 1000) % 60);
-//        System.out.println(invokeSecond);
+            long curTs = startTs / 1000 * 1000;
 
-        TimeUnit.MILLISECONDS.sleep(1000 - ts % 1000);
-        ts = System.currentTimeMillis();
-        long newTs = ts - 999;
-        System.out.println(System.currentTimeMillis());
-        System.out.println(DateFormatUtils.format(ts, "yyyy-MM-dd HH:mm:ss,SSS"));
-        System.out.println(DateFormatUtils.format(newTs, "yyyy-MM-dd HH:mm:ss,SSS"));
+            System.out.println("读取 [" + DateFormatUtils.format(curTs, DATE_TIME_PATTERN)
+                    + "]-[" + DateFormatUtils.format(curTs + preReadMs, DATE_TIME_PATTERN) + "] 之间的数据");
 
+            TimeUnit.SECONDS.sleep(RandomUtils.nextInt(1, 4));
 
+            long costMs = System.currentTimeMillis() - curTs;
+            System.out.println("耗时:" + costMs + "毫秒");
+
+            TimeUnit.MILLISECONDS.sleep(preReadMs - costMs);
+        }
 
     }
 }

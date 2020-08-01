@@ -14,6 +14,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import static com.snailwu.job.admin.constant.JobConstants.DATE_TIME_PATTERN;
 import static com.snailwu.job.admin.mapper.JobInfoDynamicSqlSupport.*;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
@@ -41,11 +42,6 @@ public class JobScheduleHelper {
     private static volatile boolean invokeJobStopFlag = false;
 
     /**
-     * 提前 5 秒加载数据
-     */
-    private static final long PRE_READ_MS = 5000;
-
-    /**
      * 缓存将要执行的任务
      * key: 秒
      * val: 任务ID集合
@@ -62,54 +58,61 @@ public class JobScheduleHelper {
      */
     public static void start() {
         scanJobThread = new Thread(() -> {
-            // 对齐整秒
-            try {
-                TimeUnit.MILLISECONDS.sleep(1000 - System.currentTimeMillis() % 1000);
-            } catch (InterruptedException e) {
-                LOGGER.error("[SnailJob]-对齐整秒休眠异常.原因:{}", e.getMessage());
-            }
+            // 加入接下来5秒内待调度的任务，也就是5秒后必须进行下一次任务的扫描
+            final long preReadMs = 5000;
+
             while (!scanJobStopFlag) {
-                // 当前时间戳, 到这里后是"17:06:25,003"比整秒大一点
-                long nowTimeTs = System.currentTimeMillis();
+                long startTs = System.currentTimeMillis();
+
+                // 当前整秒时间戳
+                long nowTimeTs = startTs / 1000 * 1000;
 
                 // 获取 触发时间小于等于该时间戳的所有任务
-                long maxTriggerNextTime = nowTimeTs + PRE_READ_MS;
+                long nextScanTs = nowTimeTs + preReadMs;
 
-                // 扫描将要待执行的任务
+                // 扫描将要待执行的任务 FIXME 与数据库打交道,耗时未知,需要加缓存
                 List<JobInfo> jobInfoList = AdminConfig.getInstance().getJobInfoMapper().selectMany(
-                        select(jobInfo.allColumns())
+                        select(jobInfo.id, jobInfo.triggerNextTime)
                                 .from(jobInfo)
                                 .where(triggerStatus, isEqualTo((byte) 1)) // 可运行的
-                                .and(triggerNextTime, isLessThanOrEqualTo(maxTriggerNextTime)) // 下次调度时间小于等于未来5秒
+                                .and(triggerNextTime, isLessThanOrEqualTo(nextScanTs)) // 下次调度时间小于等于未来5秒
                                 .limit(MAX_LIMIT_PRE_READ)
                                 .build().render(RenderingStrategies.MYBATIS3)
                 );
 
                 // 遍历待执行的任务
                 for (JobInfo info : jobInfoList) {
-                    // 1. 过时的任务 - 忽略
-                    // 防止出现触发时间是"17:06:25,000"，当前时间是"17:06:25,003"的情况
-                    if (info.getTriggerNextTime() < nowTimeTs - 999) {
-                        LOGGER.warn("[SnailJob]-任务:{},错失触发时间:{}", info.getId(),
-                                DateFormatUtils.format(info.getTriggerNextTime(), "yyyy-MM-dd HH:mm:ss,SSS"));
+                    Long triggerNextTime = info.getTriggerNextTime();
 
-                        // 计算任务从当前时间开始的下次执行时间
+                    // 1. 过时的任务 - 忽略
+                    if (triggerNextTime < nowTimeTs) {
+                        LOGGER.warn("任务:{},错失触发时间:{}", info.getId(),
+                                DateFormatUtils.format(triggerNextTime, DATE_TIME_PATTERN));
+
+                        // 刷新下次调度时间
                         refreshNextValidTime(info, new Date());
                         continue;
                     }
 
-                    // 2. 剩下的任务就是接下来 5 秒内要执行的任务
-                    while (info.getTriggerNextTime() <= maxTriggerNextTime && info.getTriggerNextTime() != 0L) {
-                        // 当前任务需要在 X 秒执行
-                        int invokeSecond = (int) ((info.getTriggerNextTime() / 1000) % 60);
-                        LOGGER.info("[SnailJob]-任务:{},执行时间:{}", info.getId(),
-                                DateFormatUtils.format(info.getTriggerNextTime(), "yyyy-MM-dd HH:mm:ss,SSS"));
+                    // 2. 当前秒要执行的任务
+                    if ((triggerNextTime / 1000 % 60) == (nowTimeTs / 1000 % 60)) {
+                        // 立马进行调度
+                        JobTriggerPoolHelper.push(info.getId(), TriggerTypeEnum.CRON, -1, null);
+
+                        // 刷新下次调度时间
+                        refreshNextValidTime(info, new Date());
+                        triggerNextTime = info.getTriggerNextTime();
+                    }
+
+                    while (triggerNextTime <= nextScanTs && triggerNextTime != 0L) {
+                        int invokeSecond = (int) ((triggerNextTime / 1000) % 60);
 
                         // 放入执行队列
                         pushInvokeMap(invokeSecond, info.getId());
 
-                        // 刷新任务的下次执行时间
+                        // 刷新下次调度时间
                         refreshNextValidTime(info, new Date());
+                        triggerNextTime = info.getTriggerNextTime();
                     }
                 }
 
@@ -124,19 +127,12 @@ public class JobScheduleHelper {
                                     .build().render(RenderingStrategies.MYBATIS3)
                     );
                 }
-                long costTs = System.currentTimeMillis() - nowTimeTs;
-                LOGGER.info("[SnailJob]-本次任务扫描整理耗时:{}毫秒", costTs);
-
-                // 耗时大于预读时间，不进行休眠
-                if (costTs > PRE_READ_MS) {
-                    // 几乎不可能运行到这，如果运行到这则会丢失一些任务调度
-                    LOGGER.warn("[SnailJob]-本次任务扫描整理耗时过长,可能会丢失一些任务调度.");
-                    continue;
-                }
+                long costMs = System.currentTimeMillis() - startTs;
+                LOGGER.info("[SnailJob]-本次任务扫描整理耗时:{}毫秒", costMs);
 
                 // 休眠
                 try {
-                    TimeUnit.MILLISECONDS.sleep(PRE_READ_MS - System.currentTimeMillis() % 1000);
+                    TimeUnit.MILLISECONDS.sleep(preReadMs - costMs);
                 } catch (InterruptedException e) {
                     if (!scanJobStopFlag) {
                         LOGGER.error("对齐整秒，休眠异常", e);

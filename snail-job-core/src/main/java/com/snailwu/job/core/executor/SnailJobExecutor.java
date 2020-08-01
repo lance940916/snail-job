@@ -157,7 +157,7 @@ public class SnailJobExecutor {
 
         // 启动 Netty Server，与 Admin 进行通信
         embedServer = new EmbedServer();
-        embedServer.start(port, executorAddress, groupName);
+        embedServer.start(port, executorAddress, groupName, accessToken);
     }
 
     /**
