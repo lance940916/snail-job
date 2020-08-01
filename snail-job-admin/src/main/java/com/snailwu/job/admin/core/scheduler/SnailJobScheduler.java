@@ -32,26 +32,29 @@ public class SnailJobScheduler {
      * 销毁
      */
     public void destroy() {
+        ExecutorRegistryMonitorHelper.stop();
 
+        JobScheduleHelper.stop();
     }
 
-    // Executor-Client
+    // Executor-Client 库
     private static final ConcurrentHashMap<String, ExecutorBiz> EXECUTOR_BIZ_REPOSITORY = new ConcurrentHashMap<>();
 
+    /**
+     * 获取访问执行器的biz
+     */
     public static ExecutorBiz getExecutorBiz(String address) {
         if (address == null || address.trim().length() == 0) {
             return null;
         }
-
         address = address.trim();
         ExecutorBiz executorBiz = EXECUTOR_BIZ_REPOSITORY.get(address);
         if (executorBiz != null) {
             return executorBiz;
         }
-
         executorBiz = new ExecutorBizClient(address, AdminConfig.getInstance().getAccessToken());
         EXECUTOR_BIZ_REPOSITORY.put(address, executorBiz);
-        return null;
+        return executorBiz;
     }
 
 }

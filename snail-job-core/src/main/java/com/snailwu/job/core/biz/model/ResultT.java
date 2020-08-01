@@ -52,4 +52,13 @@ public class ResultT<T> {
     public void setContent(T content) {
         this.content = content;
     }
+
+    @Override
+    public String toString() {
+        return "ResultT{" +
+                "code=" + code +
+                ", msg='" + msg + '\'' +
+                ", content=" + content +
+                '}';
+    }
 }

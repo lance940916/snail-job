@@ -18,30 +18,22 @@ import java.util.List;
 public class ExecutorRouteBusyOver extends ExecutorRouter {
     @Override
     public ResultT<String> route(TriggerParam triggerParam, List<String> addressList) {
-        StringBuilder sb = new StringBuilder();
         for (String address : addressList) {
-            // 繁忙监测
-            ResultT<String> idleBeatResult;
+            ResultT<String> result;
             try {
                 ExecutorBiz executorBiz = SnailJobScheduler.getExecutorBiz(address);
-                idleBeatResult = executorBiz.idleBeat(new IdleBeatParam(triggerParam.getJobId()));
+                result = executorBiz.idleBeat(new IdleBeatParam(triggerParam.getJobId()));
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
-                idleBeatResult = new ResultT<>(ResultT.FAIL_CODE, e.getMessage());
+                LOGGER.error("选择执行器.idleBeat接口异常,原因:{}", e.getMessage());
+                continue;
             }
 
-            sb.append("Address:").append(address);
-            sb.append("Code:").append(idleBeatResult.getCode());
-            sb.append("Msg:").append(idleBeatResult.getMsg());
-            sb.append(";");
-
-            // 不忙
-            if (idleBeatResult.getCode() == ResultT.SUCCESS_CODE) {
-                idleBeatResult.setMsg(sb.toString());
-                idleBeatResult.setContent(address);
-                return idleBeatResult;
+            if (result.getCode() == ResultT.SUCCESS_CODE) {
+                return new ResultT<>(address);
+            } else {
+                LOGGER.info("选择执行器.执行器:[{}]忙碌,继续寻找执行器...", address);
             }
         }
-        return new ResultT<>(ResultT.FAIL_CODE, sb.toString());
+        return new ResultT<>(ResultT.FAIL_CODE, NO_FOUND_ADDRESS_MSG);
     }
 }

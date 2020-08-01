@@ -50,9 +50,9 @@ public class AdminBizImpl implements AdminBiz {
                             .build().render(RenderingStrategies.MYBATIS3)
             ).orElse(null);
             if (jobLog == null) {
-                return new ResultT<>(ResultT.FAIL_CODE, "没有找到对应的log");
+                return new ResultT<>(ResultT.FAIL_CODE, "没有对应的任务Log记录");
             }
-            if (jobLog.getExecCode() > 0) {
+            if (jobLog.getExecCode() != null) {
                 return new ResultT<>(ResultT.FAIL_CODE, "重复回调");
             }
 

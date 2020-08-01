@@ -7,6 +7,7 @@ import com.snailwu.job.core.biz.model.KillParam;
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.biz.model.TriggerParam;
 import com.snailwu.job.core.thread.ExecutorRegistryThread;
+import com.snailwu.job.core.utils.JobHttpUtil;
 import com.snailwu.job.core.utils.JobJsonUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
@@ -43,7 +44,7 @@ public class EmbedServer {
      *
      * @param httpPort Netty 服务对应的本机端口
      */
-    public void start(int httpPort, String executorAddress, String groupName) {
+    public void start(int httpPort, String executorAddress, String groupName, String accessToken) {
         executorBiz = new ExecutorBizImpl();
         serverThread = new Thread(() -> {
             // 启动 Netty
@@ -59,7 +60,7 @@ public class EmbedServer {
                                     .addLast(new IdleStateHandler(0, 0, 30))
                                     .addLast(new HttpServerCodec())
                                     .addLast(new HttpObjectAggregator(5 * 1024 * 1024))
-                                    .addLast(new EmbedHttpServerHandler(executorBiz))
+                                    .addLast(new EmbedHttpServerHandler(executorBiz, accessToken))
                             ;
                         }
                     })
@@ -107,9 +108,11 @@ public class EmbedServer {
         private static final Logger LOGGER = LoggerFactory.getLogger(EmbedHttpServerHandler.class);
 
         private final ExecutorBiz executorBiz;
+        private final String accessToken;
 
-        public EmbedHttpServerHandler(ExecutorBiz executorBiz) {
+        public EmbedHttpServerHandler(ExecutorBiz executorBiz, String accessToken) {
             this.executorBiz = executorBiz;
+            this.accessToken = accessToken;
         }
 
         @Override
@@ -118,9 +121,10 @@ public class EmbedServer {
             HttpMethod method = msg.method();
             String requestData = msg.content().toString(StandardCharsets.UTF_8);
             LOGGER.info("[SnailJob]-请求方法: {} 请求地址:{} 请求体:{}", method.name(), uri, requestData);
+            String headerAccessToken = msg.headers().get(JobHttpUtil.JOB_ACCESS_TOKEN);
 
             // 请求处理
-            ResultT<String> result = doService(method, uri, requestData);
+            ResultT<String> result = doService(method, uri, headerAccessToken, requestData);
 
             // 请求响应
             String responseJson = "";
@@ -136,13 +140,16 @@ public class EmbedServer {
         /**
          * 处理客户端的请求
          */
-        private ResultT<String> doService(HttpMethod httpMethod, String uri, String requestData) {
+        private ResultT<String> doService(HttpMethod httpMethod, String uri, String headerAccessToken, String requestData) {
             // 校验
             if (HttpMethod.POST != httpMethod) {
-                return new ResultT<>(ResultT.FAIL_CODE, "错误的请求,HttpMethod不支持.");
+                return new ResultT<>(ResultT.FAIL_CODE, "错误的请求,HttpMethod不支持");
             }
             if (uri == null || uri.trim().length() == 0) {
-                return new ResultT<>(ResultT.FAIL_CODE, "错误的请求,请求地址为空.");
+                return new ResultT<>(ResultT.FAIL_CODE, "错误的请求,请求地址为空");
+            }
+            if (accessToken != null && accessToken.trim().length() > 0 && !accessToken.equals(headerAccessToken)) {
+                return new ResultT<>(ResultT.FAIL_CODE, "错误的请求,AccessToken不正确");
             }
 
             // 映射 uri

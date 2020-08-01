@@ -1,7 +1,9 @@
 package com.snailwu.job.admin.core.thread;
 
+import com.snailwu.job.admin.constant.HttpConstants;
 import com.snailwu.job.admin.trigger.JobTrigger;
 import com.snailwu.job.admin.trigger.TriggerTypeEnum;
+import org.apache.logging.log4j.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,11 +47,16 @@ public class JobTriggerPoolHelper {
      */
     public static void push(final int jobId, TriggerTypeEnum triggerType, int failRetryCount, final String executorParam) {
         triggerPool.execute(() -> {
+            long curTs = System.currentTimeMillis();
+            ThreadContext.put(HttpConstants.JOB_LOG_ID, "trigger-" + jobId + "-" + curTs);
+            log.info("---------- 任务调度开始 ----------");
             try {
                 JobTrigger.trigger(jobId, triggerType, failRetryCount, executorParam);
             } catch (Exception e) {
-                log.error("触发任务异常", e);
+                log.error("任务调度异常", e);
             }
+            log.info("---------- 任务调度结束 ----------");
+            ThreadContext.clearAll();
         });
     }
 

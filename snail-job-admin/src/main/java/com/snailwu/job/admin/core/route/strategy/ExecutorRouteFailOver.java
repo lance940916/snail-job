@@ -9,35 +9,29 @@ import com.snailwu.job.core.biz.model.TriggerParam;
 import java.util.List;
 
 /**
+ * 心跳监测在线可用执行器
+ *
  * @author 吴庆龙
  * @date 2020/6/17 10:11 上午
  */
 public class ExecutorRouteFailOver extends ExecutorRouter {
     @Override
     public ResultT<String> route(TriggerParam triggerParam, List<String> addressList) {
-        StringBuilder sb = new StringBuilder();
         for (String address : addressList) {
-            // 心跳监测
             ResultT<String> beatResult;
             try {
                 ExecutorBiz executorBiz = SnailJobScheduler.getExecutorBiz(address);
                 beatResult = executorBiz.beat();
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
-                beatResult = new ResultT<>(ResultT.FAIL_CODE, e.getMessage());
+                LOGGER.error("选择执行器.idleBeat接口异常,执行器:{},原因:{}", address, e.getMessage());
+                continue;
             }
-
-            sb.append("Address:").append(address);
-            sb.append("Code:").append(beatResult.getCode());
-            sb.append("Msg:").append(beatResult.getMsg());
-            sb.append(";");
-
             if (beatResult.getCode() == ResultT.SUCCESS_CODE) {
-                beatResult.setMsg(sb.toString());
-                beatResult.setContent(address);
-                return beatResult;
+                return new ResultT<>(address);
+            } else {
+                LOGGER.info("选择执行器.执行器:[{}]忙碌,继续寻找执行器...", address);
             }
         }
-        return new ResultT<>(ResultT.FAIL_CODE, sb.toString());
+        return new ResultT<>(ResultT.FAIL_CODE, NO_FOUND_ADDRESS_MSG);
     }
 }

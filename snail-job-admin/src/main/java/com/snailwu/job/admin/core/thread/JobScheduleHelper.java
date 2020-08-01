@@ -69,8 +69,6 @@ public class JobScheduleHelper {
                 LOGGER.error("[SnailJob]-对齐整秒休眠异常.原因:{}", e.getMessage());
             }
             while (!scanJobStopFlag) {
-                // TODO 使用数据库锁进行分布式事物的调度
-
                 // 当前时间戳, 到这里后是"17:06:25,003"比整秒大一点
                 long nowTimeTs = System.currentTimeMillis();
 
@@ -86,8 +84,6 @@ public class JobScheduleHelper {
                                 .limit(MAX_LIMIT_PRE_READ)
                                 .build().render(RenderingStrategies.MYBATIS3)
                 );
-                // 是否预读到数据
-                boolean preReadSuccess = !jobInfoList.isEmpty();
 
                 // 遍历待执行的任务
                 for (JobInfo info : jobInfoList) {

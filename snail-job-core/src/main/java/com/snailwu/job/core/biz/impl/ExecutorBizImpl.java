@@ -35,26 +35,28 @@ public class ExecutorBizImpl implements ExecutorBiz {
     public ResultT<String> run(TriggerParam triggerParam) {
         Integer jobId = triggerParam.getJobId();
 
-        // 通过 jobId, 获取执行线程，获取执行方法。如果任务执行了一次后，这里就可以获取到了
+        // 获取任务指定的 job
+        String executorHandler = triggerParam.getExecutorHandler();
+        IJobHandler newJobHandler = SnailJobExecutor.loadJobHandler(executorHandler);
+        // 没有找到对应的 newJobHandler 直接报错
+        if (newJobHandler == null) {
+            return new ResultT<>(ResultT.FAIL_CODE, "没有指定的JobHandler-[" + executorHandler + "]");
+        }
+
+        // 通过 jobId, 获取执行线程
         JobThread jobThread = SnailJobExecutor.loadJobThread(jobId);
-        // 获取 JobHandler
-        IJobHandler jobHandler = jobThread == null ? null : jobThread.getJobHandler();
-
-        // 移除原因
-        String removeOldReason = null;
-
-        // 与已存在的线程对比线程内的 jobHandler，如果不一样，则动态替换 handler。立即生效
-        IJobHandler newJobHandler = SnailJobExecutor.loadJobHandler(triggerParam.getExecutorHandler());
-        if (jobThread != null && jobHandler != newJobHandler) {
-            removeOldReason = "Job对应的JobHandler发生变更";
-            jobThread = null;
-            jobHandler = newJobHandler;
-        }
-        if (jobHandler == null) {
-            return new ResultT<>(ResultT.FAIL_CODE, "没有找到对应的JobHandler-[" + triggerParam.getExecutorHandler() + "]");
-        }
-        if (jobThread == null) {
-            jobThread = SnailJobExecutor.registryJobThread(jobId, jobHandler, removeOldReason);
+        if (jobThread == null) { // 该任务第一次被调度
+            // 生成 Job 对应的 jobThread
+            jobThread = SnailJobExecutor.registryJobThread(jobId, newJobHandler, null);
+        } else { // 任务非第一次被调度
+            // 获取任务已经关联的 newJobHandler
+            IJobHandler jobHandler = jobThread.getJobHandler();
+            if (jobHandler != newJobHandler) {
+                // 任务对应的 jobHandler 被修改了
+                jobHandler = newJobHandler;
+            }
+            // 生成 Job 对应的 jobThread
+            jobThread = SnailJobExecutor.registryJobThread(jobId, jobHandler, "任务对应的JobHandler发生变化");
         }
 
         // 最后 添加任务到队列中等待执行
@@ -68,7 +70,7 @@ public class ExecutorBizImpl implements ExecutorBiz {
         if (jobThread == null) {
             return new ResultT<>(ResultT.SUCCESS_CODE, "调度线程为空.");
         }
-        SnailJobExecutor.removeJobThread(killParam.getJobId(), "调度中心终止任务.");
-        return new ResultT<>(ResultT.SUCCESS_CODE, "调度线程被终止.");
+        // 移除任务
+        return jobThread.removeJobQueue(killParam.convertTriggerParam());
     }
 }

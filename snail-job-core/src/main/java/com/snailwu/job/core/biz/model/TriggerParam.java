@@ -66,4 +66,27 @@ public class TriggerParam {
         this.logId = logId;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        TriggerParam that = (TriggerParam) o;
+        if (!jobId.equals(that.jobId)) {
+            return false;
+        }
+        return logId.equals(that.logId);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = jobId.hashCode();
+        result = 31 * result + logId.hashCode();
+        return result;
+    }
+
 }

@@ -4,7 +4,7 @@ package com.snailwu.job.admin.constant;
  * @author 吴庆龙
  * @date 2020/7/28 7:22
  */
-public interface JobHttpConstants {
+public interface HttpConstants {
 
     /**
      * 请求ID,在拦截器中放在Header中,作为请求的唯一标识

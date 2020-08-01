@@ -14,13 +14,12 @@ import java.util.List;
  * @date 2020/6/4 11:23 上午
  */
 public abstract class ExecutorRouter {
-    protected static Logger log = LoggerFactory.getLogger(ExecutorRouter.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(ExecutorRouter.class);
+
+    protected static final String NO_FOUND_ADDRESS_MSG = "无可用的执行器";
 
     /**
      * route address
-     *
-     * @param addressList
-     * @return  ResultT.content=address
      */
     public abstract ResultT<String> route(TriggerParam triggerParam, List<String> addressList);
 

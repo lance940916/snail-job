@@ -15,6 +15,9 @@ import java.util.List;
 public class ExecutorRouteFirst extends ExecutorRouter {
     @Override
     public ResultT<String> route(TriggerParam triggerParam, List<String> addressList) {
+        if (addressList.isEmpty()) {
+            return new ResultT<>(ResultT.FAIL_CODE, NO_FOUND_ADDRESS_MSG);
+        }
         return new ResultT<>(addressList.get(0));
     }
 }

@@ -63,7 +63,11 @@ public class ExecutorRouteConsistentHash extends ExecutorRouter {
 
     @Override
     public ResultT<String> route(TriggerParam triggerParam, List<String> addressList) {
-        String address = hashJob(triggerParam.getJobId(), addressList);
-        return new ResultT<>(address);
+        try {
+            String address = hashJob(triggerParam.getJobId(), addressList);
+            return new ResultT<>(address);
+        } catch (Exception e) {
+            return new ResultT<>(ResultT.FAIL_CODE, NO_FOUND_ADDRESS_MSG);
+        }
     }
 }

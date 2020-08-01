@@ -1,6 +1,6 @@
 package com.snailwu.job.admin;
 
-import com.snailwu.job.admin.constant.JobHttpConstants;
+import com.snailwu.job.admin.constant.HttpConstants;
 import org.apache.logging.log4j.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,7 @@ public class LogThreadContextTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(LogThreadContextTest.class);
 
     public static void main(String[] args) {
-        ThreadContext.put(JobHttpConstants.JOB_LOG_ID, "WuQinglong");
+        ThreadContext.put(HttpConstants.JOB_LOG_ID, "WuQinglong");
         LOGGER.info("Hello Log");
         LOGGER.error("Hello Log");
     }

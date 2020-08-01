@@ -30,6 +30,7 @@ public interface ExecutorBiz {
 
     /**
      * 终止任务
+     * true:终止成功;false:终止失败(任务已被执行或任务执行中)
      */
     ResultT<String> kill(KillParam killParam);
 

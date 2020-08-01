@@ -10,8 +10,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static com.snailwu.job.admin.constant.JobHttpConstants.JOB_LOG_ID;
-import static com.snailwu.job.admin.constant.JobHttpConstants.JOB_REQUEST_ID;
+import static com.snailwu.job.admin.constant.HttpConstants.JOB_LOG_ID;
+import static com.snailwu.job.admin.constant.HttpConstants.JOB_REQUEST_ID;
 
 /**
  * 将所有的请求加入请求ID

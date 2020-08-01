@@ -40,7 +40,7 @@ public class JobThread extends Thread {
 
     /**
      * Job 对应的日志表的 ID
-     * 做任务去重使用
+     * 做任务去重使用,任务执行一次会生成一次log
      */
     private final Set<Long> logIdSet;
 
@@ -83,9 +83,8 @@ public class JobThread extends Thread {
      * 添加任务到任务队列中
      */
     public ResultT<String> addJobQueue(TriggerParam triggerParam) {
-        // 校验是否有重复的
+        // 校验是否重复执行
         if (logIdSet.contains(triggerParam.getLogId())) {
-            LOGGER.info("[SnailJob]-执行任务-队列中已有重复的任务.logId:{}", triggerParam.getLogId());
             return new ResultT<>(ResultT.FAIL_CODE, "重复的任务调度.logId:" + triggerParam.getLogId());
         }
         logIdSet.add(triggerParam.getLogId());
@@ -97,13 +96,17 @@ public class JobThread extends Thread {
 
     /**
      * 将任务从队列中移除
+     * jobId 和 logId 一样即相等
      */
     public ResultT<String> removeJobQueue(TriggerParam triggerParam) {
-        logIdSet.add(triggerParam.getLogId());
-
-        // 添加到执行队列
-        jobQueue.add(triggerParam);
-        return ResultT.SUCCESS;
+        // 移除时需要获取读写锁
+        boolean removeResult = jobQueue.remove(triggerParam);
+        if (removeResult) {
+            // 从判重集合中移除 logId
+            logIdSet.add(triggerParam.getLogId());
+            return ResultT.SUCCESS;
+        }
+        return ResultT.FAIL;
     }
 
     /**
