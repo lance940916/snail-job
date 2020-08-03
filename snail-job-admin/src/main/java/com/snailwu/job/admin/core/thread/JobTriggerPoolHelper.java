@@ -1,6 +1,5 @@
 package com.snailwu.job.admin.core.thread;
 
-import com.snailwu.job.admin.constant.HttpConstants;
 import com.snailwu.job.admin.trigger.JobTrigger;
 import com.snailwu.job.admin.trigger.TriggerTypeEnum;
 import org.apache.logging.log4j.ThreadContext;
@@ -11,6 +10,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import static com.snailwu.job.admin.constant.HttpConstants.JOB_LOG_ID;
+
 /**
  * 将任务的调度放在线程池里进行
  *
@@ -18,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2020/6/22 11:12 上午
  */
 public class JobTriggerPoolHelper {
-    private static final Logger log = LoggerFactory.getLogger(JobTriggerPoolHelper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JobTriggerPoolHelper.class);
 
     private static ThreadPoolExecutor triggerPool;
 
@@ -31,7 +32,7 @@ public class JobTriggerPoolHelper {
                 new LinkedBlockingQueue<>(1000),
                 r -> new Thread(r, "TriggerPool-" + r.hashCode())
         );
-        log.info("启动 TriggerPool 成功");
+        LOGGER.info("启动 TriggerPool 成功");
     }
 
     /**
@@ -39,23 +40,25 @@ public class JobTriggerPoolHelper {
      */
     public static void stop() {
         triggerPool.shutdownNow();
-        log.info("停止 TriggerPool 成功");
+        LOGGER.info("停止 TriggerPool 成功");
     }
 
     /**
      * 添加任务到线程池中调度
+     * 不指定 executorParam 使用 JobInfo 中的， failRetryCount 同理
      */
-    public static void push(final int jobId, TriggerTypeEnum triggerType, int failRetryCount, final String executorParam) {
+    public static void push(int jobId, TriggerTypeEnum triggerType, int failRetryCount, final String executorParam) {
         triggerPool.execute(() -> {
             long curTs = System.currentTimeMillis();
-            ThreadContext.put(HttpConstants.JOB_LOG_ID, "trigger-" + jobId + "-" + curTs);
-            log.info("---------- 任务调度开始 ----------");
+            ThreadContext.put(JOB_LOG_ID, "trigger-" + jobId + "-" + curTs);
+
+            LOGGER.info("---------- 任务调度开始 ----------");
             try {
                 JobTrigger.trigger(jobId, triggerType, failRetryCount, executorParam);
             } catch (Exception e) {
-                log.error("任务调度异常", e);
+                LOGGER.error("任务调度异常", e);
             }
-            log.info("---------- 任务调度结束 ----------");
+            LOGGER.info("---------- 任务调度结束 ----------");
             ThreadContext.clearAll();
         });
     }

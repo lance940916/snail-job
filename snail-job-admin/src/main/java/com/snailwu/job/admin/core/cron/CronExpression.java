@@ -414,7 +414,6 @@ public final class CronExpression implements Serializable, Cloneable {
     }
 
     public static void validateExpression(String cronExpression) throws ParseException {
-
         new CronExpression(cronExpression);
     }
 

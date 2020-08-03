@@ -1,9 +1,5 @@
 package com.snailwu.job.admin.constant;
 
-import com.snailwu.job.admin.core.model.JobInfo;
-
-import java.util.concurrent.ConcurrentHashMap;
-
 /**
  * @author 吴庆龙
  * @date 2020/8/1 2:28 下午
@@ -16,10 +12,8 @@ public interface JobConstants {
     String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss,SSS";
 
     /**
-     * 任务库
+     * 每间隔多少秒进行一次预读取任务
      */
-    ConcurrentHashMap<Long, JobInfo> JOB_INFO_REPOSITORY = new ConcurrentHashMap<>();
-
-
+    long PRE_LOAD_SLEEP_MS = 10000;
 
 }

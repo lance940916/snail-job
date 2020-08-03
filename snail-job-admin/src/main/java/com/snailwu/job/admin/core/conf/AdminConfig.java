@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import javax.sql.DataSource;
 
 /**
  * @author 吴庆龙
@@ -18,7 +19,7 @@ import javax.annotation.Resource;
  */
 @Component
 public class AdminConfig implements InitializingBean, DisposableBean {
-    private static final Logger log = LoggerFactory.getLogger(AdminConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdminConfig.class);
 
     private static AdminConfig instance;
 
@@ -66,6 +67,8 @@ public class AdminConfig implements InitializingBean, DisposableBean {
     private JobLogReportMapper jobLogReportMapper;
     @Resource
     private JobAlarmComposite jobAlarmComposite;
+    @Resource
+    private DataSource dataSource;
 
     public JobExecutorMapper getJobExecutorMapper() {
         return jobExecutorMapper;
@@ -93,5 +96,9 @@ public class AdminConfig implements InitializingBean, DisposableBean {
 
     public JobAlarmComposite getJobAlarmComposite() {
         return jobAlarmComposite;
+    }
+
+    public DataSource getDataSource() {
+        return dataSource;
     }
 }
