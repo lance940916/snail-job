@@ -5,7 +5,6 @@ import com.snailwu.job.admin.core.cron.CronExpression;
 import com.snailwu.job.admin.core.model.JobInfo;
 import com.snailwu.job.admin.trigger.TriggerTypeEnum;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.logging.log4j.ThreadContext;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +17,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-import static com.snailwu.job.admin.constant.HttpConstants.JOB_LOG_ID;
 import static com.snailwu.job.admin.constant.JobConstants.DATE_TIME_PATTERN;
 import static com.snailwu.job.admin.constant.JobConstants.PRE_LOAD_SLEEP_MS;
 import static com.snailwu.job.admin.mapper.JobInfoDynamicSqlSupport.*;
@@ -64,9 +62,6 @@ public class JobScheduleHelper {
      */
     public static void start() {
         scanJobThread = new Thread(() -> {
-            // 本线程在日志中的唯一标识
-            ThreadContext.put(JOB_LOG_ID, "scanJobThread");
-
             // 提前准备任务调度的时间跨度
             final long preReadMs = 20000;
 
@@ -78,7 +73,6 @@ public class JobScheduleHelper {
                     LOGGER.error("没有获取到数据库分布式锁.");
                     continue;
                 }
-
                 LOGGER.info("获取数据库锁成功.进行任务的扫描和整理.");
 
                 // 当前时间戳
@@ -164,24 +158,18 @@ public class JobScheduleHelper {
                     TimeUnit.MILLISECONDS.sleep(PRE_LOAD_SLEEP_MS);
                 } catch (InterruptedException e) {
                     if (!scanJobStopFlag) {
-                        LOGGER.error("对齐整秒，休眠异常", e);
+                        LOGGER.error("任务扫描整理线程.休眠异常", e);
                     }
                 }
             }
-
-            // 清除日志上下文内容
-            ThreadContext.clearAll();
         });
         scanJobThread.setDaemon(true);
-        scanJobThread.setName("ScheduleThread");
+        scanJobThread.setName("schedule-thread");
         scanJobThread.start();
         LOGGER.info("启动任务扫描整理线程成功.");
 
         // 执行调度任务线程
         invokeJobThread = new Thread(() -> {
-            // 本线程在日志中的唯一标识
-            ThreadContext.put(JOB_LOG_ID, "invokeJobThread");
-
             while (!invokeJobStopFlag) {
                 long nowTimeTs = System.currentTimeMillis();
 
@@ -212,14 +200,11 @@ public class JobScheduleHelper {
                     LOGGER.info("本次任务调度耗时:{}毫秒", costMs);
                 }
             }
-
-            // 清除日志上下文内容
-            ThreadContext.clearAll();
         });
         invokeJobThread.setDaemon(true);
         // 最高优先级
         invokeJobThread.setPriority(Thread.MAX_PRIORITY);
-        invokeJobThread.setName("RingThread");
+        invokeJobThread.setName("invoke-job-thread");
         invokeJobThread.start();
         LOGGER.info("启动任务调度线程成功.");
     }
@@ -266,7 +251,7 @@ public class JobScheduleHelper {
         } catch (InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
         }
-        LOGGER.info("任务扫描整理线程停止.");
+        LOGGER.info("任务扫描整理线程-停止");
 
         // 让线程完成剩余任务的调度
         while (!INVOKE_JOB_MAP.isEmpty()) {
@@ -284,7 +269,7 @@ public class JobScheduleHelper {
         } catch (InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
         }
-        LOGGER.info("任务调度线程停止.");
+        LOGGER.info("任务调度线程-停止");
     }
 
     /**

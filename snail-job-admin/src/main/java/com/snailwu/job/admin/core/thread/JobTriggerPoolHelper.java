@@ -50,7 +50,7 @@ public class JobTriggerPoolHelper {
     public static void push(int jobId, TriggerTypeEnum triggerType, int failRetryCount, final String executorParam) {
         triggerPool.execute(() -> {
             long curTs = System.currentTimeMillis();
-            ThreadContext.put(JOB_LOG_ID, "trigger-" + jobId + "-" + curTs);
+            ThreadContext.put(JOB_LOG_ID, curTs + "");
 
             LOGGER.info("---------- 任务调度开始 ----------");
             try {

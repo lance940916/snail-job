@@ -4,7 +4,7 @@
     <appenders>
         <Console name="Console">
             <PatternLayout>
-                <Pattern>%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %X{JOB_LOG_ID} %c{1.}#%t[%L]: %m%n</Pattern>
+                <Pattern>[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS} %t %X{JOB_LOG_ID} %c{1.}#%M[%L]: %m%n</Pattern>
             </PatternLayout>
         </Console>
     </appenders>
