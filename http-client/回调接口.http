@@ -1,3 +1,0 @@
-GET http://localhost:8080/snail-job-admin/api/access
-Accept: application/json
-Accept-Charset: UTF-8

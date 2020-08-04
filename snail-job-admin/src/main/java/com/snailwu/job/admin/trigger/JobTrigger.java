@@ -31,7 +31,7 @@ import static org.mybatis.dynamic.sql.SqlBuilder.select;
  * @date 2020/6/17 1:56 下午
  */
 public class JobTrigger {
-    private static final Logger log = LoggerFactory.getLogger(JobTrigger.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JobTrigger.class);
 
     /**
      * 触发 Job
@@ -39,8 +39,8 @@ public class JobTrigger {
      * @param executorParam 执行参数，手动执行时页面填写的会覆盖任务中的参数
      */
     public static void trigger(int jobId, TriggerTypeEnum triggerType, int failRetryCount, String executorParam) {
-        log.info("任务ID:{}", jobId);
-        log.info("任务触发类型:{}", triggerType);
+        LOGGER.info("任务ID:{}", jobId);
+        LOGGER.info("任务触发类型:{}", triggerType);
 
         // 查询任务信息
         JobInfo jobInfo = AdminConfig.getInstance().getJobInfoMapper().selectOne(
@@ -50,13 +50,13 @@ public class JobTrigger {
                         .build().render(RenderingStrategies.MYBATIS3)
         ).orElse(null);
         if (jobInfo == null) {
-            log.error("无效的任务ID:{}", jobId);
+            LOGGER.error("无效的任务ID:{}", jobId);
             return;
         }
         if (executorParam != null) {
             jobInfo.setExecutorParam(executorParam);
         }
-        log.info("任务参数:{}", jobInfo.getExecutorParam());
+        LOGGER.info("任务参数:{}", jobInfo.getExecutorParam());
 
         // 查询任务分组信息
         JobGroup jobGroup = AdminConfig.getInstance().getJobGroupMapper().selectOne(
@@ -66,17 +66,17 @@ public class JobTrigger {
                         .build().render(RenderingStrategies.MYBATIS3)
         ).orElse(null);
         if (jobGroup == null) {
-            log.error("任务分组信息不存在.name:{}", jobInfo.getGroupName());
+            LOGGER.error("任务分组信息不存在.name:{}", jobInfo.getGroupName());
             return;
         }
 
         // 任务调度地址集合
         String groupAddresses = jobGroup.getAddressList();
-        log.info("任务执行可用地址:{}", groupAddresses);
+        LOGGER.info("任务执行可用地址:{}", groupAddresses);
 
         // 失败重试次数（如果参数大于，则使用参数的值）
         int finalFailRetryCount = failRetryCount >= 0 ? failRetryCount : jobInfo.getExecutorFailRetryCount();
-        log.info("任务失败重试次数:{}", failRetryCount);
+        LOGGER.info("任务失败重试次数:{}", failRetryCount);
 
         // 进行调度
         processTrigger(groupAddresses, jobInfo, finalFailRetryCount);
@@ -86,20 +86,16 @@ public class JobTrigger {
      * 进行调度
      */
     private static void processTrigger(String groupAddresses, JobInfo jobInfo, int failRetryCount) {
-        // 调度时间
-        Date triggerTime = new Date();
-        log.info("调度时间:{}", DateFormatUtils.format(triggerTime, DATE_TIME_PATTERN));
-
         // 执行器路由策略
         ExecutorRouteStrategyEnum routeStrategy = ExecutorRouteStrategyEnum.match(jobInfo.getExecutorRouteStrategy());
-        log.info("执行器路由策略:{}", routeStrategy.getDesc());
+        LOGGER.info("执行器路由策略:{}", routeStrategy.getDesc());
 
         // 1 保存日志
         JobLog jobLog = new JobLog();
         jobLog.setJobId(jobInfo.getId());
         jobLog.setGroupName(jobInfo.getGroupName());
         AdminConfig.getInstance().getJobLogMapper().insertSelective(jobLog);
-        log.info("保存任务执行日志.jobId:{}", jobLog.getJobId());
+        LOGGER.info("保存任务执行日志.jobId:{}", jobLog.getJobId());
 
         // 2 初始化触发参数
         TriggerParam triggerParam = new TriggerParam();
@@ -122,7 +118,11 @@ public class JobTrigger {
                 address = routeAddressResult.getContent();
             }
         }
-        log.info("可用执行器地址:{}", address);
+        LOGGER.info("可用执行器地址:{}", address);
+
+        // 调度时间
+        Date triggerTime = new Date();
+        LOGGER.info("调度时间:{}", DateFormatUtils.format(triggerTime, DATE_TIME_PATTERN));
 
         // 4 触发远程执行器
         ResultT<String> triggerResult;
@@ -131,7 +131,7 @@ public class JobTrigger {
         } else {
             triggerResult = new ResultT<>(ResultT.FAIL_CODE, "未找到可用的执行器");
         }
-        log.info("调度结果:{}", triggerResult);
+        LOGGER.info("调度结果:{}", triggerResult);
 
         // 5 更新 Log
         JobLog updateJobLog = new JobLog();
@@ -140,13 +140,13 @@ public class JobTrigger {
         updateJobLog.setExecutorAddress(address);
         updateJobLog.setExecutorHandler(jobInfo.getExecutorHandler());
         updateJobLog.setExecutorParam(jobInfo.getExecutorParam());
-        updateJobLog.setExecutorFailRetryCount((byte) failRetryCount);
+        updateJobLog.setFailRetryCount((byte) failRetryCount);
         // 调度相关字段
         updateJobLog.setTriggerTime(triggerTime);
         updateJobLog.setTriggerCode(triggerResult.getCode());
         updateJobLog.setTriggerMsg(triggerResult.getMsg());
         AdminConfig.getInstance().getJobLogMapper().updateByPrimaryKeySelective(updateJobLog);
-        log.info("更新调度参数和调度结果成功.任务日志ID:{}", updateJobLog.getId());
+        LOGGER.info("更新调度参数和调度结果成功.logId:{}", updateJobLog.getId());
     }
 
     /**
@@ -158,7 +158,7 @@ public class JobTrigger {
             ExecutorBiz executorBiz = SnailJobScheduler.getExecutorBiz(address);
             result = executorBiz.run(triggerParam);
         } catch (Exception e) {
-            log.error("调度请求异常.执行器:[{}],原因:{}.", address, e.getMessage());
+            LOGGER.error("调度请求异常.执行器:[{}],原因:{}.", address, e.getMessage());
             result = new ResultT<>(ResultT.FAIL_CODE, e.getMessage());
         }
         return result;

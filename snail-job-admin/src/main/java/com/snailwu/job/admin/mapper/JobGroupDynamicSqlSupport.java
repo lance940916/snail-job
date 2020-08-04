@@ -20,13 +20,10 @@ public final class JobGroupDynamicSqlSupport {
     public static final SqlColumn<String> name = jobGroup.name;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<String> type = jobGroup.type;
+    public static final SqlColumn<Byte> type = jobGroup.type;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final SqlColumn<String> addressList = jobGroup.addressList;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<String> description = jobGroup.description;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final class JobGroup extends SqlTable {
@@ -36,11 +33,9 @@ public final class JobGroupDynamicSqlSupport {
 
         public final SqlColumn<String> name = column("name", JDBCType.VARCHAR);
 
-        public final SqlColumn<String> type = column("type", JDBCType.VARCHAR);
+        public final SqlColumn<Byte> type = column("type", JDBCType.TINYINT);
 
         public final SqlColumn<String> addressList = column("address_list", JDBCType.VARCHAR);
-
-        public final SqlColumn<String> description = column("description", JDBCType.VARCHAR);
 
         public JobGroup() {
             super("job_group");

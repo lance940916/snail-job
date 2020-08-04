@@ -1,40 +1,42 @@
 package com.snailwu.job.admin.core.scheduler;
 
 import com.snailwu.job.admin.core.conf.AdminConfig;
-import com.snailwu.job.admin.core.thread.ExecutorRegistryMonitorHelper;
+import com.snailwu.job.admin.core.thread.ExecutorMonitorHelper;
 import com.snailwu.job.admin.core.thread.JobScheduleHelper;
+import com.snailwu.job.admin.core.thread.JobTriggerPoolHelper;
 import com.snailwu.job.core.biz.ExecutorBiz;
 import com.snailwu.job.core.biz.client.ExecutorBizClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * 调度线程的启动与停止
+ *
  * @author 吴庆龙
  * @date 2020/6/4 11:19 上午
  */
 public class SnailJobScheduler {
-    private static final Logger log = LoggerFactory.getLogger(SnailJobScheduler.class);
 
     /**
-     * 初始化
+     * 启动线程
      */
     public void init() {
         // 定时整理注册节点到 group 中
-        ExecutorRegistryMonitorHelper.start();
+        ExecutorMonitorHelper.start();
 
-        // 启动任务扫描类
+        // 启动任务扫描调度类
+        JobTriggerPoolHelper.start();
         JobScheduleHelper.start();
     }
 
     /**
-     * 销毁
+     * 停止线程
      */
     public void destroy() {
-        ExecutorRegistryMonitorHelper.stop();
+        ExecutorMonitorHelper.stop();
 
         JobScheduleHelper.stop();
+        JobTriggerPoolHelper.stop();
     }
 
     // Executor-Client 库

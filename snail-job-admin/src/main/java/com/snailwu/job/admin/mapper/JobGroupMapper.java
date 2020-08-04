@@ -29,7 +29,7 @@ import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 @Mapper
 public interface JobGroupMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    BasicColumn[] selectList = BasicColumn.columnList(id, title, name, type, addressList, description);
+    BasicColumn[] selectList = BasicColumn.columnList(id, title, name, type, addressList);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
@@ -58,9 +58,8 @@ public interface JobGroupMapper {
         @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
         @Result(column="title", property="title", jdbcType=JdbcType.VARCHAR),
         @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
-        @Result(column="type", property="type", jdbcType=JdbcType.VARCHAR),
-        @Result(column="address_list", property="addressList", jdbcType=JdbcType.VARCHAR),
-        @Result(column="description", property="description", jdbcType=JdbcType.VARCHAR)
+        @Result(column="type", property="type", jdbcType=JdbcType.TINYINT),
+        @Result(column="address_list", property="addressList", jdbcType=JdbcType.VARCHAR)
     })
     List<JobGroup> selectMany(SelectStatementProvider selectStatement);
 
@@ -93,7 +92,6 @@ public interface JobGroupMapper {
             .map(name).toProperty("name")
             .map(type).toProperty("type")
             .map(addressList).toProperty("addressList")
-            .map(description).toProperty("description")
         );
     }
 
@@ -105,7 +103,6 @@ public interface JobGroupMapper {
             .map(name).toProperty("name")
             .map(type).toProperty("type")
             .map(addressList).toProperty("addressList")
-            .map(description).toProperty("description")
         );
     }
 
@@ -117,7 +114,6 @@ public interface JobGroupMapper {
             .map(name).toPropertyWhenPresent("name", record::getName)
             .map(type).toPropertyWhenPresent("type", record::getType)
             .map(addressList).toPropertyWhenPresent("addressList", record::getAddressList)
-            .map(description).toPropertyWhenPresent("description", record::getDescription)
         );
     }
 
@@ -154,8 +150,7 @@ public interface JobGroupMapper {
                 .set(title).equalTo(record::getTitle)
                 .set(name).equalTo(record::getName)
                 .set(type).equalTo(record::getType)
-                .set(addressList).equalTo(record::getAddressList)
-                .set(description).equalTo(record::getDescription);
+                .set(addressList).equalTo(record::getAddressList);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -164,8 +159,7 @@ public interface JobGroupMapper {
                 .set(title).equalToWhenPresent(record::getTitle)
                 .set(name).equalToWhenPresent(record::getName)
                 .set(type).equalToWhenPresent(record::getType)
-                .set(addressList).equalToWhenPresent(record::getAddressList)
-                .set(description).equalToWhenPresent(record::getDescription);
+                .set(addressList).equalToWhenPresent(record::getAddressList);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -175,7 +169,6 @@ public interface JobGroupMapper {
             .set(name).equalTo(record::getName)
             .set(type).equalTo(record::getType)
             .set(addressList).equalTo(record::getAddressList)
-            .set(description).equalTo(record::getDescription)
             .where(id, isEqualTo(record::getId))
         );
     }
@@ -187,7 +180,6 @@ public interface JobGroupMapper {
             .set(name).equalToWhenPresent(record::getName)
             .set(type).equalToWhenPresent(record::getType)
             .set(addressList).equalToWhenPresent(record::getAddressList)
-            .set(description).equalToWhenPresent(record::getDescription)
             .where(id, isEqualTo(record::getId))
         );
     }

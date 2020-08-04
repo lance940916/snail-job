@@ -13,13 +13,10 @@ public class JobGroup {
     private String name;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String type;
+    private Byte type;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private String addressList;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String description;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public Integer getId() {
@@ -52,12 +49,12 @@ public class JobGroup {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getType() {
+    public Byte getType() {
         return type;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setType(String type) {
+    public void setType(Byte type) {
         this.type = type;
     }
 
@@ -69,15 +66,5 @@ public class JobGroup {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public void setAddressList(String addressList) {
         this.addressList = addressList;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getDescription() {
-        return description;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setDescription(String description) {
-        this.description = description;
     }
 }

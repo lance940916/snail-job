@@ -30,7 +30,7 @@ public final class JobLogDynamicSqlSupport {
     public static final SqlColumn<String> executorParam = jobLog.executorParam;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<Byte> executorFailRetryCount = jobLog.executorFailRetryCount;
+    public static final SqlColumn<Byte> failRetryCount = jobLog.failRetryCount;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final SqlColumn<Date> triggerTime = jobLog.triggerTime;
@@ -39,19 +39,19 @@ public final class JobLogDynamicSqlSupport {
     public static final SqlColumn<Integer> triggerCode = jobLog.triggerCode;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public static final SqlColumn<String> triggerMsg = jobLog.triggerMsg;
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final SqlColumn<Date> execTime = jobLog.execTime;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final SqlColumn<Integer> execCode = jobLog.execCode;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<Byte> alarmStatus = jobLog.alarmStatus;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<String> triggerMsg = jobLog.triggerMsg;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final SqlColumn<String> execMsg = jobLog.execMsg;
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public static final SqlColumn<Byte> alarmStatus = jobLog.alarmStatus;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final class JobLog extends SqlTable {
@@ -67,21 +67,21 @@ public final class JobLogDynamicSqlSupport {
 
         public final SqlColumn<String> executorParam = column("executor_param", JDBCType.VARCHAR);
 
-        public final SqlColumn<Byte> executorFailRetryCount = column("executor_fail_retry_count", JDBCType.TINYINT);
+        public final SqlColumn<Byte> failRetryCount = column("fail_retry_count", JDBCType.TINYINT);
 
         public final SqlColumn<Date> triggerTime = column("trigger_time", JDBCType.TIMESTAMP);
 
         public final SqlColumn<Integer> triggerCode = column("trigger_code", JDBCType.INTEGER);
 
+        public final SqlColumn<String> triggerMsg = column("trigger_msg", JDBCType.VARCHAR);
+
         public final SqlColumn<Date> execTime = column("exec_time", JDBCType.TIMESTAMP);
 
         public final SqlColumn<Integer> execCode = column("exec_code", JDBCType.INTEGER);
 
+        public final SqlColumn<String> execMsg = column("exec_msg", JDBCType.VARCHAR);
+
         public final SqlColumn<Byte> alarmStatus = column("alarm_status", JDBCType.TINYINT);
-
-        public final SqlColumn<String> triggerMsg = column("trigger_msg", JDBCType.LONGVARCHAR);
-
-        public final SqlColumn<String> execMsg = column("exec_msg", JDBCType.LONGVARCHAR);
 
         public JobLog() {
             super("job_log");

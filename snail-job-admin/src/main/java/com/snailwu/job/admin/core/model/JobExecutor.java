@@ -14,9 +14,6 @@ public class JobExecutor {
     private String address;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private Byte registryType;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Date updateTime;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -47,16 +44,6 @@ public class JobExecutor {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public Byte getRegistryType() {
-        return registryType;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setRegistryType(Byte registryType) {
-        this.registryType = registryType;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")

@@ -40,6 +40,10 @@ public class JobAlarmComposite implements ApplicationContextAware, InitializingB
         this.applicationContext = applicationContext;
     }
 
+    /**
+     * 进行报警
+     * @return true=报警成功;false=报警失败
+     */
     public boolean alarm(JobInfo jobInfo, JobLog jobLog) {
         if (alarmList == null || alarmList.isEmpty()) {
             return false;

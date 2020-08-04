@@ -23,7 +23,7 @@ public class JobLog {
     private String executorParam;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private Byte executorFailRetryCount;
+    private Byte failRetryCount;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Date triggerTime;
@@ -32,19 +32,19 @@ public class JobLog {
     private Integer triggerCode;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    private String triggerMsg;
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Date execTime;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Integer execCode;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private Byte alarmStatus;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String triggerMsg;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private String execMsg;
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    private Byte alarmStatus;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public Long getId() {
@@ -107,13 +107,13 @@ public class JobLog {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public Byte getExecutorFailRetryCount() {
-        return executorFailRetryCount;
+    public Byte getFailRetryCount() {
+        return failRetryCount;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setExecutorFailRetryCount(Byte executorFailRetryCount) {
-        this.executorFailRetryCount = executorFailRetryCount;
+    public void setFailRetryCount(Byte failRetryCount) {
+        this.failRetryCount = failRetryCount;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -137,6 +137,16 @@ public class JobLog {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public String getTriggerMsg() {
+        return triggerMsg;
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public void setTriggerMsg(String triggerMsg) {
+        this.triggerMsg = triggerMsg;
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public Date getExecTime() {
         return execTime;
     }
@@ -157,26 +167,6 @@ public class JobLog {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public Byte getAlarmStatus() {
-        return alarmStatus;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setAlarmStatus(Byte alarmStatus) {
-        this.alarmStatus = alarmStatus;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getTriggerMsg() {
-        return triggerMsg;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setTriggerMsg(String triggerMsg) {
-        this.triggerMsg = triggerMsg;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public String getExecMsg() {
         return execMsg;
     }
@@ -184,5 +174,15 @@ public class JobLog {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public void setExecMsg(String execMsg) {
         this.execMsg = execMsg;
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public Byte getAlarmStatus() {
+        return alarmStatus;
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public void setAlarmStatus(Byte alarmStatus) {
+        this.alarmStatus = alarmStatus;
     }
 }

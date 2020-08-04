@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `job_group`
     `id`           INT(11)      NOT NULL AUTO_INCREMENT,
     `title`        VARCHAR(64)  NOT NULL COMMENT '组的标题',
     `name`         VARCHAR(32)  NOT NULL COMMENT '任务组名称，唯一不重复',
-    `type`         VARCHAR(32)  NOT NULL COMMENT '注册类型.自动注册=0;手动注册=1',
+    `type`         TINYINT      NOT NULL COMMENT '注册类型.自动注册=0;手动注册=1',
     `address_list` VARCHAR(512) NOT NULL COMMENT '执行器节点地址列表，多地址用逗号分隔',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -62,24 +62,24 @@ CREATE TABLE IF NOT EXISTS `job_info`
 DROP TABLE IF EXISTS `job_log`;
 CREATE TABLE IF NOT EXISTS `job_log`
 (
-    `id`                        BIGINT(20)   NOT NULL AUTO_INCREMENT,
-    `job_id`                    INT(11)      NOT NULL COMMENT '任务，主键ID',
-    `group_name`                VARCHAR(32)  NOT NULL COMMENT '任务组名',
+    `id`               BIGINT(20)    NOT NULL AUTO_INCREMENT,
+    `job_id`           INT(11)       NOT NULL COMMENT '任务，主键ID',
+    `group_name`       VARCHAR(32)   NOT NULL COMMENT '任务组名',
 
-    `executor_address`          VARCHAR(255) NULL COMMENT '本次执行的地址',
-    `executor_handler`          VARCHAR(255) NULL COMMENT '执行器任务handler',
-    `executor_param`            VARCHAR(512) NULL COMMENT '执行器任务参数',
-    `executor_fail_retry_count` TINYINT      NOT NULL DEFAULT 0 COMMENT '当前失败重试次数',
+    `executor_address` VARCHAR(128)  NULL COMMENT '本次执行的地址',
+    `executor_handler` VARCHAR(64)   NULL COMMENT '执行器任务handler',
+    `executor_param`   VARCHAR(512)  NULL COMMENT '执行器任务参数',
+    `fail_retry_count` TINYINT       NOT NULL DEFAULT 0 COMMENT '失败重试次数',
 
-    `trigger_time`              DATETIME     NULL COMMENT '调度-时间',
-    `trigger_code`              INT(11)      NULL COMMENT '调度-结果',
-    `trigger_msg`               TEXT         NULL COMMENT '调度-日志',
+    `trigger_time`     DATETIME      NULL COMMENT '调度-时间',
+    `trigger_code`     INT(11)       NOT NULL DEFAULT 0 COMMENT '调度-结果码',
+    `trigger_msg`      VARCHAR(1024) NULL COMMENT '调度-结果信息',
 
-    `exec_time`                 DATETIME     NULL COMMENT '执行-时间',
-    `exec_code`                 INT(11)      NULL COMMENT '执行-结果',
-    `exec_msg`                  TEXT         NULL COMMENT '执行-日志',
+    `exec_time`        DATETIME      NULL COMMENT '执行-时间',
+    `exec_code`        INT(11)       NOT NULL DEFAULT 0 COMMENT '执行-结果码',
+    `exec_msg`         VARCHAR(1024) NULL COMMENT '执行-结果信息',
 
-    `alarm_status`              TINYINT      NOT NULL DEFAULT '0' COMMENT '告警状态：0-默认、1-无需告警、2-告警成功、3-告警失败',
+    `alarm_status`     TINYINT       NOT NULL DEFAULT '0' COMMENT '告警状态：0-默认、1-无需告警、2-告警成功、3-告警失败',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;

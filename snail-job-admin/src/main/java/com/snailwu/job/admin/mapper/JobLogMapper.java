@@ -29,7 +29,7 @@ import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 @Mapper
 public interface JobLogMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    BasicColumn[] selectList = BasicColumn.columnList(id, jobId, groupName, executorAddress, executorHandler, executorParam, executorFailRetryCount, triggerTime, triggerCode, execTime, execCode, alarmStatus, triggerMsg, execMsg);
+    BasicColumn[] selectList = BasicColumn.columnList(id, jobId, groupName, executorAddress, executorHandler, executorParam, failRetryCount, triggerTime, triggerCode, triggerMsg, execTime, execCode, execMsg, alarmStatus);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
@@ -61,14 +61,14 @@ public interface JobLogMapper {
         @Result(column="executor_address", property="executorAddress", jdbcType=JdbcType.VARCHAR),
         @Result(column="executor_handler", property="executorHandler", jdbcType=JdbcType.VARCHAR),
         @Result(column="executor_param", property="executorParam", jdbcType=JdbcType.VARCHAR),
-        @Result(column="executor_fail_retry_count", property="executorFailRetryCount", jdbcType=JdbcType.TINYINT),
+        @Result(column="fail_retry_count", property="failRetryCount", jdbcType=JdbcType.TINYINT),
         @Result(column="trigger_time", property="triggerTime", jdbcType=JdbcType.TIMESTAMP),
         @Result(column="trigger_code", property="triggerCode", jdbcType=JdbcType.INTEGER),
+        @Result(column="trigger_msg", property="triggerMsg", jdbcType=JdbcType.VARCHAR),
         @Result(column="exec_time", property="execTime", jdbcType=JdbcType.TIMESTAMP),
         @Result(column="exec_code", property="execCode", jdbcType=JdbcType.INTEGER),
-        @Result(column="alarm_status", property="alarmStatus", jdbcType=JdbcType.TINYINT),
-        @Result(column="trigger_msg", property="triggerMsg", jdbcType=JdbcType.LONGVARCHAR),
-        @Result(column="exec_msg", property="execMsg", jdbcType=JdbcType.LONGVARCHAR)
+        @Result(column="exec_msg", property="execMsg", jdbcType=JdbcType.VARCHAR),
+        @Result(column="alarm_status", property="alarmStatus", jdbcType=JdbcType.TINYINT)
     })
     List<JobLog> selectMany(SelectStatementProvider selectStatement);
 
@@ -102,14 +102,14 @@ public interface JobLogMapper {
             .map(executorAddress).toProperty("executorAddress")
             .map(executorHandler).toProperty("executorHandler")
             .map(executorParam).toProperty("executorParam")
-            .map(executorFailRetryCount).toProperty("executorFailRetryCount")
+            .map(failRetryCount).toProperty("failRetryCount")
             .map(triggerTime).toProperty("triggerTime")
             .map(triggerCode).toProperty("triggerCode")
+            .map(triggerMsg).toProperty("triggerMsg")
             .map(execTime).toProperty("execTime")
             .map(execCode).toProperty("execCode")
-            .map(alarmStatus).toProperty("alarmStatus")
-            .map(triggerMsg).toProperty("triggerMsg")
             .map(execMsg).toProperty("execMsg")
+            .map(alarmStatus).toProperty("alarmStatus")
         );
     }
 
@@ -122,14 +122,14 @@ public interface JobLogMapper {
             .map(executorAddress).toProperty("executorAddress")
             .map(executorHandler).toProperty("executorHandler")
             .map(executorParam).toProperty("executorParam")
-            .map(executorFailRetryCount).toProperty("executorFailRetryCount")
+            .map(failRetryCount).toProperty("failRetryCount")
             .map(triggerTime).toProperty("triggerTime")
             .map(triggerCode).toProperty("triggerCode")
+            .map(triggerMsg).toProperty("triggerMsg")
             .map(execTime).toProperty("execTime")
             .map(execCode).toProperty("execCode")
-            .map(alarmStatus).toProperty("alarmStatus")
-            .map(triggerMsg).toProperty("triggerMsg")
             .map(execMsg).toProperty("execMsg")
+            .map(alarmStatus).toProperty("alarmStatus")
         );
     }
 
@@ -142,14 +142,14 @@ public interface JobLogMapper {
             .map(executorAddress).toPropertyWhenPresent("executorAddress", record::getExecutorAddress)
             .map(executorHandler).toPropertyWhenPresent("executorHandler", record::getExecutorHandler)
             .map(executorParam).toPropertyWhenPresent("executorParam", record::getExecutorParam)
-            .map(executorFailRetryCount).toPropertyWhenPresent("executorFailRetryCount", record::getExecutorFailRetryCount)
+            .map(failRetryCount).toPropertyWhenPresent("failRetryCount", record::getFailRetryCount)
             .map(triggerTime).toPropertyWhenPresent("triggerTime", record::getTriggerTime)
             .map(triggerCode).toPropertyWhenPresent("triggerCode", record::getTriggerCode)
+            .map(triggerMsg).toPropertyWhenPresent("triggerMsg", record::getTriggerMsg)
             .map(execTime).toPropertyWhenPresent("execTime", record::getExecTime)
             .map(execCode).toPropertyWhenPresent("execCode", record::getExecCode)
-            .map(alarmStatus).toPropertyWhenPresent("alarmStatus", record::getAlarmStatus)
-            .map(triggerMsg).toPropertyWhenPresent("triggerMsg", record::getTriggerMsg)
             .map(execMsg).toPropertyWhenPresent("execMsg", record::getExecMsg)
+            .map(alarmStatus).toPropertyWhenPresent("alarmStatus", record::getAlarmStatus)
         );
     }
 
@@ -188,14 +188,14 @@ public interface JobLogMapper {
                 .set(executorAddress).equalTo(record::getExecutorAddress)
                 .set(executorHandler).equalTo(record::getExecutorHandler)
                 .set(executorParam).equalTo(record::getExecutorParam)
-                .set(executorFailRetryCount).equalTo(record::getExecutorFailRetryCount)
+                .set(failRetryCount).equalTo(record::getFailRetryCount)
                 .set(triggerTime).equalTo(record::getTriggerTime)
                 .set(triggerCode).equalTo(record::getTriggerCode)
+                .set(triggerMsg).equalTo(record::getTriggerMsg)
                 .set(execTime).equalTo(record::getExecTime)
                 .set(execCode).equalTo(record::getExecCode)
-                .set(alarmStatus).equalTo(record::getAlarmStatus)
-                .set(triggerMsg).equalTo(record::getTriggerMsg)
-                .set(execMsg).equalTo(record::getExecMsg);
+                .set(execMsg).equalTo(record::getExecMsg)
+                .set(alarmStatus).equalTo(record::getAlarmStatus);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -206,14 +206,14 @@ public interface JobLogMapper {
                 .set(executorAddress).equalToWhenPresent(record::getExecutorAddress)
                 .set(executorHandler).equalToWhenPresent(record::getExecutorHandler)
                 .set(executorParam).equalToWhenPresent(record::getExecutorParam)
-                .set(executorFailRetryCount).equalToWhenPresent(record::getExecutorFailRetryCount)
+                .set(failRetryCount).equalToWhenPresent(record::getFailRetryCount)
                 .set(triggerTime).equalToWhenPresent(record::getTriggerTime)
                 .set(triggerCode).equalToWhenPresent(record::getTriggerCode)
+                .set(triggerMsg).equalToWhenPresent(record::getTriggerMsg)
                 .set(execTime).equalToWhenPresent(record::getExecTime)
                 .set(execCode).equalToWhenPresent(record::getExecCode)
-                .set(alarmStatus).equalToWhenPresent(record::getAlarmStatus)
-                .set(triggerMsg).equalToWhenPresent(record::getTriggerMsg)
-                .set(execMsg).equalToWhenPresent(record::getExecMsg);
+                .set(execMsg).equalToWhenPresent(record::getExecMsg)
+                .set(alarmStatus).equalToWhenPresent(record::getAlarmStatus);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -224,14 +224,14 @@ public interface JobLogMapper {
             .set(executorAddress).equalTo(record::getExecutorAddress)
             .set(executorHandler).equalTo(record::getExecutorHandler)
             .set(executorParam).equalTo(record::getExecutorParam)
-            .set(executorFailRetryCount).equalTo(record::getExecutorFailRetryCount)
+            .set(failRetryCount).equalTo(record::getFailRetryCount)
             .set(triggerTime).equalTo(record::getTriggerTime)
             .set(triggerCode).equalTo(record::getTriggerCode)
+            .set(triggerMsg).equalTo(record::getTriggerMsg)
             .set(execTime).equalTo(record::getExecTime)
             .set(execCode).equalTo(record::getExecCode)
-            .set(alarmStatus).equalTo(record::getAlarmStatus)
-            .set(triggerMsg).equalTo(record::getTriggerMsg)
             .set(execMsg).equalTo(record::getExecMsg)
+            .set(alarmStatus).equalTo(record::getAlarmStatus)
             .where(id, isEqualTo(record::getId))
         );
     }
@@ -244,14 +244,14 @@ public interface JobLogMapper {
             .set(executorAddress).equalToWhenPresent(record::getExecutorAddress)
             .set(executorHandler).equalToWhenPresent(record::getExecutorHandler)
             .set(executorParam).equalToWhenPresent(record::getExecutorParam)
-            .set(executorFailRetryCount).equalToWhenPresent(record::getExecutorFailRetryCount)
+            .set(failRetryCount).equalToWhenPresent(record::getFailRetryCount)
             .set(triggerTime).equalToWhenPresent(record::getTriggerTime)
             .set(triggerCode).equalToWhenPresent(record::getTriggerCode)
+            .set(triggerMsg).equalToWhenPresent(record::getTriggerMsg)
             .set(execTime).equalToWhenPresent(record::getExecTime)
             .set(execCode).equalToWhenPresent(record::getExecCode)
-            .set(alarmStatus).equalToWhenPresent(record::getAlarmStatus)
-            .set(triggerMsg).equalToWhenPresent(record::getTriggerMsg)
             .set(execMsg).equalToWhenPresent(record::getExecMsg)
+            .set(alarmStatus).equalToWhenPresent(record::getAlarmStatus)
             .where(id, isEqualTo(record::getId))
         );
     }

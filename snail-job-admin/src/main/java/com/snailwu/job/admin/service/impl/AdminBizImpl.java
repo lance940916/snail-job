@@ -11,7 +11,6 @@ import com.snailwu.job.core.biz.AdminBiz;
 import com.snailwu.job.core.biz.model.CallbackParam;
 import com.snailwu.job.core.biz.model.RegistryParam;
 import com.snailwu.job.core.biz.model.ResultT;
-import com.snailwu.job.core.enums.RegistryType;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +28,7 @@ import static org.mybatis.dynamic.sql.SqlBuilder.*;
  */
 @Service
 public class AdminBizImpl implements AdminBiz {
-    private static final Logger log = LoggerFactory.getLogger(AdminBizImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdminBizImpl.class);
 
     @Resource
     private JobExecutorMapper jobExecutorMapper;
@@ -44,15 +43,15 @@ public class AdminBizImpl implements AdminBiz {
         for (CallbackParam callbackParam : callbackParamList) {
             // 查询任务日志
             JobLog jobLog = jobLogMapper.selectOne(
-                    select(JobLogDynamicSqlSupport.jobLog.allColumns())
+                    select(JobLogDynamicSqlSupport.jobLog.id, JobLogDynamicSqlSupport.execCode)
                             .from(JobLogDynamicSqlSupport.jobLog)
                             .where(JobLogDynamicSqlSupport.id, isEqualTo(callbackParam.getLogId()))
                             .build().render(RenderingStrategies.MYBATIS3)
             ).orElse(null);
             if (jobLog == null) {
-                return new ResultT<>(ResultT.FAIL_CODE, "没有对应的任务Log记录");
+                return new ResultT<>(ResultT.FAIL_CODE, "无效的logId");
             }
-            if (jobLog.getExecCode() != null) {
+            if (jobLog.getExecCode() != 0) { // 默认是 0
                 return new ResultT<>(ResultT.FAIL_CODE, "重复回调");
             }
 
@@ -63,7 +62,7 @@ public class AdminBizImpl implements AdminBiz {
             updateJobLog.setExecCode(callbackParam.getExecCode());
             updateJobLog.setExecMsg(callbackParam.getExecMsg());
             AdminConfig.getInstance().getJobLogMapper().updateByPrimaryKeySelective(updateJobLog);
-            log.info("回调成功. 任务执行结果: {}", callbackParam.getExecCode());
+            LOGGER.info("回调成功. 任务执行结果: {}", callbackParam.getExecCode());
         }
         return ResultT.SUCCESS;
     }
@@ -74,23 +73,20 @@ public class AdminBizImpl implements AdminBiz {
                 select(JobExecutorDynamicSqlSupport.id)
                         .from(JobExecutorDynamicSqlSupport.jobExecutor)
                         .where(JobExecutorDynamicSqlSupport.groupName, isEqualTo(registryParam.getGroupName()))
-                        .and(JobExecutorDynamicSqlSupport.address, isEqualTo(registryParam.getExecutorAddress()))
+                        .and(JobExecutorDynamicSqlSupport.address, isEqualTo(registryParam.getAddress()))
                         .build().render(RenderingStrategies.MYBATIS3)
         ).orElse(null);
         if (jobExecutor == null) {
-            // insert
-            JobExecutor executor = new JobExecutor();
-            executor.setGroupName(registryParam.getGroupName());
-            executor.setAddress(registryParam.getExecutorAddress());
-            executor.setRegistryType(RegistryType.AUTO.getValue());
-            executor.setUpdateTime(new Date());
-            jobExecutorMapper.insertSelective(executor);
+            // 新增
+            jobExecutor = new JobExecutor();
+            jobExecutor.setGroupName(registryParam.getGroupName());
+            jobExecutor.setAddress(registryParam.getAddress());
+            jobExecutor.setUpdateTime(new Date());
+            jobExecutorMapper.insertSelective(jobExecutor);
         } else {
-            // update
-            JobExecutor executor = new JobExecutor();
-            executor.setId(jobExecutor.getId());
-            executor.setUpdateTime(new Date());
-            jobExecutorMapper.updateByPrimaryKeySelective(executor);
+            // 更新 update_time
+            jobExecutor.setUpdateTime(new Date());
+            jobExecutorMapper.updateByPrimaryKeySelective(jobExecutor);
         }
         return ResultT.SUCCESS;
     }
@@ -101,7 +97,7 @@ public class AdminBizImpl implements AdminBiz {
         jobExecutorMapper.delete(
                 deleteFrom(JobExecutorDynamicSqlSupport.jobExecutor)
                         .where(JobExecutorDynamicSqlSupport.groupName, isEqualTo(registryParam.getGroupName()))
-                        .and(JobExecutorDynamicSqlSupport.address, isEqualTo(registryParam.getExecutorAddress()))
+                        .and(JobExecutorDynamicSqlSupport.address, isEqualTo(registryParam.getAddress()))
                         .build().render(RenderingStrategies.MYBATIS3)
         );
         return ResultT.SUCCESS;

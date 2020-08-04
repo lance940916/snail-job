@@ -10,14 +10,14 @@ public class RegistryParam {
     private String groupName;
 
     // 注册节点的地址
-    private String executorAddress;
+    private String address;
 
     public RegistryParam() {
     }
 
-    public RegistryParam(String groupName, String executorAddress) {
+    public RegistryParam(String groupName, String address) {
         this.groupName = groupName;
-        this.executorAddress = executorAddress;
+        this.address = address;
     }
 
     public String getGroupName() {
@@ -28,11 +28,11 @@ public class RegistryParam {
         this.groupName = groupName;
     }
 
-    public String getExecutorAddress() {
-        return executorAddress;
+    public String getAddress() {
+        return address;
     }
 
-    public void setExecutorAddress(String executorAddress) {
-        this.executorAddress = executorAddress;
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

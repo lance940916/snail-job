@@ -21,9 +21,6 @@ public final class JobExecutorDynamicSqlSupport {
     public static final SqlColumn<String> address = jobExecutor.address;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<Byte> registryType = jobExecutor.registryType;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final SqlColumn<Date> updateTime = jobExecutor.updateTime;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -33,8 +30,6 @@ public final class JobExecutorDynamicSqlSupport {
         public final SqlColumn<String> groupName = column("group_name", JDBCType.VARCHAR);
 
         public final SqlColumn<String> address = column("address", JDBCType.VARCHAR);
-
-        public final SqlColumn<Byte> registryType = column("registry_type", JDBCType.TINYINT);
 
         public final SqlColumn<Date> updateTime = column("update_time", JDBCType.TIMESTAMP);
 
