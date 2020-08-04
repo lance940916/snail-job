@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
-import java.util.List;
 
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
@@ -39,31 +38,29 @@ public class AdminBizImpl implements AdminBiz {
      * 接收任务执行结果
      */
     @Override
-    public ResultT<String> callback(List<CallbackParam> callbackParamList) {
-        for (CallbackParam callbackParam : callbackParamList) {
-            // 查询任务日志
-            JobLog jobLog = jobLogMapper.selectOne(
-                    select(JobLogDynamicSqlSupport.jobLog.id, JobLogDynamicSqlSupport.execCode)
-                            .from(JobLogDynamicSqlSupport.jobLog)
-                            .where(JobLogDynamicSqlSupport.id, isEqualTo(callbackParam.getLogId()))
-                            .build().render(RenderingStrategies.MYBATIS3)
-            ).orElse(null);
-            if (jobLog == null) {
-                return new ResultT<>(ResultT.FAIL_CODE, "无效的logId");
-            }
-            if (jobLog.getExecCode() != 0) { // 默认是 0
-                return new ResultT<>(ResultT.FAIL_CODE, "重复回调");
-            }
-
-            // 更新 JobLog 执行结果
-            JobLog updateJobLog = new JobLog();
-            updateJobLog.setId(jobLog.getId());
-            updateJobLog.setExecTime(callbackParam.getExecTime());
-            updateJobLog.setExecCode(callbackParam.getExecCode());
-            updateJobLog.setExecMsg(callbackParam.getExecMsg());
-            AdminConfig.getInstance().getJobLogMapper().updateByPrimaryKeySelective(updateJobLog);
-            LOGGER.info("回调成功. 任务执行结果: {}", callbackParam.getExecCode());
+    public ResultT<String> callback(CallbackParam callbackParam) {
+        // 查询任务日志
+        JobLog jobLog = jobLogMapper.selectOne(
+                select(JobLogDynamicSqlSupport.jobLog.id, JobLogDynamicSqlSupport.execCode)
+                        .from(JobLogDynamicSqlSupport.jobLog)
+                        .where(JobLogDynamicSqlSupport.id, isEqualTo(callbackParam.getLogId()))
+                        .build().render(RenderingStrategies.MYBATIS3)
+        ).orElse(null);
+        if (jobLog == null) {
+            return new ResultT<>(ResultT.FAIL_CODE, "无效的logId");
         }
+        if (jobLog.getExecCode() != 0) { // 默认是 0
+            return new ResultT<>(ResultT.FAIL_CODE, "重复回调");
+        }
+
+        // 更新 JobLog 执行结果
+        JobLog updateJobLog = new JobLog();
+        updateJobLog.setId(jobLog.getId());
+        updateJobLog.setExecTime(callbackParam.getExecTime());
+        updateJobLog.setExecCode(callbackParam.getExecCode());
+        updateJobLog.setExecMsg(callbackParam.getExecMsg());
+        AdminConfig.getInstance().getJobLogMapper().updateByPrimaryKeySelective(updateJobLog);
+        LOGGER.info("回调成功. 任务执行结果: {}", callbackParam.getExecCode());
         return ResultT.SUCCESS;
     }
 

@@ -38,9 +38,9 @@ public class ExecutorRegistryThread {
      * 启动注册线程
      *
      * @param groupName 执行器的唯一标识
-     * @param executorAddress 本机的外网地址 http://ip:port
+     * @param address 本机的外网地址 http://ip:port
      */
-    public static void start(final String groupName, final String executorAddress) {
+    public static void start(final String groupName, final String address) {
         if (groupName == null || groupName.trim().length() == 0) {
             LOGGER.warn("[SnailJob]-注册失败.没有配置groupName");
             return;
@@ -55,7 +55,7 @@ public class ExecutorRegistryThread {
             while (!stopFlag) {
                 // 注册
                 try {
-                    RegistryParam registryParam = new RegistryParam(groupName, executorAddress);
+                    RegistryParam registryParam = new RegistryParam(groupName, address);
                     ResultT<String> result = SnailJobExecutor.getAdminBiz().registry(registryParam);
                     if (ResultT.SUCCESS_CODE == result.getCode()) {
                         LOGGER.info("[SnailJob]-在调度中心注册成功");
@@ -81,9 +81,9 @@ public class ExecutorRegistryThread {
                 }
             }
 
-            // 移除节点。线程被停止后（toStop 为 true）通知调度中心进行节点的移除
+            // 移除节点。线程被停止后通知调度中心进行节点的移除
             try {
-                RegistryParam registryParam = new RegistryParam(groupName, executorAddress);
+                RegistryParam registryParam = new RegistryParam(groupName, address);
                 ResultT<String> result = SnailJobExecutor.getAdminBiz().registryRemove(registryParam);
                 if (ResultT.SUCCESS_CODE == result.getCode()) {
                     LOGGER.info("[SnailJob]-通知调度中心移除注册节点成功");
@@ -97,7 +97,7 @@ public class ExecutorRegistryThread {
             }
         });
         registryThread.setDaemon(true);
-        registryThread.setName("executorRegistryThread");
+        registryThread.setName("executor-registry-thread");
         registryThread.start();
         LOGGER.info("[SnailJob]-注册节点守护线程-启动成功");
     }
@@ -107,8 +107,11 @@ public class ExecutorRegistryThread {
      */
     public static void stop() {
         stopFlag = true;
-        if (registryThread != null) {
-            registryThread.interrupt();
+        registryThread.interrupt();
+        try {
+            registryThread.join();
+        } catch (InterruptedException e) {
+            LOGGER.error(e.getMessage(), e);
         }
         LOGGER.info("[SnailJob]-注册节点守护线程-停止成功");
     }
