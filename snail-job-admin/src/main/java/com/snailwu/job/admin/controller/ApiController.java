@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * 接收 Worker 节点的请求
@@ -26,8 +25,8 @@ public class ApiController {
     private AdminBiz adminBiz;
 
     @PostMapping("/callback")
-    public ResultT<String> callback(@RequestBody List<CallbackParam> callbackParamList) {
-        return adminBiz.callback(callbackParamList);
+    public ResultT<String> callback(@RequestBody CallbackParam callbackParam) {
+        return adminBiz.callback(callbackParam);
     }
 
     @PostMapping("/registry")

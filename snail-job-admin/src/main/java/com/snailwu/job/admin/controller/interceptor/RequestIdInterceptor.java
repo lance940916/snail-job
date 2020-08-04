@@ -10,8 +10,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static com.snailwu.job.admin.constant.HttpConstants.JOB_LOG_ID;
-import static com.snailwu.job.admin.constant.HttpConstants.JOB_REQUEST_ID;
+import static com.snailwu.job.admin.constant.JobConstants.JOB_LOG_ID;
+import static com.snailwu.job.admin.constant.JobConstants.JOB_REQUEST_ID;
 
 /**
  * 将所有的请求加入请求ID
@@ -30,7 +30,7 @@ public class RequestIdInterceptor implements HandlerInterceptor {
     private final NamedThreadLocal<Long> REQUEST_STOP_WATCH = new NamedThreadLocal<>("JobRequestStopWatch");
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         // 开始计时
         REQUEST_STOP_WATCH.set(System.currentTimeMillis());
 
@@ -51,7 +51,7 @@ public class RequestIdInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         Long beginTime = REQUEST_STOP_WATCH.get();
         long endTime = System.currentTimeMillis();
         LOGGER.info("[SnailJob]-响应:[{} {}],耗时:{}毫秒",

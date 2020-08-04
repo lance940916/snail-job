@@ -2,7 +2,7 @@ package com.snailwu.job.admin.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.snailwu.job.admin.core.model.JobInfo;
-import com.snailwu.job.admin.service.InfoService;
+import com.snailwu.job.admin.service.LogService;
 import com.snailwu.job.core.biz.model.ResultT;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,14 +17,14 @@ import javax.annotation.Resource;
 public class LogController {
 
     @Resource
-    private InfoService infoService;
+    private LogService logService;
 
     /**
      * 分页查询
      */
     @GetMapping
     public ResultT<PageInfo<JobInfo>> list(Integer pageNum, Integer pageSize) {
-        PageInfo<JobInfo> pageInfo = infoService.list(pageNum, pageSize);
+        PageInfo<JobInfo> pageInfo = logService.list(pageNum, pageSize);
         return new ResultT<>(pageInfo);
     }
 
@@ -33,7 +33,7 @@ public class LogController {
      */
     @PostMapping
     public ResultT<String> save(JobInfo jobInfo) {
-        infoService.saveOrUpdate(jobInfo);
+        logService.saveOrUpdate(jobInfo);
         return ResultT.SUCCESS;
     }
 
@@ -42,7 +42,7 @@ public class LogController {
      */
     @PutMapping
     public ResultT<String> update(JobInfo jobInfo) {
-        infoService.saveOrUpdate(jobInfo);
+        logService.saveOrUpdate(jobInfo);
         return ResultT.SUCCESS;
     }
 
@@ -51,7 +51,7 @@ public class LogController {
      */
     @DeleteMapping
     public ResultT<String> delete(Integer id) {
-        infoService.delete(id);
+        logService.delete(id);
         return ResultT.SUCCESS;
     }
 

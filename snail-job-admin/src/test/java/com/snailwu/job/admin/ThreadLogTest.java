@@ -1,6 +1,6 @@
 package com.snailwu.job.admin;
 
-import com.snailwu.job.admin.constant.HttpConstants;
+import com.snailwu.job.admin.constant.JobConstants;
 import org.apache.logging.log4j.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +15,10 @@ public class ThreadLogTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(ThreadLogTest.class);
 
     public static void main(String[] args) throws InterruptedException {
-        ThreadContext.put(HttpConstants.JOB_LOG_ID, "主线程");
+        ThreadContext.put(JobConstants.JOB_LOG_ID, "主线程");
 
         new Thread(() -> {
-            ThreadContext.put(HttpConstants.JOB_LOG_ID, "线程1");
+            ThreadContext.put(JobConstants.JOB_LOG_ID, "线程1");
             while (true) {
                 try {
                     TimeUnit.SECONDS.sleep(1);
@@ -30,7 +30,7 @@ public class ThreadLogTest {
         }).start();
 
         new Thread(() -> {
-            ThreadContext.put(HttpConstants.JOB_LOG_ID, "线程2");
+            ThreadContext.put(JobConstants.JOB_LOG_ID, "线程2");
             while (true) {
                 try {
                     TimeUnit.SECONDS.sleep(1);

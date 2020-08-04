@@ -6,8 +6,6 @@ import com.snailwu.job.core.biz.model.RegistryParam;
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.utils.JobHttpUtil;
 
-import java.util.List;
-
 /**
  * @author 吴庆龙
  * @date 2020/5/25 2:50 下午
@@ -39,8 +37,8 @@ public class AdminBizClient implements AdminBiz {
     }
 
     @Override
-    public ResultT<String> callback(List<CallbackParam> callbackParamList) {
-        return JobHttpUtil.postBody(adminAddress + "api/callback", accessToken, callbackParamList, timeout, String.class);
+    public ResultT<String> callback(CallbackParam callbackParam) {
+        return JobHttpUtil.postBody(adminAddress + "api/callback", accessToken, callbackParam, timeout, String.class);
     }
 
     @Override

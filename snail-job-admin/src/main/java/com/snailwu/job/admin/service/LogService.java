@@ -1,5 +1,7 @@
 package com.snailwu.job.admin.service;
 
+import com.github.pagehelper.PageInfo;
+import com.snailwu.job.admin.core.model.JobInfo;
 import com.snailwu.job.admin.mapper.JobLogMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,4 +21,15 @@ public class LogService {
     private JobLogMapper jobLogMapper;
 
 
+    public PageInfo<JobInfo> list(Integer pageNum, Integer pageSize) {
+        return null;
+    }
+
+    public void delete(Integer id) {
+
+    }
+
+    public void saveOrUpdate(JobInfo jobInfo) {
+
+    }
 }

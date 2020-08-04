@@ -10,6 +10,9 @@
     </appenders>
 
     <loggers>
+        <logger name="com.snailwu.job.admin.mapper" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+        </logger>
         <root level="info">
             <AppenderRef ref="Console"/>
         </root>

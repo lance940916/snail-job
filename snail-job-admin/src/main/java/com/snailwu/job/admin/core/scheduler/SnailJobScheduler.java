@@ -2,6 +2,7 @@ package com.snailwu.job.admin.core.scheduler;
 
 import com.snailwu.job.admin.core.conf.AdminConfig;
 import com.snailwu.job.admin.core.thread.ExecutorMonitorHelper;
+import com.snailwu.job.admin.core.thread.JobFailMonitorHelper;
 import com.snailwu.job.admin.core.thread.JobScheduleHelper;
 import com.snailwu.job.admin.core.thread.JobTriggerPoolHelper;
 import com.snailwu.job.core.biz.ExecutorBiz;
@@ -24,6 +25,9 @@ public class SnailJobScheduler {
         // 定时整理注册节点到 group 中
         ExecutorMonitorHelper.start();
 
+        // 失败重试线程
+        JobFailMonitorHelper.start();
+
         // 启动任务扫描调度类
         JobTriggerPoolHelper.start();
         JobScheduleHelper.start();
@@ -34,6 +38,8 @@ public class SnailJobScheduler {
      */
     public void destroy() {
         ExecutorMonitorHelper.stop();
+
+        JobFailMonitorHelper.stop();
 
         JobScheduleHelper.stop();
         JobTriggerPoolHelper.stop();

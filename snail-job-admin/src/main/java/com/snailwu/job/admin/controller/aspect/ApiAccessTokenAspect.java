@@ -40,7 +40,7 @@ public class ApiAccessTokenAspect {
         }
         String uri = request.getRequestURI();
 
-        LOGGER.error("[SnailJob]-{}-AccessToken错误", uri);
+        LOGGER.error("{}-AccessToken错误", uri);
         return new ResultT<>(ResultT.FAIL_CODE, "AccessToken错误");
     }
 
