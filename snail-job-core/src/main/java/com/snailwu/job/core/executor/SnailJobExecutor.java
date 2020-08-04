@@ -196,6 +196,7 @@ public class SnailJobExecutor {
      */
     public static JobThread registryJobThread(int jobId, IJobHandler handler, String removeOldReason) {
         JobThread jobThread = new JobThread(jobId, handler);
+        jobThread.setName("job-id-" + jobId);
         jobThread.start();
         LOGGER.info("[SnailJob]-注册JobThread成功.jobId:{},handler:{}", jobId, handler);
 
