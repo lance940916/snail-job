@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration name="baseConf" status="info" monitorInterval="30">
 
-    <appenders>
+    <Appenders>
         <Console name="Console">
             <PatternLayout>
                 <Pattern>[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS} %t %X{JOB_LOG_ID} %c{1.}#%M[%L]: %m%n</Pattern>
             </PatternLayout>
         </Console>
-    </appenders>
+    </Appenders>
 
-    <loggers>
-        <logger name="com.snailwu.job.admin.mapper" level="debug" additivity="false">
+    <Loggers>
+        <Logger name="com.snailwu.job.admin.mapper" level="debug" additivity="false">
             <AppenderRef ref="Console"/>
-        </logger>
-        <root level="info">
+        </Logger>
+        <Root level="info">
             <AppenderRef ref="Console"/>
-        </root>
-    </loggers>
+        </Root>
+    </Loggers>
 
 </Configuration>

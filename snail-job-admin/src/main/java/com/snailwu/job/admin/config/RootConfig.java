@@ -78,7 +78,6 @@ public class RootConfig {
     @Bean
     public org.apache.ibatis.session.Configuration myBatisConfiguration() {
         org.apache.ibatis.session.Configuration mbConfig = new org.apache.ibatis.session.Configuration();
-        mbConfig.setLogPrefix("mybatis-");
 
         // 增加分页拦截器
         mbConfig.addInterceptor(pageInterceptor());

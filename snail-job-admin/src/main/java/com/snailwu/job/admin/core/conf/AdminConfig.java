@@ -47,7 +47,7 @@ public class AdminConfig implements InitializingBean, DisposableBean {
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         snailJobScheduler.destroy();
     }
 

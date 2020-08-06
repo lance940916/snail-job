@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
         String uri = request.getRequestURI();
         // 异常信息
         String message = e.getMessage();
-        LOGGER.error("[SnailJob]-请求:[{}]发生异常:{}", uri, message);
+        LOGGER.error("请求:[{}]发生异常:{}", uri, message);
 
         model.addAttribute("errorMsg", e.getMessage());
         return "500";

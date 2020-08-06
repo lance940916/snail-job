@@ -45,7 +45,7 @@ public class RequestIdInterceptor implements HandlerInterceptor {
         if (jobRequestId == null || jobRequestId.trim().length() == 0) {
             request.setAttribute(JOB_REQUEST_ID, requestId);
         }
-        LOGGER.info("[SnailJob]-请求:[{} {}],匹配方法:[{}]",
+        LOGGER.info("请求:[{} {}],匹配方法:[{}]",
                 request.getMethod(), request.getRequestURI(), handler.getClass());
         return true;
     }
@@ -54,7 +54,7 @@ public class RequestIdInterceptor implements HandlerInterceptor {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         Long beginTime = REQUEST_STOP_WATCH.get();
         long endTime = System.currentTimeMillis();
-        LOGGER.info("[SnailJob]-响应:[{} {}],耗时:{}毫秒",
+        LOGGER.info("响应:[{} {}],耗时:{}毫秒",
                 request.getMethod(), request.getRequestURI(), (endTime - beginTime));
         ThreadContext.clearAll();
     }
