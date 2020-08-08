@@ -23,8 +23,8 @@ public class GroupController {
      * 分页列表
      */
     @GetMapping
-    public ResultT<PageInfo<JobGroup>> list(Integer pageNum, Integer pageSize) {
-        PageInfo<JobGroup> pageInfo = groupService.list(pageNum, pageSize);
+    public ResultT<PageInfo<JobGroup>> list(Integer page, Integer limit) {
+        PageInfo<JobGroup> pageInfo = groupService.list(page, limit);
         return new ResultT<>(pageInfo);
     }
 
@@ -49,8 +49,8 @@ public class GroupController {
     /**
      * 删除
      */
-    @DeleteMapping
-    public ResultT<String> delete(Integer id) {
+    @DeleteMapping("/{id}")
+    public ResultT<String> delete(@PathVariable("id") Integer id) {
         groupService.delete(id);
         return ResultT.SUCCESS;
     }

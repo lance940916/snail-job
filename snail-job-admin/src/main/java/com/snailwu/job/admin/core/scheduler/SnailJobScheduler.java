@@ -28,8 +28,10 @@ public class SnailJobScheduler {
         // 失败重试线程
         JobFailMonitorHelper.start();
 
-        // 启动任务扫描调度类
+        // 任务触发类线程
         JobTriggerPoolHelper.start();
+
+        // 启动任务扫描调度类
         JobScheduleHelper.start();
     }
 
@@ -42,6 +44,7 @@ public class SnailJobScheduler {
         JobFailMonitorHelper.stop();
 
         JobScheduleHelper.stop();
+
         JobTriggerPoolHelper.stop();
     }
 

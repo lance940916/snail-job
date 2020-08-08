@@ -149,7 +149,7 @@ public class JobScheduleHelper {
 
                 // 整理任务的耗时要控制在 (preReadMs - sleepMs) 毫秒内
                 if (costMs > preReadMs - PRE_LOAD_SLEEP_MS) {
-                    LOGGER.warn("整理任务时间过长,需要优化!!!");
+                    LOGGER.warn("整理任务时间过长,耗时:{}毫秒,需要优化!!!", costMs);
                     continue;
                 }
 
@@ -196,8 +196,6 @@ public class JobScheduleHelper {
                 long costMs = System.currentTimeMillis() - nowTimeTs;
                 if (costMs > 1000) {
                     LOGGER.warn("本次任务调度耗时时间过长:{}毫秒", costMs);
-                } else {
-                    LOGGER.info("本次任务调度耗时:{}毫秒", costMs);
                 }
             }
         });

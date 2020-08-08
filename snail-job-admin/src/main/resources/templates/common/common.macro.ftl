@@ -42,13 +42,16 @@
         <div class="layui-side-scroll">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
             <ul class="layui-nav layui-nav-tree">
-                <li class="layui-nav-item <#if pageName=="index">layui-this</#if>"><a href="${contextPath}/">控制台</a>
+                <li class="layui-nav-item <#if pageName=="index">layui-this</#if>">
+                    <a href="${contextPath}/">控制台</a>
                 </li>
-                <li class="layui-nav-item <#if pageName=="group">layui-this</#if>"><a
-                            href="${contextPath}/group">执行器管理</a></li>
-                <li class="layui-nav-item <#if pageName=="job">layui-this</#if>"><a href="${contextPath}/job">任务管理</a>
+                <li class="layui-nav-item <#if pageName=="group">layui-this</#if>">
+                    <a href="${contextPath}/group_page">执行器管理</a></li>
+                <li class="layui-nav-item <#if pageName=="job">layui-this</#if>">
+                    <a href="${contextPath}/info_page">任务管理</a>
                 </li>
-                <li class="layui-nav-item <#if pageName=="log">layui-this</#if>"><a href="${contextPath}/log">日志管理</a>
+                <li class="layui-nav-item <#if pageName=="log">layui-this</#if>">
+                    <a href="${contextPath}/log_page">日志管理</a>
                 </li>
             </ul>
         </div>
