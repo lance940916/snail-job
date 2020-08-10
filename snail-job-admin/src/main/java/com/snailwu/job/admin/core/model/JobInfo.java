@@ -38,9 +38,6 @@ public class JobInfo {
     private String executorParam;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String executorBlockStrategy;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Integer executorTimeout;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -163,16 +160,6 @@ public class JobInfo {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public void setExecutorParam(String executorParam) {
         this.executorParam = executorParam;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getExecutorBlockStrategy() {
-        return executorBlockStrategy;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setExecutorBlockStrategy(String executorBlockStrategy) {
-        this.executorBlockStrategy = executorBlockStrategy;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")

@@ -50,7 +50,7 @@
             </form>
 
             <#-- 数据表格 -->
-            <table class="layui-hide" id="dataTable" lay-filter="dataTable"></table>
+            <table class="layui-hide" id="dataTableID" lay-filter="dataTable"></table>
 
         </div>
     </div>
@@ -69,34 +69,67 @@
                 </div>
             </div>
             <div class="layui-form-item">
+                <label class="layui-form-label">描述</label>
+                <div class="layui-input-block">
+                    <input type="text" name="description" required lay-verify="required" class="layui-input" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">CRON表达式</label>
+                <div class="layui-input-block">
+                    <input type="text" name="cron" required lay-verify="required" class="layui-input" />
+                </div>
+            </div>
+            <div class="layui-form-item">
                 <label class="layui-form-label">分组</label>
                 <div class="layui-input-block">
-                    <select name="groupName">
-                        <option value="">请选择分组</option>
-                        <option value="010">北京</option>
-                        <option value="021">上海</option>
-                        <option value="0571">杭州</option>
+                    <select id="groupNameSelect" name="groupName">
+                        <option value="">请选择</option>
                     </select>
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">唯一标识</label>
+                <label class="layui-form-label">负责人</label>
                 <div class="layui-input-block">
-                    <input type="text" name="name" required lay-verify="required" class="layui-input" />
+                    <input type="text" name="author" class="layui-input" />
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">注册类型</label>
+                <label class="layui-form-label">报警邮箱</label>
                 <div class="layui-input-block">
-                    <input type="radio" name="type" value="0" title="自动">
-                    <input type="radio" name="type" value="1" title="手动">
+                    <input type="text" name="alarmEmail" class="layui-input" />
                 </div>
             </div>
-            <div class="layui-form-item layui-form-text">
-                <label class="layui-form-label">地址列表</label>
+            <div class="layui-form-item">
+                <label class="layui-form-label">路由策略</label>
                 <div class="layui-input-block">
-                    <textarea name="addressList" placeholder="地址列表使用英文逗号分开" class="layui-textarea">
-                    </textarea>
+                    <select id="executorRouteStrategySelect" name="executorRouteStrategy">
+                        <option value="">请选择</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">JobHandler</label>
+                <div class="layui-input-block">
+                    <input type="text" name="executorHandler" required lay-verify="required" class="layui-input" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">任务参数</label>
+                <div class="layui-input-block">
+                    <input type="text" name="executorParam" class="layui-input" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">超时时间</label>
+                <div class="layui-input-block">
+                    <input type="text" name="executorTimeout" required lay-verify="required|number" class="layui-input" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">失败重试次数</label>
+                <div class="layui-input-block">
+                    <input type="text" name="executorFailRetryCount" required lay-verify="required|number" class="layui-input" />
                 </div>
             </div>
             <div class="layui-form-item">
@@ -135,7 +168,7 @@
     !function() {
         // 渲染表格
         table.render({
-            elem: '#dataTable',
+            elem: '#dataTableID',
             url: '${contextPath}/info',
             cols: [[
                 {field: 'id', title: 'ID', fixed: 'left', width: 50, unresize: true},
@@ -147,9 +180,6 @@
                 {fixed: 'right', title: '操作', toolbar: '#showOperate'},
             ]],
             page: true,
-            response: {
-                statusCode: 200
-            },
             parseData: function(res) {
                 return {
                     "code": res.code,
@@ -162,19 +192,7 @@
         table.on('tool(dataTable)', function(obj){
             let data = obj.data;
             let eventName = obj.event;
-            if (eventName === 'show') {
-                // 查看地址
-                let addrArray = data.addressList.split(",");
-                let htmlContent = '<div>';
-                for (let i = 0; i < addrArray.length; i++) {
-                    htmlContent +=  (i + 1) + ': ' + addrArray[i];
-                    htmlContent += '<br/>';
-                }
-                htmlContent += '</div>';
-                layer.open({
-                    content: htmlContent
-                });
-            } else if (eventName === 'edit') {
+            if (eventName === 'edit') {
                 // 把信息都回显上去
                 form.val('editForm', {
                     'id': data.id,

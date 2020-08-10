@@ -90,8 +90,7 @@
             <div class="layui-form-item layui-form-text">
                 <label class="layui-form-label">地址列表</label>
                 <div class="layui-input-block">
-                    <textarea name="addressList" placeholder="地址列表使用英文逗号分开" class="layui-textarea">
-                    </textarea>
+                    <textarea name="addressList" placeholder="地址列表使用英文逗号分开" class="layui-textarea"></textarea>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -146,9 +145,6 @@
                 {fixed: 'right', title: '操作', toolbar: '#showOperate'},
             ]],
             page: true,
-            response: {
-                statusCode: 200
-            },
             parseData: function(res) {
                 return {
                     "code": res.code,

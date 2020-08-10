@@ -29,7 +29,7 @@ import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 @Mapper
 public interface JobInfoMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    BasicColumn[] selectList = BasicColumn.columnList(id, groupName, cron, description, createTime, updateTime, author, alarmEmail, executorRouteStrategy, executorHandler, executorParam, executorBlockStrategy, executorTimeout, executorFailRetryCount, triggerStatus, triggerLastTime, triggerNextTime);
+    BasicColumn[] selectList = BasicColumn.columnList(id, groupName, cron, description, createTime, updateTime, author, alarmEmail, executorRouteStrategy, executorHandler, executorParam, executorTimeout, executorFailRetryCount, triggerStatus, triggerLastTime, triggerNextTime);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
@@ -66,7 +66,6 @@ public interface JobInfoMapper {
         @Result(column="executor_route_strategy", property="executorRouteStrategy", jdbcType=JdbcType.VARCHAR),
         @Result(column="executor_handler", property="executorHandler", jdbcType=JdbcType.VARCHAR),
         @Result(column="executor_param", property="executorParam", jdbcType=JdbcType.VARCHAR),
-        @Result(column="executor_block_strategy", property="executorBlockStrategy", jdbcType=JdbcType.VARCHAR),
         @Result(column="executor_timeout", property="executorTimeout", jdbcType=JdbcType.INTEGER),
         @Result(column="executor_fail_retry_count", property="executorFailRetryCount", jdbcType=JdbcType.TINYINT),
         @Result(column="trigger_status", property="triggerStatus", jdbcType=JdbcType.TINYINT),
@@ -110,7 +109,6 @@ public interface JobInfoMapper {
             .map(executorRouteStrategy).toProperty("executorRouteStrategy")
             .map(executorHandler).toProperty("executorHandler")
             .map(executorParam).toProperty("executorParam")
-            .map(executorBlockStrategy).toProperty("executorBlockStrategy")
             .map(executorTimeout).toProperty("executorTimeout")
             .map(executorFailRetryCount).toProperty("executorFailRetryCount")
             .map(triggerStatus).toProperty("triggerStatus")
@@ -133,7 +131,6 @@ public interface JobInfoMapper {
             .map(executorRouteStrategy).toProperty("executorRouteStrategy")
             .map(executorHandler).toProperty("executorHandler")
             .map(executorParam).toProperty("executorParam")
-            .map(executorBlockStrategy).toProperty("executorBlockStrategy")
             .map(executorTimeout).toProperty("executorTimeout")
             .map(executorFailRetryCount).toProperty("executorFailRetryCount")
             .map(triggerStatus).toProperty("triggerStatus")
@@ -156,7 +153,6 @@ public interface JobInfoMapper {
             .map(executorRouteStrategy).toPropertyWhenPresent("executorRouteStrategy", record::getExecutorRouteStrategy)
             .map(executorHandler).toPropertyWhenPresent("executorHandler", record::getExecutorHandler)
             .map(executorParam).toPropertyWhenPresent("executorParam", record::getExecutorParam)
-            .map(executorBlockStrategy).toPropertyWhenPresent("executorBlockStrategy", record::getExecutorBlockStrategy)
             .map(executorTimeout).toPropertyWhenPresent("executorTimeout", record::getExecutorTimeout)
             .map(executorFailRetryCount).toPropertyWhenPresent("executorFailRetryCount", record::getExecutorFailRetryCount)
             .map(triggerStatus).toPropertyWhenPresent("triggerStatus", record::getTriggerStatus)
@@ -205,7 +201,6 @@ public interface JobInfoMapper {
                 .set(executorRouteStrategy).equalTo(record::getExecutorRouteStrategy)
                 .set(executorHandler).equalTo(record::getExecutorHandler)
                 .set(executorParam).equalTo(record::getExecutorParam)
-                .set(executorBlockStrategy).equalTo(record::getExecutorBlockStrategy)
                 .set(executorTimeout).equalTo(record::getExecutorTimeout)
                 .set(executorFailRetryCount).equalTo(record::getExecutorFailRetryCount)
                 .set(triggerStatus).equalTo(record::getTriggerStatus)
@@ -226,7 +221,6 @@ public interface JobInfoMapper {
                 .set(executorRouteStrategy).equalToWhenPresent(record::getExecutorRouteStrategy)
                 .set(executorHandler).equalToWhenPresent(record::getExecutorHandler)
                 .set(executorParam).equalToWhenPresent(record::getExecutorParam)
-                .set(executorBlockStrategy).equalToWhenPresent(record::getExecutorBlockStrategy)
                 .set(executorTimeout).equalToWhenPresent(record::getExecutorTimeout)
                 .set(executorFailRetryCount).equalToWhenPresent(record::getExecutorFailRetryCount)
                 .set(triggerStatus).equalToWhenPresent(record::getTriggerStatus)
@@ -247,7 +241,6 @@ public interface JobInfoMapper {
             .set(executorRouteStrategy).equalTo(record::getExecutorRouteStrategy)
             .set(executorHandler).equalTo(record::getExecutorHandler)
             .set(executorParam).equalTo(record::getExecutorParam)
-            .set(executorBlockStrategy).equalTo(record::getExecutorBlockStrategy)
             .set(executorTimeout).equalTo(record::getExecutorTimeout)
             .set(executorFailRetryCount).equalTo(record::getExecutorFailRetryCount)
             .set(triggerStatus).equalTo(record::getTriggerStatus)
@@ -270,7 +263,6 @@ public interface JobInfoMapper {
             .set(executorRouteStrategy).equalToWhenPresent(record::getExecutorRouteStrategy)
             .set(executorHandler).equalToWhenPresent(record::getExecutorHandler)
             .set(executorParam).equalToWhenPresent(record::getExecutorParam)
-            .set(executorBlockStrategy).equalToWhenPresent(record::getExecutorBlockStrategy)
             .set(executorTimeout).equalToWhenPresent(record::getExecutorTimeout)
             .set(executorFailRetryCount).equalToWhenPresent(record::getExecutorFailRetryCount)
             .set(triggerStatus).equalToWhenPresent(record::getTriggerStatus)

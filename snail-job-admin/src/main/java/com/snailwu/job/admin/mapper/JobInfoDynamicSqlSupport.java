@@ -45,9 +45,6 @@ public final class JobInfoDynamicSqlSupport {
     public static final SqlColumn<String> executorParam = jobInfo.executorParam;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<String> executorBlockStrategy = jobInfo.executorBlockStrategy;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final SqlColumn<Integer> executorTimeout = jobInfo.executorTimeout;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -85,8 +82,6 @@ public final class JobInfoDynamicSqlSupport {
         public final SqlColumn<String> executorHandler = column("executor_handler", JDBCType.VARCHAR);
 
         public final SqlColumn<String> executorParam = column("executor_param", JDBCType.VARCHAR);
-
-        public final SqlColumn<String> executorBlockStrategy = column("executor_block_strategy", JDBCType.VARCHAR);
 
         public final SqlColumn<Integer> executorTimeout = column("executor_timeout", JDBCType.INTEGER);
 
