@@ -36,12 +36,12 @@ CREATE TABLE IF NOT EXISTS `job_info`
     `id`                        INT(11)      NOT NULL AUTO_INCREMENT,
     `group_name`                VARCHAR(32)  NOT NULL COMMENT '任务组名称',
     `cron`                      VARCHAR(50)  NOT NULL COMMENT '任务CRON表达式',
-    `description`               VARCHAR(255) NOT NULL DEFAULT '' COMMENT '任务描述',
+    `description`               VARCHAR(255) NOT NULL COMMENT '任务描述',
     `create_time`               DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
     `update_time`               DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
 
-    `author`                    VARCHAR(64)  NULL COMMENT '管理者',
-    `alarm_email`               VARCHAR(255) NULL COMMENT '报警邮件',
+    `author`                    VARCHAR(64)  NULL COMMENT '负责人',
+    `alarm_email`               VARCHAR(255) NULL COMMENT '报警邮箱',
 
     `executor_route_strategy`   VARCHAR(50)  NOT NULL COMMENT '执行器路由策略',
     `executor_handler`          VARCHAR(255) NOT NULL COMMENT '执行器任务handler',

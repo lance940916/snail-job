@@ -3,6 +3,7 @@ package com.snailwu.job.admin.controller;
 import com.github.pagehelper.PageInfo;
 import com.snailwu.job.admin.core.model.JobInfo;
 import com.snailwu.job.admin.core.thread.JobTriggerPoolHelper;
+import com.snailwu.job.admin.request.JobInfoSearchRequest;
 import com.snailwu.job.admin.service.InfoService;
 import com.snailwu.job.admin.trigger.TriggerTypeEnum;
 import com.snailwu.job.core.biz.model.ResultT;
@@ -25,8 +26,8 @@ public class InfoController {
      * 分页查询
      */
     @GetMapping
-    public ResultT<PageInfo<JobInfo>> list(Integer pageNum, Integer pageSize) {
-        PageInfo<JobInfo> pageInfo = infoService.list(pageNum, pageSize);
+    public ResultT<PageInfo<JobInfo>> list(JobInfoSearchRequest searchRequest) {
+        PageInfo<JobInfo> pageInfo = infoService.list(searchRequest);
         return new ResultT<>(pageInfo);
     }
 

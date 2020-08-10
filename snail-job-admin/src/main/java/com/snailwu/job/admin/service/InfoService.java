@@ -7,7 +7,10 @@ import com.snailwu.job.admin.core.cron.CronExpression;
 import com.snailwu.job.admin.core.model.JobInfo;
 import com.snailwu.job.admin.mapper.JobInfoDynamicSqlSupport;
 import com.snailwu.job.admin.mapper.JobInfoMapper;
+import com.snailwu.job.admin.request.JobInfoSearchRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
+import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,7 +19,7 @@ import javax.annotation.Resource;
 import java.text.ParseException;
 import java.util.Date;
 
-import static org.mybatis.dynamic.sql.SqlBuilder.select;
+import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
 /**
  * @author 吴庆龙
@@ -80,15 +83,20 @@ public class InfoService {
     /**
      * 分页查询
      */
-    public PageInfo<JobInfo> list(Integer pageNum, Integer pageSize) {
-        return PageHelper.startPage(pageNum, pageSize)
-                .doSelectPageInfo(() -> {
-                    jobInfoMapper.selectMany(
-                            select(JobInfoDynamicSqlSupport.jobInfo.allColumns())
-                            .from(JobInfoDynamicSqlSupport.jobInfo)
-                            .build().render(RenderingStrategies.MYBATIS3)
-                    );
-                });
+    public PageInfo<JobInfo> list(JobInfoSearchRequest searchRequest) {
+        String groupName = searchRequest.getGroupName();
+        String author = searchRequest.getAuthor();
+        groupName = StringUtils.isEmpty(groupName) ? null : groupName;
+        author = StringUtils.isEmpty(author) ? null : ("%" + author + "%");
+
+        SelectStatementProvider statementProvider = select(JobInfoDynamicSqlSupport.jobInfo.allColumns())
+                .from(JobInfoDynamicSqlSupport.jobInfo)
+                .where()
+                .and(JobInfoDynamicSqlSupport.groupName, isEqualToWhenPresent(groupName))
+                .and(JobInfoDynamicSqlSupport.author, isLikeWhenPresent(author))
+                .build().render(RenderingStrategies.MYBATIS3);
+        return PageHelper.startPage(searchRequest.getPage(), searchRequest.getLimit())
+                .doSelectPageInfo(() -> jobInfoMapper.selectMany(statementProvider));
     }
 
     /**

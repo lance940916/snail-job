@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletRequest;
  * @date 2020/7/25 8:17
  */
 @RestControllerAdvice(annotations = RestController.class)
-public class GlobalRestfulExceptionHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalRestfulExceptionHandler.class);
+public class GlobalRestExceptionHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalRestExceptionHandler.class);
 
     @ExceptionHandler(Exception.class)
     public ResultT<String> handler(Exception e, HttpServletRequest request) {

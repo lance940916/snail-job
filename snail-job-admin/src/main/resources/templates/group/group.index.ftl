@@ -29,7 +29,7 @@
             <form class="layui-form layui-form-pane">
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <button id="addJobGroupBtn" type="button" class="layui-btn layui-btn-normal">新增</button>
+                        <button id="addBtn" type="button" class="layui-btn layui-btn-normal">新增</button>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">名称</label>
@@ -44,13 +44,13 @@
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <button lay-submit class="layui-btn" lay-filter="searchFormSubmit">搜索</button>
+                        <button lay-submit class="layui-btn" lay-filter="searchBtn">搜索</button>
                     </div>
                 </div>
             </form>
 
             <#-- 数据表格 -->
-            <table class="layui-hide" id="groupTable"  lay-filter="groupTable"></table>
+            <table class="layui-hide" id="dataTableID" lay-filter="dataTable"></table>
 
         </div>
     </div>
@@ -58,12 +58,11 @@
     <!-- 底部固定区域 -->
     <@netCommon.commonFooter />
 </div>
-<@netCommon.commonScript />
 
 <#-- 编辑 -->
 <div id="editLayer" class="layui-row" style="display:none;">
     <div class="layui-col-lg10 layui-col-lg-offset1">
-        <form id="editFormID" class="layui-form layui-form-pane" pane style="margin-top: 20px;" lay-filter="editForm">
+        <form id="editFormID" class="layui-form layui-form-pane" pane style="margin-top: 20px;">
             <div class="layui-form-item layui-hide">
                 <div class="layui-input-block">
                     <input type="text" name="id" class="layui-input" />
@@ -97,12 +96,15 @@
             </div>
             <div class="layui-form-item">
                 <div class="layui-input-block">
-                    <button lay-submit class="layui-btn" lay-filter="editFormSubmit">保存</button>
+                    <button lay-submit class="layui-btn" lay-filter="saveBtn">保存</button>
                 </div>
             </div>
         </form>
     </div>
 </div>
+
+<#-- 公共 JS -->
+<@netCommon.commonScript />
 
 <#-- 查看执行器地址 -->
 <script type="text/html" id="showExecAddr">
@@ -123,21 +125,18 @@
     {{# } }}
 </script>
 
-<script src="${contextPath}/static/layui.all.js"></script>
 <script>
     let element = layui.element;
     let layer = layui.layer;
     let table = layui.table;
     let $ = layui.jquery;
     let form = layui.form;
-    let layerIndex = -1;
 
     !function() {
         // 渲染表格
         table.render({
-            elem: '#groupTable',
+            elem: '#dataTableID',
             url: '${contextPath}/group',
-            title: '分组数据表格',
             cols: [[
                 {field: 'id', title: 'ID', fixed: 'left', width: 50, unresize: true},
                 {field: 'title', title: '名称'},
@@ -159,7 +158,7 @@
                 };
             }
         });
-        table.on('tool(groupTable)', function(obj){
+        table.on('tool(dataTable)', function(obj){
             let data = obj.data;
             let eventName = obj.event;
             if (eventName === 'show') {
@@ -197,16 +196,13 @@
                 layer.confirm('是否删除该条记录?', {icon: 3, title:'提示'}, function(index){
                     layer.close(index);
                     $.ajax({
-                        url: '${contextPath}/group/' + data.id,
+                        url: '${contextPath}/group/' + data.id + '?_method=delete',
                         type: 'post',
-                        data: {
-                            _method: 'delete'
-                        },
                         success: function (ret) {
                             layer.alert('删除成功');
 
                             // 刷新表格
-                            table.reload('groupTable');
+                            table.reload('dataTable');
                         }
                     })
                 });
@@ -215,7 +211,7 @@
     }();
 
     // 添加弹窗
-    $('#addJobGroupBtn').click(function () {
+    $('#addBtn').click(function () {
         $('#editFormID')[0].reset();
         form.render('radio');
 
@@ -228,7 +224,7 @@
     })
 
     // 编辑表单提交
-    form.on('submit(editFormSubmit)', function (data) {
+    form.on('submit(saveBtn)', function (data) {
         let field = data.field;
         let method = field.id === '' ? 'post' : 'put';
         $.ajax({
@@ -241,21 +237,18 @@
                 layer.alert('保存成功');
 
                 // 刷新表格
-                table.reload('groupTable');
+                table.reload('dataTable');
             }
         });
         return false;
     });
 
     // 搜索提交
-    form.on('submit(searchFormSubmit)', function (data) {
+    form.on('submit(searchBtn)', function (data) {
         let field = data.field;
-        layer.alert(JSON.stringify(field));
-        table.reload('groupTable', {
-            where: {
-                title: field.title,
-                name: field.name
-            },
+        let searchJson = JSON.stringify(field, jsonFilter);
+        table.reload('dataTableID', {
+            where: JSON.parse(searchJson),
             page: {
                 curr: 1
             }

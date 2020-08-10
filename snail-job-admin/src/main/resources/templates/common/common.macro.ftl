@@ -14,7 +14,15 @@
 
 <#-- 公共 JS -->
 <#macro commonScript>
-    <script src="${contextPath}/static/layui.js"></script>
+    <script src="${contextPath}/static/layui.all.js"></script>
+    <script>
+        function jsonFilter(key, value) {
+            if (value === '') {
+                return undefined;
+            }
+            return value;
+        }
+    </script>
 </#macro>
 
 <#-- Header -->

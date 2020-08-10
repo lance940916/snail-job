@@ -1,6 +1,10 @@
+<#-- 自定义变量 -->
+<#assign contextPath="${springMacroRequestContext.contextPath}" >
+
 <!DOCTYPE html>
 <html lang="zh_CN">
 <head>
+    <title>蜗牛任务调度中心</title>
     <#import "../common/common.macro.ftl" as netCommon />
     <@netCommon.commonHead />
     <@netCommon.commonStyle />
@@ -17,9 +21,7 @@
         <!-- 内容主体区域 -->
         <div style="padding: 15px;">
 
-            <h1>任务数量: 8</h1>
-            <h1>执行器数量: 8</h1>
-            <h1>调度次数: 8</h1>
+            LOG PAGE
 
         </div>
     </div>
