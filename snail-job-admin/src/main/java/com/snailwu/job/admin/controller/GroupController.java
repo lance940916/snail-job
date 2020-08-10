@@ -2,6 +2,7 @@ package com.snailwu.job.admin.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.snailwu.job.admin.core.model.JobGroup;
+import com.snailwu.job.admin.request.JobGroupSearchRequest;
 import com.snailwu.job.admin.service.GroupService;
 import com.snailwu.job.core.biz.model.ResultT;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +24,9 @@ public class GroupController {
      * 分页列表
      */
     @GetMapping
-    public ResultT<PageInfo<JobGroup>> list(Integer page, Integer limit) {
-        PageInfo<JobGroup> pageInfo = groupService.list(page, limit);
+    public ResultT<PageInfo<JobGroup>> list(JobGroupSearchRequest request) {
+        PageInfo<JobGroup> pageInfo = groupService.list(request.getTitle(), request.getName(),
+                request.getPage(), request.getLimit());
         return new ResultT<>(pageInfo);
     }
 
@@ -32,7 +34,7 @@ public class GroupController {
      * 新增
      */
     @PostMapping
-    public ResultT<String> save(JobGroup jobGroup) {
+    public ResultT<String> save(@RequestBody JobGroup jobGroup) {
         groupService.saveOrUpdate(jobGroup);
         return ResultT.SUCCESS;
     }
@@ -41,7 +43,7 @@ public class GroupController {
      * 更新
      */
     @PutMapping
-    public ResultT<String> update(JobGroup jobGroup) {
+    public ResultT<String> update(@RequestBody JobGroup jobGroup) {
         groupService.saveOrUpdate(jobGroup);
         return ResultT.SUCCESS;
     }

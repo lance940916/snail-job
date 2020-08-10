@@ -29,28 +29,28 @@
             <form class="layui-form layui-form-pane">
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <button id="addBtn" class="layui-btn layui-btn-normal">新增</button>
+                        <button id="addJobGroupBtn" type="button" class="layui-btn layui-btn-normal">新增</button>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">名称</label>
                         <div class="layui-input-block">
-                            <input id="searchTitle" class="layui-input" type="text" autocomplete="off" />
+                            <input type="text" name="title" class="layui-input" />
                         </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">唯一标识</label>
                         <div class="layui-input-block">
-                            <input id="searchName" class="layui-input" type="text" autocomplete="off" />
+                            <input type="text" name="name" class="layui-input" />
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <button id="searchBtn" class="layui-btn">搜索</button>
+                        <button lay-submit class="layui-btn" lay-filter="searchFormSubmit">搜索</button>
                     </div>
                 </div>
             </form>
 
             <#-- 数据表格 -->
-            <table class="layui-hide" id="groupTable" lay-filter="groupTable"></table>
+            <table class="layui-hide" id="groupTable"  lay-filter="groupTable"></table>
 
         </div>
     </div>
@@ -61,24 +61,29 @@
 <@netCommon.commonScript />
 
 <#-- 编辑 -->
-<div id="editFormLayer" class="layui-row" style="display:none;">
+<div id="editLayer" class="layui-row" style="display:none;">
     <div class="layui-col-lg10 layui-col-lg-offset1">
-        <form class="layui-form layui-form-pane" style="margin-top: 20px;">
+        <form id="editFormID" class="layui-form layui-form-pane" pane style="margin-top: 20px;" lay-filter="editForm">
+            <div class="layui-form-item layui-hide">
+                <div class="layui-input-block">
+                    <input type="text" name="id" class="layui-input" />
+                </div>
+            </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">名称</label>
                 <div class="layui-input-block">
-                    <input id="editTitle" type="text" name="title" required lay-verify="required" class="layui-input" />
+                    <input type="text" name="title" required lay-verify="required" class="layui-input" />
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">唯一标识</label>
                 <div class="layui-input-block">
-                    <input id="editName" type="text" name="name" required lay-verify="required" class="layui-input" />
+                    <input type="text" name="name" required lay-verify="required" class="layui-input" />
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">注册类型</label>
-                <div id="editType" class="layui-input-block">
+                <div class="layui-input-block">
                     <input type="radio" name="type" value="0" title="自动">
                     <input type="radio" name="type" value="1" title="手动">
                 </div>
@@ -86,13 +91,13 @@
             <div class="layui-form-item layui-form-text">
                 <label class="layui-form-label">地址列表</label>
                 <div class="layui-input-block">
-                    <textarea id="editAddrList" placeholder="地址列表使用英文逗号分开" class="layui-textarea">
+                    <textarea name="addressList" placeholder="地址列表使用英文逗号分开" class="layui-textarea">
                     </textarea>
                 </div>
             </div>
             <div class="layui-form-item">
                 <div class="layui-input-block">
-                    <button id="saveEdit" type="submit" class="layui-btn">保存</button>
+                    <button lay-submit class="layui-btn" lay-filter="editFormSubmit">保存</button>
                 </div>
             </div>
         </form>
@@ -118,15 +123,16 @@
     {{# } }}
 </script>
 
+<script src="${contextPath}/static/layui.all.js"></script>
 <script>
-    //JavaScript代码区域
-    layui.use(['element', 'layer', 'table', 'jquery', 'form'], function () {
-        let element = layui.element;
-        let layer = layui.layer;
-        let table = layui.table;
-        let $ = layui.jquery;
-        let form = layui.form;
+    let element = layui.element;
+    let layer = layui.layer;
+    let table = layui.table;
+    let $ = layui.jquery;
+    let form = layui.form;
+    let layerIndex = -1;
 
+    !function() {
         // 渲染表格
         table.render({
             elem: '#groupTable',
@@ -170,20 +176,21 @@
                 });
             } else if (eventName === 'edit') {
                 // 把信息都回显上去
-                $('#editTitle').val(data.title);
-                $('#editName').val(data.name);
-                $('#editType input[type="radio"]').each(function (item, e) {
-                    console.log(item, e);
-                    $(this).prop('checked', true);
-                })
-                // $('input[type="radio"][name="type"][value="1"]').attr('checked', true);
-                $('#editAddrList').text(data.addressList);
+                form.val('editForm', {
+                    'id': data.id,
+                    'title': data.title,
+                    'name': data.name,
+                    'type': data.type,
+                    'addressList': data.addressList
+                });
+                form.render('radio');
+
                 // 回显
                 layer.open({
                     type: 1,
                     title: '编辑分组信息',
                     area: '350px',
-                    content: $('#editFormLayer')
+                    content: $('#editLayer')
                 })
             } else if (eventName === 'del') {
                 // 删除
@@ -197,6 +204,7 @@
                         },
                         success: function (ret) {
                             layer.alert('删除成功');
+
                             // 刷新表格
                             table.reload('groupTable');
                         }
@@ -204,20 +212,57 @@
                 });
             }
         });
+    }();
 
-        // 新增分组
-        // $('#addBtn').onclick(function () {
-        //     $('#editFormLayer input').val('');
-        //
-        //     layer.open({
-        //         type: 1,
-        //         title: '编辑分组信息',
-        //         area: '350px',
-        //         content: $('#editFormLayer')
-        //     })
-        // });
+    // 添加弹窗
+    $('#addJobGroupBtn').click(function () {
+        $('#editFormID')[0].reset();
+        form.render('radio');
 
+        layer.open({
+            type: 1,
+            title: '添加分组信息',
+            area: '350px',
+            content: $('#editLayer')
+        })
+    })
+
+    // 编辑表单提交
+    form.on('submit(editFormSubmit)', function (data) {
+        let field = data.field;
+        let method = field.id === '' ? 'post' : 'put';
+        $.ajax({
+            url: '${contextPath}/group?_method=' + method,
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(field),
+            success: function (ret) {
+                layer.close(layer.index);
+                layer.alert('保存成功');
+
+                // 刷新表格
+                table.reload('groupTable');
+            }
+        });
+        return false;
     });
+
+    // 搜索提交
+    form.on('submit(searchFormSubmit)', function (data) {
+        let field = data.field;
+        layer.alert(JSON.stringify(field));
+        table.reload('groupTable', {
+            where: {
+                title: field.title,
+                name: field.name
+            },
+            page: {
+                curr: 1
+            }
+        });
+        return false;
+    });
+
 </script>
 </body>
 </html>

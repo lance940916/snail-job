@@ -5,8 +5,10 @@ import com.github.pagehelper.PageInfo;
 import com.snailwu.job.admin.core.model.JobGroup;
 import com.snailwu.job.admin.mapper.JobGroupDynamicSqlSupport;
 import com.snailwu.job.admin.mapper.JobGroupMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
+import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -29,15 +31,17 @@ public class GroupService {
     /**
      * 分页列表
      */
-    public PageInfo<JobGroup> list(Integer pageNum, Integer pageSize) {
+    public PageInfo<JobGroup> list(String title, String name, Integer pageNum, Integer pageSize) {
+        title = StringUtils.isEmpty(title) ? null : ("%" + title + "%");
+        name = StringUtils.isEmpty(name) ? null : ("%" + name + "%");
+        SelectStatementProvider statementProvider = select(JobGroupDynamicSqlSupport.jobGroup.allColumns())
+                .from(JobGroupDynamicSqlSupport.jobGroup)
+                .where()
+                .and(JobGroupDynamicSqlSupport.title, isLikeWhenPresent(title))
+                .and(JobGroupDynamicSqlSupport.name, isLikeWhenPresent(name))
+                .build().render(RenderingStrategies.MYBATIS3);
         return PageHelper.startPage(pageNum, pageSize)
-                .doSelectPageInfo(() -> {
-                    jobGroupMapper.selectMany(
-                            select(JobGroupDynamicSqlSupport.jobGroup.allColumns())
-                                    .from(JobGroupDynamicSqlSupport.jobGroup)
-                                    .build().render(RenderingStrategies.MYBATIS3)
-                    );
-                });
+                .doSelectPageInfo(() -> jobGroupMapper.selectMany(statementProvider));
     }
 
     /**
