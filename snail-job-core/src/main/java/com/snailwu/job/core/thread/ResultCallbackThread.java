@@ -76,7 +76,6 @@ public class ResultCallbackThread {
         callbackThread.setDaemon(true);
         callbackThread.setName("result-callback-thread");
         callbackThread.start();
-        LOGGER.info("任务执行结果回调线程启动成功");
     }
 
     /**
@@ -107,7 +106,6 @@ public class ResultCallbackThread {
         } catch (InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
         }
-        LOGGER.info("任务执行结果回调线程停止成功");
     }
 
 }

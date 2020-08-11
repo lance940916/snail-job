@@ -55,7 +55,7 @@ public enum ExecutorRouteStrategyEnum {
     public static ExecutorRouteStrategyEnum match(String name) {
         if (name != null) {
             for (ExecutorRouteStrategyEnum item : ExecutorRouteStrategyEnum.values()) {
-                if (item.name().equals(name)) {
+                if (item.getName().equals(name)) {
                     return item;
                 }
             }

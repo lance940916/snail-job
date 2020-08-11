@@ -26,7 +26,7 @@ import java.util.Properties;
 @ComponentScan({
         "com.snailwu.job.admin.service",
         "com.snailwu.job.admin.core.alarm",
-//        "com.snailwu.job.admin.core.conf",
+        "com.snailwu.job.admin.core.conf",
 })
 @MapperScan("com.snailwu.job.admin.mapper")
 public class RootConfig {
@@ -69,6 +69,8 @@ public class RootConfig {
         // MyBatis JavaConfig配置
         factoryBean.setConfiguration(myBatisConfiguration());
 
+        factoryBean.setPlugins();
+
         return factoryBean.getObject();
     }
 
@@ -81,6 +83,11 @@ public class RootConfig {
 
         // 增加分页拦截器
         mbConfig.addInterceptor(pageInterceptor());
+
+        // 	允许 JDBC 支持自动生成主键，需要数据库驱动支持。如果设置为 true，将强制使用自动生成主键。
+        // 	尽管一些数据库驱动不支持此特性，但仍可正常工作（如 Derby）。
+        mbConfig.setUseGeneratedKeys(true);
+
         return mbConfig;
     }
 

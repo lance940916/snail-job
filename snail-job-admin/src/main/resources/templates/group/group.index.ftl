@@ -145,6 +145,9 @@
                 {fixed: 'right', title: '操作', toolbar: '#showOperate'},
             ]],
             page: true,
+            response: {
+                statusCode: 200
+            },
             parseData: function(res) {
                 return {
                     "code": res.code,

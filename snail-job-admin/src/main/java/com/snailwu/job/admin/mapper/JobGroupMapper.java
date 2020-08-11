@@ -7,7 +7,6 @@ import org.mybatis.dynamic.sql.BasicColumn;
 import org.mybatis.dynamic.sql.delete.DeleteDSLCompleter;
 import org.mybatis.dynamic.sql.delete.render.DeleteStatementProvider;
 import org.mybatis.dynamic.sql.insert.render.InsertStatementProvider;
-import org.mybatis.dynamic.sql.insert.render.MultiRowInsertStatementProvider;
 import org.mybatis.dynamic.sql.select.CountDSLCompleter;
 import org.mybatis.dynamic.sql.select.SelectDSLCompleter;
 import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
@@ -19,7 +18,6 @@ import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
 
 import javax.annotation.Generated;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,11 +39,8 @@ public interface JobGroupMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @InsertProvider(type=SqlProviderAdapter.class, method="insert")
+    @SelectKey(statement="SELECT LAST_INSERT_ID()", keyProperty="record.id", before=false, resultType=Integer.class)
     int insert(InsertStatementProvider<JobGroup> insertStatement);
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @InsertProvider(type=SqlProviderAdapter.class, method="insertMultiple")
-    int insertMultiple(MultiRowInsertStatementProvider<JobGroup> multipleInsertStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
@@ -87,19 +82,7 @@ public interface JobGroupMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int insert(JobGroup record) {
         return MyBatis3Utils.insert(this::insert, record, jobGroup, c ->
-            c.map(id).toProperty("id")
-            .map(title).toProperty("title")
-            .map(name).toProperty("name")
-            .map(type).toProperty("type")
-            .map(addressList).toProperty("addressList")
-        );
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int insertMultiple(Collection<JobGroup> records) {
-        return MyBatis3Utils.insertMultiple(this::insertMultiple, records, jobGroup, c ->
-            c.map(id).toProperty("id")
-            .map(title).toProperty("title")
+            c.map(title).toProperty("title")
             .map(name).toProperty("name")
             .map(type).toProperty("type")
             .map(addressList).toProperty("addressList")
@@ -109,8 +92,7 @@ public interface JobGroupMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int insertSelective(JobGroup record) {
         return MyBatis3Utils.insert(this::insert, record, jobGroup, c ->
-            c.map(id).toPropertyWhenPresent("id", record::getId)
-            .map(title).toPropertyWhenPresent("title", record::getTitle)
+            c.map(title).toPropertyWhenPresent("title", record::getTitle)
             .map(name).toPropertyWhenPresent("name", record::getName)
             .map(type).toPropertyWhenPresent("type", record::getType)
             .map(addressList).toPropertyWhenPresent("addressList", record::getAddressList)
@@ -146,8 +128,7 @@ public interface JobGroupMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     static UpdateDSL<UpdateModel> updateAllColumns(JobGroup record, UpdateDSL<UpdateModel> dsl) {
-        return dsl.set(id).equalTo(record::getId)
-                .set(title).equalTo(record::getTitle)
+        return dsl.set(title).equalTo(record::getTitle)
                 .set(name).equalTo(record::getName)
                 .set(type).equalTo(record::getType)
                 .set(addressList).equalTo(record::getAddressList);
@@ -155,8 +136,7 @@ public interface JobGroupMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     static UpdateDSL<UpdateModel> updateSelectiveColumns(JobGroup record, UpdateDSL<UpdateModel> dsl) {
-        return dsl.set(id).equalToWhenPresent(record::getId)
-                .set(title).equalToWhenPresent(record::getTitle)
+        return dsl.set(title).equalToWhenPresent(record::getTitle)
                 .set(name).equalToWhenPresent(record::getName)
                 .set(type).equalToWhenPresent(record::getType)
                 .set(addressList).equalToWhenPresent(record::getAddressList);

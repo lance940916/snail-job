@@ -7,7 +7,6 @@ import org.mybatis.dynamic.sql.BasicColumn;
 import org.mybatis.dynamic.sql.delete.DeleteDSLCompleter;
 import org.mybatis.dynamic.sql.delete.render.DeleteStatementProvider;
 import org.mybatis.dynamic.sql.insert.render.InsertStatementProvider;
-import org.mybatis.dynamic.sql.insert.render.MultiRowInsertStatementProvider;
 import org.mybatis.dynamic.sql.select.CountDSLCompleter;
 import org.mybatis.dynamic.sql.select.SelectDSLCompleter;
 import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
@@ -19,7 +18,6 @@ import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
 
 import javax.annotation.Generated;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,11 +39,8 @@ public interface JobInfoMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @InsertProvider(type=SqlProviderAdapter.class, method="insert")
+    @SelectKey(statement="SELECT LAST_INSERT_ID()", keyProperty="record.id", before=false, resultType=Integer.class)
     int insert(InsertStatementProvider<JobInfo> insertStatement);
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @InsertProvider(type=SqlProviderAdapter.class, method="insertMultiple")
-    int insertMultiple(MultiRowInsertStatementProvider<JobInfo> multipleInsertStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
@@ -98,30 +93,7 @@ public interface JobInfoMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int insert(JobInfo record) {
         return MyBatis3Utils.insert(this::insert, record, jobInfo, c ->
-            c.map(id).toProperty("id")
-            .map(groupName).toProperty("groupName")
-            .map(cron).toProperty("cron")
-            .map(description).toProperty("description")
-            .map(createTime).toProperty("createTime")
-            .map(updateTime).toProperty("updateTime")
-            .map(author).toProperty("author")
-            .map(alarmEmail).toProperty("alarmEmail")
-            .map(executorRouteStrategy).toProperty("executorRouteStrategy")
-            .map(executorHandler).toProperty("executorHandler")
-            .map(executorParam).toProperty("executorParam")
-            .map(executorTimeout).toProperty("executorTimeout")
-            .map(executorFailRetryCount).toProperty("executorFailRetryCount")
-            .map(triggerStatus).toProperty("triggerStatus")
-            .map(triggerLastTime).toProperty("triggerLastTime")
-            .map(triggerNextTime).toProperty("triggerNextTime")
-        );
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int insertMultiple(Collection<JobInfo> records) {
-        return MyBatis3Utils.insertMultiple(this::insertMultiple, records, jobInfo, c ->
-            c.map(id).toProperty("id")
-            .map(groupName).toProperty("groupName")
+            c.map(groupName).toProperty("groupName")
             .map(cron).toProperty("cron")
             .map(description).toProperty("description")
             .map(createTime).toProperty("createTime")
@@ -142,8 +114,7 @@ public interface JobInfoMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int insertSelective(JobInfo record) {
         return MyBatis3Utils.insert(this::insert, record, jobInfo, c ->
-            c.map(id).toPropertyWhenPresent("id", record::getId)
-            .map(groupName).toPropertyWhenPresent("groupName", record::getGroupName)
+            c.map(groupName).toPropertyWhenPresent("groupName", record::getGroupName)
             .map(cron).toPropertyWhenPresent("cron", record::getCron)
             .map(description).toPropertyWhenPresent("description", record::getDescription)
             .map(createTime).toPropertyWhenPresent("createTime", record::getCreateTime)
@@ -190,8 +161,7 @@ public interface JobInfoMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     static UpdateDSL<UpdateModel> updateAllColumns(JobInfo record, UpdateDSL<UpdateModel> dsl) {
-        return dsl.set(id).equalTo(record::getId)
-                .set(groupName).equalTo(record::getGroupName)
+        return dsl.set(groupName).equalTo(record::getGroupName)
                 .set(cron).equalTo(record::getCron)
                 .set(description).equalTo(record::getDescription)
                 .set(createTime).equalTo(record::getCreateTime)
@@ -210,8 +180,7 @@ public interface JobInfoMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     static UpdateDSL<UpdateModel> updateSelectiveColumns(JobInfo record, UpdateDSL<UpdateModel> dsl) {
-        return dsl.set(id).equalToWhenPresent(record::getId)
-                .set(groupName).equalToWhenPresent(record::getGroupName)
+        return dsl.set(groupName).equalToWhenPresent(record::getGroupName)
                 .set(cron).equalToWhenPresent(record::getCron)
                 .set(description).equalToWhenPresent(record::getDescription)
                 .set(createTime).equalToWhenPresent(record::getCreateTime)

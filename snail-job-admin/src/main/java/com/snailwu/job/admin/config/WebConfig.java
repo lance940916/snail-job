@@ -1,5 +1,8 @@
 package com.snailwu.job.admin.config;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.snailwu.job.admin.controller.interceptor.RequestIdInterceptor;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -9,12 +12,19 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.CacheControl;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
 import javax.annotation.Resource;
 import java.time.Duration;
+import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -50,6 +60,22 @@ public class WebConfig implements WebMvcConfigurer, ApplicationContextAware {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(requestIdInterceptor).addPathPatterns("/**");
+    }
+
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.add(new ByteArrayHttpMessageConverter());
+        converters.add(new StringHttpMessageConverter());
+        converters.add(new AllEncompassingFormHttpMessageConverter());
+
+        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
+                .applicationContext(applicationContext)
+                .simpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                .failOnUnknownProperties(false)
+                .serializationInclusion(JsonInclude.Include.NON_NULL)
+                .propertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+                .build();
+        converters.add(new MappingJackson2HttpMessageConverter(objectMapper));
     }
 
     /**

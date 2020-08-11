@@ -7,7 +7,6 @@ import org.mybatis.dynamic.sql.BasicColumn;
 import org.mybatis.dynamic.sql.delete.DeleteDSLCompleter;
 import org.mybatis.dynamic.sql.delete.render.DeleteStatementProvider;
 import org.mybatis.dynamic.sql.insert.render.InsertStatementProvider;
-import org.mybatis.dynamic.sql.insert.render.MultiRowInsertStatementProvider;
 import org.mybatis.dynamic.sql.select.CountDSLCompleter;
 import org.mybatis.dynamic.sql.select.SelectDSLCompleter;
 import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
@@ -19,7 +18,6 @@ import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
 
 import javax.annotation.Generated;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,11 +39,8 @@ public interface JobLogMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @InsertProvider(type=SqlProviderAdapter.class, method="insert")
+    @SelectKey(statement="SELECT LAST_INSERT_ID()", keyProperty="record.id", before=false, resultType=Long.class)
     int insert(InsertStatementProvider<JobLog> insertStatement);
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @InsertProvider(type=SqlProviderAdapter.class, method="insertMultiple")
-    int insertMultiple(MultiRowInsertStatementProvider<JobLog> multipleInsertStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
@@ -96,28 +91,7 @@ public interface JobLogMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int insert(JobLog record) {
         return MyBatis3Utils.insert(this::insert, record, jobLog, c ->
-            c.map(id).toProperty("id")
-            .map(jobId).toProperty("jobId")
-            .map(groupName).toProperty("groupName")
-            .map(executorAddress).toProperty("executorAddress")
-            .map(executorHandler).toProperty("executorHandler")
-            .map(executorParam).toProperty("executorParam")
-            .map(failRetryCount).toProperty("failRetryCount")
-            .map(triggerTime).toProperty("triggerTime")
-            .map(triggerCode).toProperty("triggerCode")
-            .map(triggerMsg).toProperty("triggerMsg")
-            .map(execTime).toProperty("execTime")
-            .map(execCode).toProperty("execCode")
-            .map(execMsg).toProperty("execMsg")
-            .map(alarmStatus).toProperty("alarmStatus")
-        );
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int insertMultiple(Collection<JobLog> records) {
-        return MyBatis3Utils.insertMultiple(this::insertMultiple, records, jobLog, c ->
-            c.map(id).toProperty("id")
-            .map(jobId).toProperty("jobId")
+            c.map(jobId).toProperty("jobId")
             .map(groupName).toProperty("groupName")
             .map(executorAddress).toProperty("executorAddress")
             .map(executorHandler).toProperty("executorHandler")
@@ -136,8 +110,7 @@ public interface JobLogMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int insertSelective(JobLog record) {
         return MyBatis3Utils.insert(this::insert, record, jobLog, c ->
-            c.map(id).toPropertyWhenPresent("id", record::getId)
-            .map(jobId).toPropertyWhenPresent("jobId", record::getJobId)
+            c.map(jobId).toPropertyWhenPresent("jobId", record::getJobId)
             .map(groupName).toPropertyWhenPresent("groupName", record::getGroupName)
             .map(executorAddress).toPropertyWhenPresent("executorAddress", record::getExecutorAddress)
             .map(executorHandler).toPropertyWhenPresent("executorHandler", record::getExecutorHandler)
@@ -182,8 +155,7 @@ public interface JobLogMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     static UpdateDSL<UpdateModel> updateAllColumns(JobLog record, UpdateDSL<UpdateModel> dsl) {
-        return dsl.set(id).equalTo(record::getId)
-                .set(jobId).equalTo(record::getJobId)
+        return dsl.set(jobId).equalTo(record::getJobId)
                 .set(groupName).equalTo(record::getGroupName)
                 .set(executorAddress).equalTo(record::getExecutorAddress)
                 .set(executorHandler).equalTo(record::getExecutorHandler)
@@ -200,8 +172,7 @@ public interface JobLogMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     static UpdateDSL<UpdateModel> updateSelectiveColumns(JobLog record, UpdateDSL<UpdateModel> dsl) {
-        return dsl.set(id).equalToWhenPresent(record::getId)
-                .set(jobId).equalToWhenPresent(record::getJobId)
+        return dsl.set(jobId).equalToWhenPresent(record::getJobId)
                 .set(groupName).equalToWhenPresent(record::getGroupName)
                 .set(executorAddress).equalToWhenPresent(record::getExecutorAddress)
                 .set(executorHandler).equalToWhenPresent(record::getExecutorHandler)

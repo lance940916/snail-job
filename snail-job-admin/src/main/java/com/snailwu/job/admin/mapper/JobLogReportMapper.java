@@ -7,7 +7,6 @@ import org.mybatis.dynamic.sql.BasicColumn;
 import org.mybatis.dynamic.sql.delete.DeleteDSLCompleter;
 import org.mybatis.dynamic.sql.delete.render.DeleteStatementProvider;
 import org.mybatis.dynamic.sql.insert.render.InsertStatementProvider;
-import org.mybatis.dynamic.sql.insert.render.MultiRowInsertStatementProvider;
 import org.mybatis.dynamic.sql.select.CountDSLCompleter;
 import org.mybatis.dynamic.sql.select.SelectDSLCompleter;
 import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
@@ -19,7 +18,6 @@ import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
 
 import javax.annotation.Generated;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,11 +39,8 @@ public interface JobLogReportMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @InsertProvider(type=SqlProviderAdapter.class, method="insert")
+    @SelectKey(statement="SELECT LAST_INSERT_ID()", keyProperty="record.id", before=false, resultType=Integer.class)
     int insert(InsertStatementProvider<JobLogReport> insertStatement);
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @InsertProvider(type=SqlProviderAdapter.class, method="insertMultiple")
-    int insertMultiple(MultiRowInsertStatementProvider<JobLogReport> multipleInsertStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
@@ -87,19 +82,7 @@ public interface JobLogReportMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int insert(JobLogReport record) {
         return MyBatis3Utils.insert(this::insert, record, jobLogReport, c ->
-            c.map(id).toProperty("id")
-            .map(triggerTime).toProperty("triggerTime")
-            .map(runningCount).toProperty("runningCount")
-            .map(successCount).toProperty("successCount")
-            .map(failCount).toProperty("failCount")
-        );
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int insertMultiple(Collection<JobLogReport> records) {
-        return MyBatis3Utils.insertMultiple(this::insertMultiple, records, jobLogReport, c ->
-            c.map(id).toProperty("id")
-            .map(triggerTime).toProperty("triggerTime")
+            c.map(triggerTime).toProperty("triggerTime")
             .map(runningCount).toProperty("runningCount")
             .map(successCount).toProperty("successCount")
             .map(failCount).toProperty("failCount")
@@ -109,8 +92,7 @@ public interface JobLogReportMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int insertSelective(JobLogReport record) {
         return MyBatis3Utils.insert(this::insert, record, jobLogReport, c ->
-            c.map(id).toPropertyWhenPresent("id", record::getId)
-            .map(triggerTime).toPropertyWhenPresent("triggerTime", record::getTriggerTime)
+            c.map(triggerTime).toPropertyWhenPresent("triggerTime", record::getTriggerTime)
             .map(runningCount).toPropertyWhenPresent("runningCount", record::getRunningCount)
             .map(successCount).toPropertyWhenPresent("successCount", record::getSuccessCount)
             .map(failCount).toPropertyWhenPresent("failCount", record::getFailCount)
@@ -146,8 +128,7 @@ public interface JobLogReportMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     static UpdateDSL<UpdateModel> updateAllColumns(JobLogReport record, UpdateDSL<UpdateModel> dsl) {
-        return dsl.set(id).equalTo(record::getId)
-                .set(triggerTime).equalTo(record::getTriggerTime)
+        return dsl.set(triggerTime).equalTo(record::getTriggerTime)
                 .set(runningCount).equalTo(record::getRunningCount)
                 .set(successCount).equalTo(record::getSuccessCount)
                 .set(failCount).equalTo(record::getFailCount);
@@ -155,8 +136,7 @@ public interface JobLogReportMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     static UpdateDSL<UpdateModel> updateSelectiveColumns(JobLogReport record, UpdateDSL<UpdateModel> dsl) {
-        return dsl.set(id).equalToWhenPresent(record::getId)
-                .set(triggerTime).equalToWhenPresent(record::getTriggerTime)
+        return dsl.set(triggerTime).equalToWhenPresent(record::getTriggerTime)
                 .set(runningCount).equalToWhenPresent(record::getRunningCount)
                 .set(successCount).equalToWhenPresent(record::getSuccessCount)
                 .set(failCount).equalToWhenPresent(record::getFailCount);

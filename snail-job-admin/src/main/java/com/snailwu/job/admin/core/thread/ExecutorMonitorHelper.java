@@ -76,9 +76,6 @@ public class ExecutorMonitorHelper {
                     for (JobGroup group : groupList) {
                         List<String> addrList = groupAddressMap.get(group.getName());
                         String addresses = StringUtils.join(addrList, ",");
-                        if (addresses == null) {
-                            continue;
-                        }
 
                         // 更新.通过id更新地址列表
                         AdminConfig.getInstance().getJobGroupMapper().update(

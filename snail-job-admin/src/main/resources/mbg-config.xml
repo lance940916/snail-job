@@ -61,12 +61,24 @@
         </javaClientGenerator>
 
         <!-- Tables -->
-        <table tableName="job_group" domainObjectName="JobGroup"/>
-        <table tableName="job_executor" domainObjectName="JobExecutor"/>
-        <table tableName="job_info" domainObjectName="JobInfo"/>
-        <table tableName="job_log" domainObjectName="JobLog"/>
-        <table tableName="job_log_report" domainObjectName="JobLogReport"/>
-        <table tableName="job_lock" domainObjectName="JobLock"/>
+        <table tableName="job_group" domainObjectName="JobGroup">
+            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
+        </table>
+        <table tableName="job_executor" domainObjectName="JobExecutor">
+            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
+        </table>
+        <table tableName="job_info" domainObjectName="JobInfo">
+            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
+        </table>
+        <table tableName="job_log" domainObjectName="JobLog">
+            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
+        </table>
+        <table tableName="job_log_report" domainObjectName="JobLogReport">
+            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
+        </table>
+        <table tableName="job_lock" domainObjectName="JobLock">
+            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
+        </table>
 
     </context>
 </generatorConfiguration>

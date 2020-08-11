@@ -26,7 +26,7 @@ public class SnailJobScheduler {
         ExecutorMonitorHelper.start();
 
         // 失败重试线程
-        JobFailMonitorHelper.start();
+//        JobFailMonitorHelper.start();
 
         // 任务触发类线程
         JobTriggerPoolHelper.start();

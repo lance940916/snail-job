@@ -60,7 +60,7 @@ public class JobTrigger {
 
         // 查询任务分组信息
         JobGroup jobGroup = AdminConfig.getInstance().getJobGroupMapper().selectOne(
-                select(JobGroupDynamicSqlSupport.jobGroup.addressList)
+                select(JobGroupDynamicSqlSupport.jobGroup.id, JobGroupDynamicSqlSupport.jobGroup.addressList)
                         .from(JobGroupDynamicSqlSupport.jobGroup)
                         .where(JobGroupDynamicSqlSupport.name, isEqualTo(jobInfo.getGroupName())) // name 是唯一的
                         .build().render(RenderingStrategies.MYBATIS3)
@@ -86,6 +86,10 @@ public class JobTrigger {
      * 进行调度
      */
     private static void processTrigger(String groupAddresses, JobInfo jobInfo, int failRetryCount) {
+        // 调度时间
+        Date triggerTime = new Date();
+        LOGGER.info("调度时间:{}", DateFormatUtils.format(triggerTime, DATE_TIME_PATTERN));
+
         // 执行器路由策略
         ExecutorRouteStrategyEnum routeStrategy = ExecutorRouteStrategyEnum.match(jobInfo.getExecutorRouteStrategy());
         LOGGER.info("执行器路由策略:{}", routeStrategy.getDesc());
@@ -104,7 +108,6 @@ public class JobTrigger {
         // 任务执行相关参数
         triggerParam.setExecutorHandler(jobInfo.getExecutorHandler());
         triggerParam.setExecutorParams(jobInfo.getExecutorParam());
-        triggerParam.setExecutorBlockStrategy(jobInfo.getExecutorBlockStrategy());
         triggerParam.setExecutorTimeout(jobInfo.getExecutorTimeout());
         // 任务日志ID
         triggerParam.setLogId(jobLog.getId());
@@ -119,10 +122,6 @@ public class JobTrigger {
             }
         }
         LOGGER.info("可用执行器地址:{}", address);
-
-        // 调度时间
-        Date triggerTime = new Date();
-        LOGGER.info("调度时间:{}", DateFormatUtils.format(triggerTime, DATE_TIME_PATTERN));
 
         // 4 触发远程执行器
         ResultT<String> triggerResult;
