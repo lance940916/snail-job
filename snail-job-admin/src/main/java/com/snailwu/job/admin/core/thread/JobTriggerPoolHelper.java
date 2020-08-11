@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -27,9 +28,10 @@ public class JobTriggerPoolHelper {
         triggerPool = new ThreadPoolExecutor(
                 10, 200, 60L, TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>(1000),
-                r -> new Thread(r, "trigger-pool-" + r.hashCode())
+                (ThreadFactory) Thread::new
         );
-        LOGGER.info("启动任务调度线程池成功成功");
+        // 预先把Core线程启动
+        triggerPool.prestartCoreThread();
     }
 
     /**
@@ -37,7 +39,6 @@ public class JobTriggerPoolHelper {
      */
     public static void stop() {
         triggerPool.shutdownNow();
-        LOGGER.info("停止任务调度线程池成功");
     }
 
     /**
@@ -46,13 +47,11 @@ public class JobTriggerPoolHelper {
      */
     public static void push(int jobId, TriggerTypeEnum triggerType, int failRetryCount, final String executorParam) {
         triggerPool.execute(() -> {
-            LOGGER.info("---------- 任务调度开始 ----------");
             try {
                 JobTrigger.trigger(jobId, triggerType, failRetryCount, executorParam);
             } catch (Exception e) {
                 LOGGER.error("任务调度异常", e);
             }
-            LOGGER.info("---------- 任务调度结束 ----------");
         });
     }
 

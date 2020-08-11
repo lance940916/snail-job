@@ -39,9 +39,6 @@ public class JobTrigger {
      * @param executorParam 执行参数，手动执行时页面填写的会覆盖任务中的参数
      */
     public static void trigger(int jobId, TriggerTypeEnum triggerType, int failRetryCount, String executorParam) {
-        LOGGER.info("任务ID:{}", jobId);
-        LOGGER.info("任务触发类型:{}", triggerType);
-
         // 查询任务信息
         JobInfo jobInfo = AdminConfig.getInstance().getJobInfoMapper().selectOne(
                 select(JobInfoDynamicSqlSupport.jobInfo.allColumns())
@@ -56,7 +53,6 @@ public class JobTrigger {
         if (executorParam != null) {
             jobInfo.setExecutorParam(executorParam);
         }
-        LOGGER.info("任务参数:{}", jobInfo.getExecutorParam());
 
         // 查询任务分组信息
         JobGroup jobGroup = AdminConfig.getInstance().getJobGroupMapper().selectOne(
@@ -72,34 +68,29 @@ public class JobTrigger {
 
         // 任务调度地址集合
         String groupAddresses = jobGroup.getAddressList();
-        LOGGER.info("任务执行可用地址:{}", groupAddresses);
 
         // 失败重试次数（如果参数大于，则使用参数的值）
         int finalFailRetryCount = failRetryCount >= 0 ? failRetryCount : jobInfo.getExecutorFailRetryCount();
-        LOGGER.info("任务失败重试次数:{}", failRetryCount);
 
         // 进行调度
-        processTrigger(groupAddresses, jobInfo, finalFailRetryCount);
+        processTrigger(jobInfo, groupAddresses, triggerType, finalFailRetryCount);
     }
 
     /**
      * 进行调度
      */
-    private static void processTrigger(String groupAddresses, JobInfo jobInfo, int failRetryCount) {
+    private static void processTrigger(JobInfo jobInfo, String groupAddresses, TriggerTypeEnum triggerType, int failRetryCount) {
         // 调度时间
         Date triggerTime = new Date();
-        LOGGER.info("调度时间:{}", DateFormatUtils.format(triggerTime, DATE_TIME_PATTERN));
 
         // 执行器路由策略
         ExecutorRouteStrategyEnum routeStrategy = ExecutorRouteStrategyEnum.match(jobInfo.getExecutorRouteStrategy());
-        LOGGER.info("执行器路由策略:{}", routeStrategy.getDesc());
 
         // 1 保存日志
         JobLog jobLog = new JobLog();
         jobLog.setJobId(jobInfo.getId());
         jobLog.setGroupName(jobInfo.getGroupName());
         AdminConfig.getInstance().getJobLogMapper().insertSelective(jobLog);
-        LOGGER.info("保存任务执行日志.jobId:{}", jobLog.getJobId());
 
         // 2 初始化触发参数
         TriggerParam triggerParam = new TriggerParam();
@@ -121,7 +112,9 @@ public class JobTrigger {
                 address = routeAddressResult.getContent();
             }
         }
-        LOGGER.info("可用执行器地址:{}", address);
+        LOGGER.info("开始调度-JobId:{},LogId:{},触发类型:{},参数:{},失败重试次数:{},调度时间:{},执行器地址:{}",
+                jobInfo.getId(), jobLog.getId(), triggerType, jobInfo.getExecutorParam(), failRetryCount,
+                DateFormatUtils.format(triggerTime, DATE_TIME_PATTERN), address);
 
         // 4 触发远程执行器
         ResultT<String> triggerResult;
@@ -130,7 +123,7 @@ public class JobTrigger {
         } else {
             triggerResult = new ResultT<>(ResultT.FAIL_CODE, "未找到可用的执行器");
         }
-        LOGGER.info("调度结果:{}", triggerResult);
+        LOGGER.info("结束调度-{}", triggerResult);
 
         // 5 更新 Log
         JobLog updateJobLog = new JobLog();
@@ -145,7 +138,6 @@ public class JobTrigger {
         updateJobLog.setTriggerCode(triggerResult.getCode());
         updateJobLog.setTriggerMsg(triggerResult.getMsg());
         AdminConfig.getInstance().getJobLogMapper().updateByPrimaryKeySelective(updateJobLog);
-        LOGGER.info("更新调度参数和调度结果成功.logId:{}", updateJobLog.getId());
     }
 
     /**

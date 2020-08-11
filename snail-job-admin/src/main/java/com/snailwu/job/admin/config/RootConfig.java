@@ -69,8 +69,6 @@ public class RootConfig {
         // MyBatis JavaConfig配置
         factoryBean.setConfiguration(myBatisConfiguration());
 
-        factoryBean.setPlugins();
-
         return factoryBean.getObject();
     }
 

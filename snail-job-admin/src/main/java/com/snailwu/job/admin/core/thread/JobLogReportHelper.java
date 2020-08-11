@@ -18,7 +18,6 @@ public class JobLogReportHelper {
             while (!toStop) {
                 for (int i = 0; i < 3; i++) {
 
-
                 }
             }
         });

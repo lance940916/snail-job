@@ -54,8 +54,9 @@ public class JobScheduleHelper {
 
     /**
      * 每次获取任务的最大数量
+     * 同时（一秒内）能调度 200 个任务
      */
-    private static final int MAX_LIMIT_PRE_READ = 100;
+    private static final int MAX_LIMIT_PRE_READ = 200;
 
     /**
      * 启动线程
@@ -71,6 +72,13 @@ public class JobScheduleHelper {
                 PreparedStatement statement = lock(connection);
                 if (connection == null) {
                     LOGGER.error("没有获取到数据库分布式锁.");
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(2000);
+                    } catch (InterruptedException e) {
+                        if (!scanJobStopFlag) {
+                            LOGGER.error("任务扫描整理线程.休眠异常", e);
+                        }
+                    }
                     continue;
                 }
                 LOGGER.info("获取数据库锁成功.进行任务的扫描和整理.");
@@ -166,7 +174,6 @@ public class JobScheduleHelper {
         scanJobThread.setDaemon(true);
         scanJobThread.setName("schedule-thread");
         scanJobThread.start();
-        LOGGER.info("启动任务扫描整理线程成功.");
 
         // 执行调度任务线程
         invokeJobThread = new Thread(() -> {
@@ -204,7 +211,6 @@ public class JobScheduleHelper {
         invokeJobThread.setPriority(Thread.MAX_PRIORITY);
         invokeJobThread.setName("invoke-job-thread");
         invokeJobThread.start();
-        LOGGER.info("启动任务调度线程成功.");
     }
 
     /**
@@ -295,6 +301,7 @@ public class JobScheduleHelper {
         try {
             String sql = "SELECT lock_name FROM job_lock WHERE lock_name='schedule_lock' FOR UPDATE";
             ps = connection.prepareStatement(sql);
+            ps.execute();
         } catch (SQLException e) {
             LOGGER.error("执行[for update]锁定语句异常.原因:{}", e.getMessage());
         }

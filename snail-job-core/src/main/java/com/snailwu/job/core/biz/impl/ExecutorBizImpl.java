@@ -49,14 +49,14 @@ public class ExecutorBizImpl implements ExecutorBiz {
             // 生成 Job 对应的 jobThread
             jobThread = SnailJobExecutor.registryJobThread(jobId, newJobHandler, null);
         } else { // 任务非第一次被调度
-            // 获取任务已经关联的 newJobHandler
+            // 检查 jobHandler 是否发生了变化
+            // 如果发生变化，将以前的线程停止，启动一个新的线程
+            // 没有发生变化，则直接添加到线程的执行队列中
             IJobHandler jobHandler = jobThread.getJobHandler();
             if (jobHandler != newJobHandler) {
-                // 任务对应的 jobHandler 被修改了
                 jobHandler = newJobHandler;
+                jobThread = SnailJobExecutor.registryJobThread(jobId, jobHandler, "任务对应的JobHandler发生变化");
             }
-            // 生成 Job 对应的 jobThread
-            jobThread = SnailJobExecutor.registryJobThread(jobId, jobHandler, "任务对应的JobHandler发生变化");
         }
 
         // 最后 添加任务到队列中等待执行
