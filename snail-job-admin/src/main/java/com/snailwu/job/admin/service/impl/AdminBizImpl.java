@@ -60,7 +60,6 @@ public class AdminBizImpl implements AdminBiz {
         updateJobLog.setExecCode(callbackParam.getExecCode());
         updateJobLog.setExecMsg(callbackParam.getExecMsg());
         AdminConfig.getInstance().getJobLogMapper().updateByPrimaryKeySelective(updateJobLog);
-        LOGGER.info("回调成功. 任务执行结果: {}", callbackParam.getExecCode());
         return ResultT.SUCCESS;
     }
 

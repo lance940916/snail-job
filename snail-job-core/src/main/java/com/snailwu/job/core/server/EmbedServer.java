@@ -77,14 +77,14 @@ public class EmbedServer {
                 future.channel().closeFuture().sync();
             } catch (InterruptedException e) {
                 // 服务端主动进行中断，也就是 stop
-                LOGGER.info("[SnailJob]-嵌入式Http服务停止运行");
             } finally {
                 workerGroup.shutdownGracefully();
                 bossGroup.shutdownGracefully();
+                LOGGER.info("[SnailJob]-嵌入式Http服务停止运行");
             }
         });
         serverThread.setDaemon(true);
-        serverThread.setName("JobEmbedServer");
+        serverThread.setName("job-embed-server");
         serverThread.start();
     }
 
@@ -120,7 +120,6 @@ public class EmbedServer {
             String uri = msg.uri();
             HttpMethod method = msg.method();
             String requestData = msg.content().toString(StandardCharsets.UTF_8);
-            LOGGER.info("[SnailJob]-请求方法: {} 请求地址:{} 请求体:{}", method.name(), uri, requestData);
             String headerAccessToken = msg.headers().get(JobHttpUtil.JOB_ACCESS_TOKEN);
 
             // 请求处理
@@ -134,7 +133,6 @@ public class EmbedServer {
                 LOGGER.error("[SnailJob]-序列化JSON异常");
             }
             doResponse(ctx, msg, responseJson);
-            LOGGER.info("[SnailJob]-请求响应: {}", responseJson);
         }
 
         /**

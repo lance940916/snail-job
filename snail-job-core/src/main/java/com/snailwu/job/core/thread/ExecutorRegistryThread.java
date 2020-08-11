@@ -57,9 +57,7 @@ public class ExecutorRegistryThread {
                 try {
                     RegistryParam registryParam = new RegistryParam(groupName, address);
                     ResultT<String> result = SnailJobExecutor.getAdminBiz().registry(registryParam);
-                    if (ResultT.SUCCESS_CODE == result.getCode()) {
-                        LOGGER.info("[SnailJob]-在调度中心注册成功");
-                    } else {
+                    if (ResultT.SUCCESS_CODE != result.getCode()) {
                         LOGGER.error("[SnailJob]-在调度中心注册失败.原因:{}", result.getMsg());
                     }
                 } catch (Exception e) {
@@ -85,9 +83,7 @@ public class ExecutorRegistryThread {
             try {
                 RegistryParam registryParam = new RegistryParam(groupName, address);
                 ResultT<String> result = SnailJobExecutor.getAdminBiz().registryRemove(registryParam);
-                if (ResultT.SUCCESS_CODE == result.getCode()) {
-                    LOGGER.info("[SnailJob]-通知调度中心移除注册节点成功");
-                } else {
+                if (ResultT.SUCCESS_CODE != result.getCode()) {
                     LOGGER.error("[SnailJob]-通知调度中心移除注册节点失败.原因:{}", result.getMsg());
                 }
             } catch (Exception e) {
@@ -99,7 +95,6 @@ public class ExecutorRegistryThread {
         registryThread.setDaemon(true);
         registryThread.setName("executor-registry-thread");
         registryThread.start();
-        LOGGER.info("[SnailJob]-注册节点守护线程-启动成功");
     }
 
     /**
@@ -113,7 +108,6 @@ public class ExecutorRegistryThread {
         } catch (InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
         }
-        LOGGER.info("[SnailJob]-注册节点守护线程-停止成功");
     }
 
 }

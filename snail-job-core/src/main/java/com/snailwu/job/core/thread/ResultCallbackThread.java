@@ -28,7 +28,6 @@ public class ResultCallbackThread {
      */
     public static void addCallbackQueue(CallbackParam callbackParam) {
         CALLBACK_QUEUE.add(callbackParam);
-        LOGGER.info("[SnailJob]-回调线程-添加到队列.logId:{}", callbackParam.getLogId());
     }
 
     /**
@@ -85,9 +84,7 @@ public class ResultCallbackThread {
         AdminBiz adminBiz = SnailJobExecutor.getAdminBiz();
         try {
             ResultT<String> result = adminBiz.callback(callbackParam);
-            if (ResultT.SUCCESS_CODE == result.getCode()) {
-                LOGGER.info("[SnailJob]-回调线程-回调成功");
-            } else {
+            if (ResultT.SUCCESS_CODE != result.getCode()) {
                 LOGGER.error("[SnailJob]-回调线程-回调失败.原因:{}", result.getMsg());
             }
         } catch (Exception e) {

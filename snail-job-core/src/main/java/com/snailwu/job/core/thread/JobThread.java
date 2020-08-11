@@ -148,7 +148,6 @@ public class JobThread extends Thread {
                     execResult = doInvoke(triggerParam);
 
                     runningFlag = false;
-                    LOGGER.info("[SnailJob]-任务执行完成");
                 } else {
                     // 30 次获取操作后，没有任务可以处理，则自动销毁线程
                     if (idleTimes > 30 && jobQueue.size() == 0) {

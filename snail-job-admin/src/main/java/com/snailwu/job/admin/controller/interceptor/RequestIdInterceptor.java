@@ -10,8 +10,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static com.snailwu.job.admin.constant.JobConstants.JOB_LOG_ID;
-import static com.snailwu.job.admin.constant.JobConstants.JOB_REQUEST_ID;
+import static com.snailwu.job.admin.constant.JobConstants.LOG_ID;
+import static com.snailwu.job.admin.constant.JobConstants.REQUEST_ID;
 
 /**
  * 将所有的请求加入请求ID
@@ -38,12 +38,12 @@ public class RequestIdInterceptor implements HandlerInterceptor {
         String requestId = createJobRequestId();
 
         // set log
-        ThreadContext.put(JOB_LOG_ID, requestId);
+        ThreadContext.put(LOG_ID, requestId);
 
         // set request
-        String jobRequestId = request.getHeader(JOB_REQUEST_ID);
+        String jobRequestId = request.getHeader(REQUEST_ID);
         if (jobRequestId == null || jobRequestId.trim().length() == 0) {
-            request.setAttribute(JOB_REQUEST_ID, requestId);
+            request.setAttribute(REQUEST_ID, requestId);
         }
         LOGGER.info("请求:[{} {}],匹配方法:[{}]",
                 request.getMethod(), request.getRequestURI(), handler.getClass());

@@ -15,10 +15,10 @@ public class ThreadLogTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(ThreadLogTest.class);
 
     public static void main(String[] args) throws InterruptedException {
-        ThreadContext.put(JobConstants.JOB_LOG_ID, "主线程");
+        ThreadContext.put(JobConstants.LOG_ID, "主线程");
 
         new Thread(() -> {
-            ThreadContext.put(JobConstants.JOB_LOG_ID, "线程1");
+            ThreadContext.put(JobConstants.LOG_ID, "线程1");
             while (true) {
                 try {
                     TimeUnit.SECONDS.sleep(1);
@@ -30,7 +30,7 @@ public class ThreadLogTest {
         }).start();
 
         new Thread(() -> {
-            ThreadContext.put(JobConstants.JOB_LOG_ID, "线程2");
+            ThreadContext.put(JobConstants.LOG_ID, "线程2");
             while (true) {
                 try {
                     TimeUnit.SECONDS.sleep(1);
