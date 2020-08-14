@@ -14,18 +14,10 @@ import org.springframework.stereotype.Component;
 public class SampleTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(SampleTask.class);
 
-    @SnailJob(name = "default-job", init = "beforeMethod", destroy = "afterMethod")
+    @SnailJob(name = "default-job")
     public ResultT<String> defaultJob(String param) {
         LOGGER.info("执行默认任务");
-        return ResultT.SUCCESS;
-    }
-
-    public void beforeMethod() {
-        System.out.println("前置方法");
-    }
-
-    public void afterMethod() {
-        System.out.println("前置方法");
+        return ResultT.FAIL;
     }
 
 }

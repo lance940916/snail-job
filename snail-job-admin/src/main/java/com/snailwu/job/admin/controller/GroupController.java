@@ -5,6 +5,7 @@ import com.snailwu.job.admin.core.model.JobGroup;
 import com.snailwu.job.admin.request.JobGroupSearchRequest;
 import com.snailwu.job.admin.service.GroupService;
 import com.snailwu.job.core.biz.model.ResultT;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -34,7 +35,7 @@ public class GroupController {
      * 新增
      */
     @PostMapping
-    public ResultT<String> save(@RequestBody JobGroup jobGroup) {
+    public ResultT<String> save(@Validated @RequestBody JobGroup jobGroup) {
         groupService.saveOrUpdate(jobGroup);
         return ResultT.SUCCESS;
     }

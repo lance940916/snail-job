@@ -70,7 +70,7 @@ public class WebConfig implements WebMvcConfigurer, ApplicationContextAware {
 
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .applicationContext(applicationContext)
-                .simpleDateFormat("yyyy-MM-dd HH:mm:ss")
+//                .simpleDateFormat("yyyy-MM-dd HH:mm:ss") // 默认使用序列化/反序列化为时间戳
                 .failOnUnknownProperties(false)
                 .serializationInclusion(JsonInclude.Include.NON_NULL)
                 .propertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)

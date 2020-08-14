@@ -90,7 +90,7 @@
             <div class="layui-form-item layui-form-text">
                 <label class="layui-form-label">地址列表</label>
                 <div class="layui-input-block">
-                    <textarea name="addressList" placeholder="地址列表使用英文逗号分开" class="layui-textarea"></textarea>
+                    <textarea name="address_list" placeholder="地址列表使用英文逗号分开" class="layui-textarea"></textarea>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -162,7 +162,7 @@
             let eventName = obj.event;
             if (eventName === 'show') {
                 // 查看地址
-                let addrArray = data.addressList.split(",");
+                let addrArray = data.address_list.split(",");
                 let htmlContent = '<div>';
                 for (let i = 0; i < addrArray.length; i++) {
                     htmlContent +=  (i + 1) + ': ' + addrArray[i];
@@ -179,7 +179,7 @@
                     'title': data.title,
                     'name': data.name,
                     'type': data.type,
-                    'addressList': data.addressList
+                    'address_list': data.address_list
                 });
                 form.render('radio');
 
@@ -244,8 +244,7 @@
 
     // 搜索提交
     form.on('submit(searchBtn)', function (data) {
-        let field = data.field;
-        let searchJson = JSON.stringify(field, jsonFilter);
+        let searchJson = JSON.stringify(data.field, jsonFilter);
         table.reload('dataTableID', {
             where: JSON.parse(searchJson),
             page: {

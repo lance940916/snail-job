@@ -15,7 +15,7 @@
     <@netCommon.commonHeader />
 
     <#-- 左侧菜单栏 -->
-    <@netCommon.commonLeft "job" />
+    <@netCommon.commonLeft "info" />
 
     <div class="layui-body">
         <!-- 内容主体区域 -->

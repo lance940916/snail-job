@@ -7,6 +7,12 @@
                 <Pattern>[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS} %t %X{JOB_LOG_ID} %c{1.}#%M[%L]: %m%n</Pattern>
             </PatternLayout>
         </Console>
+        <File name="File">
+            <fileName>/Users/wu/admin-job.log</fileName>
+            <PatternLayout>
+                <Pattern>[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS} %t %X{JOB_LOG_ID} %c{1.}#%M[%L]: %m%n</Pattern>
+            </PatternLayout>
+        </File>
     </Appenders>
 
     <Loggers>
@@ -15,6 +21,7 @@
 <!--        </Logger>-->
         <Root level="info">
             <AppenderRef ref="Console"/>
+            <AppenderRef ref="File"/>
         </Root>
     </Loggers>
 

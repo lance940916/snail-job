@@ -25,6 +25,8 @@ CREATE TABLE IF NOT EXISTS `job_group`
     `name`         VARCHAR(32)  NOT NULL COMMENT '任务组名称，唯一不重复',
     `type`         TINYINT      NOT NULL COMMENT '注册类型.自动注册=0;手动注册=1',
     `address_list` VARCHAR(512) NOT NULL COMMENT '执行器节点地址列表，多地址用逗号分隔',
+    `create_time`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;

@@ -34,7 +34,7 @@ public class InfoService {
 
     /**
      * 开始运行任务
-     * 任务在 {@link com.snailwu.job.admin.constant.JobConstants#PRE_LOAD_SLEEP_MS} 秒后生效
+     * 任务在 {@link com.snailwu.job.admin.constant.JobConstants#SCAN_JOB_SLEEP_MS} 秒后生效
      */
     public void start(Integer id) {
         JobInfo jobInfo = jobInfoMapper.selectByPrimaryKey(id).orElse(null);
@@ -51,7 +51,7 @@ public class InfoService {
             LOGGER.error("解析CRON表达式异常");
             return;
         }
-        Date nextTimeAfter = new Date(System.currentTimeMillis() + JobConstants.PRE_LOAD_SLEEP_MS);
+        Date nextTimeAfter = new Date(System.currentTimeMillis() + JobConstants.SCAN_JOB_SLEEP_MS);
         Date triggerNextTime = cronExpression.getNextValidTimeAfter(nextTimeAfter);
 
         JobInfo updateJobInfo = new JobInfo();
@@ -103,6 +103,8 @@ public class InfoService {
      * 保存 或 更新
      */
     public void saveOrUpdate(JobInfo jobInfo) {
+        
+
 
     }
 

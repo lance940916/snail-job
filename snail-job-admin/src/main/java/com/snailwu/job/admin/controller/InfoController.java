@@ -35,7 +35,7 @@ public class InfoController {
      * 新增
      */
     @PostMapping
-    public ResultT<String> save(JobInfo jobInfo) {
+    public ResultT<String> save(@RequestBody JobInfo jobInfo) {
         infoService.saveOrUpdate(jobInfo);
         return ResultT.SUCCESS;
     }
@@ -44,7 +44,7 @@ public class InfoController {
      * 更新
      */
     @PutMapping
-    public ResultT<String> update(JobInfo jobInfo) {
+    public ResultT<String> update(@RequestBody JobInfo jobInfo) {
         infoService.saveOrUpdate(jobInfo);
         return ResultT.SUCCESS;
     }
@@ -52,8 +52,8 @@ public class InfoController {
     /**
      * 删除
      */
-    @DeleteMapping
-    public ResultT<String> delete(Integer id) {
+    @DeleteMapping("/{id}")
+    public ResultT<String> delete(@PathVariable("id") Integer id) {
         infoService.delete(id);
         return ResultT.SUCCESS;
     }
@@ -78,8 +78,8 @@ public class InfoController {
     /**
      * 执行一次
      */
-    @PostMapping("/exec_once")
-    public ResultT<String> execOnce(Integer id) {
+    @PostMapping("/exec/{id}")
+    public ResultT<String> exec(@PathVariable("id") Integer id) {
         JobTriggerPoolHelper.push(id, TriggerTypeEnum.API, -1, null);
         return ResultT.SUCCESS;
     }

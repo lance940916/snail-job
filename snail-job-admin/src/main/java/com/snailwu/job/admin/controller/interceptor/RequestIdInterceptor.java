@@ -45,8 +45,7 @@ public class RequestIdInterceptor implements HandlerInterceptor {
         if (jobRequestId == null || jobRequestId.trim().length() == 0) {
             request.setAttribute(REQUEST_ID, requestId);
         }
-        LOGGER.info("请求:[{} {}],匹配方法:[{}]",
-                request.getMethod(), request.getRequestURI(), handler.getClass());
+        LOGGER.info("请求:[{} {}]", request.getMethod(), request.getRequestURI());
         return true;
     }
 

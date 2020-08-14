@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
@@ -48,10 +49,6 @@ public class GroupService {
      * 保存或更新
      */
     public void saveOrUpdate(JobGroup group) {
-        // 校验字段
-        Validate.notBlank(group.getTitle(), "标题不能为空");
-        Validate.notBlank(group.getName(), "名称不能为空");
-
         if (group.getId() == null) {
             // 校验 name 是否有相同的
             long count = jobGroupMapper.count(
@@ -68,6 +65,7 @@ public class GroupService {
                 LOGGER.info("保存失败");
             }
         } else {
+            group.setUpdateTime(new Date());
             int ret = jobGroupMapper.updateByPrimaryKeySelective(group);
             if (ret == 1) {
                 LOGGER.info("更新成功");

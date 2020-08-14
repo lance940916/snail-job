@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import static com.snailwu.job.admin.constant.JobConstants.DATE_TIME_PATTERN;
-import static com.snailwu.job.admin.constant.JobConstants.PRE_LOAD_SLEEP_MS;
+import static com.snailwu.job.admin.constant.JobConstants.MAX_LIMIT_PRE_READ;
 import static com.snailwu.job.admin.mapper.JobInfoDynamicSqlSupport.*;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
@@ -53,27 +53,19 @@ public class JobScheduleHelper {
     private static final Map<Long, Set<Integer>> INVOKE_JOB_MAP = new ConcurrentHashMap<>();
 
     /**
-     * 每次获取任务的最大数量
-     * 同时（一秒内）能调度 200 个任务
-     */
-    private static final int MAX_LIMIT_PRE_READ = 200;
-
-    /**
      * 启动线程
      */
     public static void start() {
         scanJobThread = new Thread(() -> {
-            // 提前准备任务调度的时间跨度
-            final long preReadMs = 20000;
-
             while (!scanJobStopFlag) {
                 // 使用 FOR UPDATE 实现分布式锁
                 Connection connection = getConnection();
                 PreparedStatement statement = lock(connection);
                 if (connection == null) {
-                    LOGGER.error("没有获取到数据库分布式锁.");
                     try {
-                        TimeUnit.MILLISECONDS.sleep(2000);
+                        // 获取锁失败，休眠 5 秒
+                        LOGGER.error("没有获取到数据库分布式锁.");
+                        TimeUnit.SECONDS.sleep(3);
                     } catch (InterruptedException e) {
                         if (!scanJobStopFlag) {
                             LOGGER.error("任务扫描整理线程.休眠异常", e);
@@ -87,7 +79,7 @@ public class JobScheduleHelper {
                 long nowTimeTs = System.currentTimeMillis();
                 try {
                     // 获取 当前时间 + preReadMs 内所有待调度的任务
-                    long maxTriggerTime = nowTimeTs + preReadMs;
+                    long maxTriggerTime = nowTimeTs + 5000;
 
                     // 扫描将要待执行的任务，根据任务的执行时间从近到远排序
                     List<JobInfo> jobInfoList = AdminConfig.getInstance().getJobInfoMapper().selectMany(
@@ -111,16 +103,17 @@ public class JobScheduleHelper {
                             // 刷新下次调度时间
                             refreshNextValidTime(info, new Date());
                         } else if (((triggerNextTime / 1000) % 60) == ((nowTimeTs / 1000) % 60)) {
-                            // 2. 当前秒要执行的任务, 立马进行调度
+                            // 2. 当前秒要执行的任务, 直接进行调度
                             JobTriggerPoolHelper.push(info.getId(), TriggerTypeEnum.CRON, -1, null);
 
                             // 刷新下次调度时间
                             refreshNextValidTime(info, new Date(triggerNextTime));
                         }
+                        // 重新赋值
                         triggerNextTime = info.getTriggerNextTime();
 
                         // 3. 在 [当前秒+1秒,当前秒+preReadMs] 之内要执行的调度任务
-                        while (triggerNextTime < maxTriggerTime && triggerNextTime != 0L) {
+                        while (triggerNextTime <= maxTriggerTime && triggerNextTime != 0L) {
                             // 任务在第几秒开始执行
                             long invokeSecond = (triggerNextTime / 1000) % 60;
 
@@ -156,14 +149,14 @@ public class JobScheduleHelper {
                 LOGGER.info("本次任务扫描整理耗时:{}毫秒", costMs);
 
                 // 整理任务的耗时要控制在 (preReadMs - sleepMs) 毫秒内
-                if (costMs > preReadMs - PRE_LOAD_SLEEP_MS) {
-                    LOGGER.warn("整理任务时间过长,耗时:{}毫秒,需要优化!!!", costMs);
-                    continue;
-                }
+//                if (costMs > 5000 - 3000) {
+//                    LOGGER.warn("整理任务时间过长,耗时:{}毫秒,需要优化!!!", costMs);
+//                    continue;
+//                }
 
-                // 休眠，任务执行一次的时间为 costMs + PRE_LOAD_SLEEP_MS
+                // 休眠
                 try {
-                    TimeUnit.MILLISECONDS.sleep(PRE_LOAD_SLEEP_MS);
+                    TimeUnit.MILLISECONDS.sleep(3000 - costMs);
                 } catch (InterruptedException e) {
                     if (!scanJobStopFlag) {
                         LOGGER.error("任务扫描整理线程.休眠异常", e);
@@ -201,8 +194,18 @@ public class JobScheduleHelper {
 
                 // 计算耗时，耗时一定不能大于 1秒，否则会造成任务调度时间不准确
                 long costMs = System.currentTimeMillis() - nowTimeTs;
+                LOGGER.info("本次任务调度耗时时间:{}毫秒", costMs);
                 if (costMs > 1000) {
                     LOGGER.warn("本次任务调度耗时时间过长:{}毫秒", costMs);
+                }
+
+                // 休眠
+                try {
+                    TimeUnit.MILLISECONDS.sleep(500 - costMs);
+                } catch (InterruptedException e) {
+                    if (!scanJobStopFlag) {
+                        LOGGER.error("任务扫描整理线程.休眠异常", e);
+                    }
                 }
             }
         });

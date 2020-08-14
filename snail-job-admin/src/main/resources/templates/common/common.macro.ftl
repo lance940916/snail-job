@@ -54,8 +54,9 @@
                     <a href="${contextPath}/">控制台</a>
                 </li>
                 <li class="layui-nav-item <#if pageName=="group">layui-this</#if>">
-                    <a href="${contextPath}/group_page">执行器管理</a></li>
-                <li class="layui-nav-item <#if pageName=="job">layui-this</#if>">
+                    <a href="${contextPath}/group_page">执行器管理</a>
+                </li>
+                <li class="layui-nav-item <#if pageName=="info">layui-this</#if>">
                     <a href="${contextPath}/info_page">任务管理</a>
                 </li>
                 <li class="layui-nav-item <#if pageName=="log">layui-this</#if>">

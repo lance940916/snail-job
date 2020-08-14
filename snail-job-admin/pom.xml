@@ -29,6 +29,13 @@
             <version>${snail-job-core.version}</version>
         </dependency>
 
+        <!-- hibernate-validator -->
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.1.5.Final</version>
+        </dependency>
+
         <!-- Junit -->
         <dependency>
             <groupId>junit</groupId>

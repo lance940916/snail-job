@@ -4,13 +4,11 @@ package com.snailwu.job.admin.request;
  * @author 吴庆龙
  * @date 2020/8/10 8:05 上午
  */
-public class JobInfoSearchRequest {
+public class JobInfoSearchRequest extends BasePageRequest {
 
     private String groupName;
     private String author;
     private Byte triggerStatus;
-    private Integer page;
-    private Integer limit;
 
     public String getGroupName() {
         return groupName;
@@ -36,19 +34,4 @@ public class JobInfoSearchRequest {
         this.triggerStatus = triggerStatus;
     }
 
-    public Integer getPage() {
-        return page;
-    }
-
-    public void setPage(Integer page) {
-        this.page = page;
-    }
-
-    public Integer getLimit() {
-        return limit;
-    }
-
-    public void setLimit(Integer limit) {
-        this.limit = limit;
-    }
 }

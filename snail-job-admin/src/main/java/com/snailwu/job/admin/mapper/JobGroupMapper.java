@@ -27,7 +27,7 @@ import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 @Mapper
 public interface JobGroupMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    BasicColumn[] selectList = BasicColumn.columnList(id, title, name, type, addressList);
+    BasicColumn[] selectList = BasicColumn.columnList(id, title, name, type, addressList, createTime, updateTime);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
@@ -54,7 +54,9 @@ public interface JobGroupMapper {
         @Result(column="title", property="title", jdbcType=JdbcType.VARCHAR),
         @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
         @Result(column="type", property="type", jdbcType=JdbcType.TINYINT),
-        @Result(column="address_list", property="addressList", jdbcType=JdbcType.VARCHAR)
+        @Result(column="address_list", property="addressList", jdbcType=JdbcType.VARCHAR),
+        @Result(column="create_time", property="createTime", jdbcType=JdbcType.TIMESTAMP),
+        @Result(column="update_time", property="updateTime", jdbcType=JdbcType.TIMESTAMP)
     })
     List<JobGroup> selectMany(SelectStatementProvider selectStatement);
 
@@ -86,6 +88,8 @@ public interface JobGroupMapper {
             .map(name).toProperty("name")
             .map(type).toProperty("type")
             .map(addressList).toProperty("addressList")
+            .map(createTime).toProperty("createTime")
+            .map(updateTime).toProperty("updateTime")
         );
     }
 
@@ -96,6 +100,8 @@ public interface JobGroupMapper {
             .map(name).toPropertyWhenPresent("name", record::getName)
             .map(type).toPropertyWhenPresent("type", record::getType)
             .map(addressList).toPropertyWhenPresent("addressList", record::getAddressList)
+            .map(createTime).toPropertyWhenPresent("createTime", record::getCreateTime)
+            .map(updateTime).toPropertyWhenPresent("updateTime", record::getUpdateTime)
         );
     }
 
@@ -131,7 +137,9 @@ public interface JobGroupMapper {
         return dsl.set(title).equalTo(record::getTitle)
                 .set(name).equalTo(record::getName)
                 .set(type).equalTo(record::getType)
-                .set(addressList).equalTo(record::getAddressList);
+                .set(addressList).equalTo(record::getAddressList)
+                .set(createTime).equalTo(record::getCreateTime)
+                .set(updateTime).equalTo(record::getUpdateTime);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -139,7 +147,9 @@ public interface JobGroupMapper {
         return dsl.set(title).equalToWhenPresent(record::getTitle)
                 .set(name).equalToWhenPresent(record::getName)
                 .set(type).equalToWhenPresent(record::getType)
-                .set(addressList).equalToWhenPresent(record::getAddressList);
+                .set(addressList).equalToWhenPresent(record::getAddressList)
+                .set(createTime).equalToWhenPresent(record::getCreateTime)
+                .set(updateTime).equalToWhenPresent(record::getUpdateTime);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -149,6 +159,8 @@ public interface JobGroupMapper {
             .set(name).equalTo(record::getName)
             .set(type).equalTo(record::getType)
             .set(addressList).equalTo(record::getAddressList)
+            .set(createTime).equalTo(record::getCreateTime)
+            .set(updateTime).equalTo(record::getUpdateTime)
             .where(id, isEqualTo(record::getId))
         );
     }
@@ -160,6 +172,8 @@ public interface JobGroupMapper {
             .set(name).equalToWhenPresent(record::getName)
             .set(type).equalToWhenPresent(record::getType)
             .set(addressList).equalToWhenPresent(record::getAddressList)
+            .set(createTime).equalToWhenPresent(record::getCreateTime)
+            .set(updateTime).equalToWhenPresent(record::getUpdateTime)
             .where(id, isEqualTo(record::getId))
         );
     }
