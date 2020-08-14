@@ -44,7 +44,7 @@ public class JobFailMonitorHelper {
                                     .and(JobLogDynamicSqlSupport.alarmStatus, isEqualTo(DEFAULT.getValue()))
                                     .and(
                                         // 调度不成功
-                                        JobLogDynamicSqlSupport.triggerCode, isNotIn(0, 200),
+                                        JobLogDynamicSqlSupport.triggerCode, isNotEqualTo(200),
                                         // 执行不成功
                                         or(JobLogDynamicSqlSupport.execCode, isNotIn(0, 200))
                                     ).build().render(RenderingStrategies.MYBATIS3)

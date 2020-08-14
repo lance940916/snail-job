@@ -1,23 +1,18 @@
 package com.snailwu.job.admin.core.model;
 
 import javax.annotation.Generated;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 public class JobGroup {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Integer id;
 
-    @NotEmpty(message = "标题不能为空")
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private String title;
 
-    @NotEmpty(message = "唯一标识不能为空")
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private String name;
 
-    @NotNull(message = "类型不能为空")
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Byte type;
 

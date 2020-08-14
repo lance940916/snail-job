@@ -27,7 +27,7 @@ import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 @Mapper
 public interface JobLogReportMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    BasicColumn[] selectList = BasicColumn.columnList(id, triggerTime, runningCount, successCount, failCount);
+    BasicColumn[] selectList = BasicColumn.columnList(id, triggerDay, runningCount, successCount, failCount);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
@@ -51,7 +51,7 @@ public interface JobLogReportMapper {
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
     @Results(id="JobLogReportResult", value = {
         @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
-        @Result(column="trigger_time", property="triggerTime", jdbcType=JdbcType.TIMESTAMP),
+        @Result(column="trigger_day", property="triggerDay", jdbcType=JdbcType.DATE),
         @Result(column="running_count", property="runningCount", jdbcType=JdbcType.INTEGER),
         @Result(column="success_count", property="successCount", jdbcType=JdbcType.INTEGER),
         @Result(column="fail_count", property="failCount", jdbcType=JdbcType.INTEGER)
@@ -82,7 +82,7 @@ public interface JobLogReportMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int insert(JobLogReport record) {
         return MyBatis3Utils.insert(this::insert, record, jobLogReport, c ->
-            c.map(triggerTime).toProperty("triggerTime")
+            c.map(triggerDay).toProperty("triggerDay")
             .map(runningCount).toProperty("runningCount")
             .map(successCount).toProperty("successCount")
             .map(failCount).toProperty("failCount")
@@ -92,7 +92,7 @@ public interface JobLogReportMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int insertSelective(JobLogReport record) {
         return MyBatis3Utils.insert(this::insert, record, jobLogReport, c ->
-            c.map(triggerTime).toPropertyWhenPresent("triggerTime", record::getTriggerTime)
+            c.map(triggerDay).toPropertyWhenPresent("triggerDay", record::getTriggerDay)
             .map(runningCount).toPropertyWhenPresent("runningCount", record::getRunningCount)
             .map(successCount).toPropertyWhenPresent("successCount", record::getSuccessCount)
             .map(failCount).toPropertyWhenPresent("failCount", record::getFailCount)
@@ -128,7 +128,7 @@ public interface JobLogReportMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     static UpdateDSL<UpdateModel> updateAllColumns(JobLogReport record, UpdateDSL<UpdateModel> dsl) {
-        return dsl.set(triggerTime).equalTo(record::getTriggerTime)
+        return dsl.set(triggerDay).equalTo(record::getTriggerDay)
                 .set(runningCount).equalTo(record::getRunningCount)
                 .set(successCount).equalTo(record::getSuccessCount)
                 .set(failCount).equalTo(record::getFailCount);
@@ -136,7 +136,7 @@ public interface JobLogReportMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     static UpdateDSL<UpdateModel> updateSelectiveColumns(JobLogReport record, UpdateDSL<UpdateModel> dsl) {
-        return dsl.set(triggerTime).equalToWhenPresent(record::getTriggerTime)
+        return dsl.set(triggerDay).equalToWhenPresent(record::getTriggerDay)
                 .set(runningCount).equalToWhenPresent(record::getRunningCount)
                 .set(successCount).equalToWhenPresent(record::getSuccessCount)
                 .set(failCount).equalToWhenPresent(record::getFailCount);
@@ -145,7 +145,7 @@ public interface JobLogReportMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int updateByPrimaryKey(JobLogReport record) {
         return update(c ->
-            c.set(triggerTime).equalTo(record::getTriggerTime)
+            c.set(triggerDay).equalTo(record::getTriggerDay)
             .set(runningCount).equalTo(record::getRunningCount)
             .set(successCount).equalTo(record::getSuccessCount)
             .set(failCount).equalTo(record::getFailCount)
@@ -156,7 +156,7 @@ public interface JobLogReportMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int updateByPrimaryKeySelective(JobLogReport record) {
         return update(c ->
-            c.set(triggerTime).equalToWhenPresent(record::getTriggerTime)
+            c.set(triggerDay).equalToWhenPresent(record::getTriggerDay)
             .set(runningCount).equalToWhenPresent(record::getRunningCount)
             .set(successCount).equalToWhenPresent(record::getSuccessCount)
             .set(failCount).equalToWhenPresent(record::getFailCount)

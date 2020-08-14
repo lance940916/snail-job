@@ -90,11 +90,11 @@ CREATE TABLE IF NOT EXISTS `job_log`
 DROP TABLE IF EXISTS `job_log_report`;
 CREATE TABLE IF NOT EXISTS `job_log_report`
 (
-    `id`            INT(11)  NOT NULL AUTO_INCREMENT,
-    `trigger_time`  DATETIME NOT NULL COMMENT '调度-时间',
-    `running_count` INT(11)  NOT NULL DEFAULT 0 COMMENT '运行中-日志数量',
-    `success_count` INT(11)  NOT NULL DEFAULT 0 COMMENT '执行成功-日志数量',
-    `fail_count`    INT(11)  NOT NULL DEFAULT 0 COMMENT '执行失败-日志数量',
+    `id`            INT(11) NOT NULL AUTO_INCREMENT,
+    `trigger_day`   DATE    NOT NULL DEFAULT CURRENT_DATE COMMENT '调度-时间',
+    `running_count` INT(11) NOT NULL DEFAULT 0 COMMENT '运行中-日志数量',
+    `success_count` INT(11) NOT NULL DEFAULT 0 COMMENT '执行成功-日志数量',
+    `fail_count`    INT(11) NOT NULL DEFAULT 0 COMMENT '执行失败-日志数量',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;

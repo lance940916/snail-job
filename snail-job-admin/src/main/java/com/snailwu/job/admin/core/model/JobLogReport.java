@@ -8,7 +8,7 @@ public class JobLogReport {
     private Integer id;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private Date triggerTime;
+    private Date triggerDay;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Integer runningCount;
@@ -30,13 +30,13 @@ public class JobLogReport {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public Date getTriggerTime() {
-        return triggerTime;
+    public Date getTriggerDay() {
+        return triggerDay;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setTriggerTime(Date triggerTime) {
-        this.triggerTime = triggerTime;
+    public void setTriggerDay(Date triggerDay) {
+        this.triggerDay = triggerDay;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
