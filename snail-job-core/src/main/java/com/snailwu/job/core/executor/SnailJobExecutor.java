@@ -134,7 +134,7 @@ public class SnailJobExecutor {
      */
     private void initAdminBiz(String adminAddress, String accessToken) {
         if (adminAddress == null || adminAddress.trim().length() == 0) {
-            LOGGER.warn("[SnailJob]没有配置调度中心地址.");
+            LOGGER.warn("[SnailJob]-没有配置调度中心地址.");
             return;
         }
 

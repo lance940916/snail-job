@@ -99,10 +99,10 @@ public class JobThread extends Thread {
      * jobId 和 logId 一样即相等
      */
     public ResultT<String> removeJobQueue(TriggerParam triggerParam) {
-        // 移除时需要获取读写锁
+        // 移除时需要获取读写锁，使用 equals 寻找一样的任务进行移除
         boolean removeResult = jobQueue.remove(triggerParam);
         if (removeResult) {
-            // 从判重集合中移除 logId
+            // 从判重集合中移除 logId（任务如果成功移除，logIdSet 中的 logId 一定没有被移除）
             logIdSet.add(triggerParam.getLogId());
             return ResultT.SUCCESS;
         }
@@ -122,7 +122,7 @@ public class JobThread extends Thread {
         try {
             jobHandler.init();
         } catch (Exception e) {
-            LOGGER.error("执行任务初始方法异常.原因:{}", e.getMessage());
+            LOGGER.error("[SnailJob]-执行任务初始方法异常.原因:{}", e.getMessage());
         }
 
         // 线程启动后不断轮训队列，有任务就执行，没有任务则累加次数达到 30 次就将该线程停止
@@ -183,7 +183,11 @@ public class JobThread extends Thread {
                 callbackParam.setLogId(triggerParam.getLogId());
                 callbackParam.setExecTime(new Date());
                 callbackParam.setExecCode(ResultT.FAIL_CODE);
-                callbackParam.setExecMsg(stopReason + "-[Job没有被执行,在队列中,线程被中断]");
+                if (stopReason != null) {
+                    callbackParam.setExecMsg("任务未执行,执行线程被中断-原因:" + stopReason);
+                } else {
+                    callbackParam.setExecMsg("任务未执行,执行线程被中断.");
+                }
                 ResultCallbackThread.addCallbackQueue(callbackParam);
             }
         }
@@ -192,7 +196,7 @@ public class JobThread extends Thread {
         try {
             jobHandler.destroy();
         } catch (Exception e) {
-            LOGGER.error("执行任务销毁方法异常.原因:{}", e.getMessage());
+            LOGGER.error("[SnailJob]-执行任务销毁方法异常.原因:{}", e.getMessage());
         }
     }
 

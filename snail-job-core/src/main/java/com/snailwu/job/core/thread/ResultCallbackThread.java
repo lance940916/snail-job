@@ -59,10 +59,10 @@ public class ResultCallbackThread {
                     doCallback(callbackParam);
                 } catch (InterruptedException e) {
                     if (!stopFlag) {
-                        LOGGER.error("任务结果回调线程被终端.", e);
+                        LOGGER.error("[SnailJob]-任务结果回调线程被终端.", e);
                     }
                 } catch (Exception e) {
-                    LOGGER.error("回调任务发生异常.", e);
+                    LOGGER.error("[SnailJob]-回调任务发生异常.", e);
                 }
             }
 
@@ -73,7 +73,7 @@ public class ResultCallbackThread {
         });
 
         callbackThread.setDaemon(true);
-        callbackThread.setName("result-callback-thread");
+        callbackThread.setName("callback-result-thread");
         callbackThread.start();
     }
 

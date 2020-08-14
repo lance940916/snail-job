@@ -53,7 +53,7 @@ public class JobFailMonitorHelper {
                         // 锁定这条数据，依赖数据库的锁
                         int update = AdminConfig.getInstance().getJobLogMapper().update(
                                 update(JobLogDynamicSqlSupport.jobLog)
-                                        .set(JobLogDynamicSqlSupport.alarmStatus).equalTo((byte) -1)
+                                        .set(JobLogDynamicSqlSupport.alarmStatus).equalTo(LOCK.getValue())
                                         .where()
                                         .and(JobLogDynamicSqlSupport.id, isEqualTo(jobLog.getId()))
                                         .and(JobLogDynamicSqlSupport.alarmStatus, isEqualTo(DEFAULT.getValue()))
