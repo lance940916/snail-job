@@ -9,6 +9,7 @@ import com.snailwu.job.admin.mapper.JobInfoDynamicSqlSupport;
 import com.snailwu.job.admin.mapper.JobInfoMapper;
 import com.snailwu.job.admin.request.JobInfoSearchRequest;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.slf4j.Logger;
@@ -102,10 +103,27 @@ public class InfoService {
     /**
      * 保存 或 更新
      */
-    public void saveOrUpdate(JobInfo jobInfo) {
-        
+    public void saveOrUpdate(JobInfo info) {
+        if (info.getId() == null) {
+            // 新增
+            // Cron 表达式是否正确
+            Validate.isTrue(CronExpression.isValidExpression(info.getCron()), "Cron表达式不正确");
 
-
+            int ret = jobInfoMapper.insertSelective(info);
+            if (ret == 1) {
+                LOGGER.info("新增任务成功");
+            } else {
+                LOGGER.error("新增任务失败");
+            }
+        } else {
+            info.setUpdateTime(new Date());
+            int ret = jobInfoMapper.updateByPrimaryKeySelective(info);
+            if (ret == 1) {
+                LOGGER.info("更新任务成功");
+            } else {
+                LOGGER.error("更新任务失败");
+            }
+        }
     }
 
     /**

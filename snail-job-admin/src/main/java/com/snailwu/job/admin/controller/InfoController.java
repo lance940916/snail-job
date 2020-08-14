@@ -7,6 +7,7 @@ import com.snailwu.job.admin.request.JobInfoSearchRequest;
 import com.snailwu.job.admin.service.InfoService;
 import com.snailwu.job.admin.trigger.TriggerTypeEnum;
 import com.snailwu.job.core.biz.model.ResultT;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -35,7 +36,7 @@ public class InfoController {
      * 新增
      */
     @PostMapping
-    public ResultT<String> save(@RequestBody JobInfo jobInfo) {
+    public ResultT<String> save(@Validated @RequestBody JobInfo jobInfo) {
         infoService.saveOrUpdate(jobInfo);
         return ResultT.SUCCESS;
     }

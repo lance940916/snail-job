@@ -1,18 +1,22 @@
 package com.snailwu.job.admin.core.model;
 
 import javax.annotation.Generated;
+import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 
 public class JobInfo {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Integer id;
 
+    @NotEmpty(message = "分组不能为空")
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private String groupName;
 
+    @NotEmpty(message = "Cron表达式不能为空")
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private String cron;
 
+    @NotEmpty(message = "描述不能为空")
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private String description;
 
@@ -28,9 +32,11 @@ public class JobInfo {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private String alarmEmail;
 
+    @NotEmpty(message = "路由策略不能为空")
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private String executorRouteStrategy;
 
+    @NotEmpty(message = "JobHandler不能为空")
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private String executorHandler;
 
