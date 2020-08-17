@@ -195,11 +195,9 @@
 </script>
 
 <script type="text/html" id="triggerStatusTpl">
-    {{# if(d.trigger_status == 0){ }}
-        <input type="checkbox" lay-skin="switch" lay-text="运行中|已停止" disabled>
-    {{# } else if(d.trigger_status == 1){ }}
-        <input type="checkbox" checked lay-skin="switch" lay-text="运行中|已停止" disabled>
-    {{# } }}
+    <input type="checkbox" lay-skin="switch" lay-text="运行中|已停止" disabled
+    {{# if(d.trigger_status == 1){ }} checked {{# } }}
+    >
 </script>
 
 <script>
