@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static com.snailwu.job.admin.constant.JobConstants.DATE_TIME_PATTERN;
+import static com.snailwu.job.admin.constant.JobConstants.DATE_TIME_MS_PATTERN;
 import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 import static org.mybatis.dynamic.sql.SqlBuilder.select;
 
@@ -56,7 +56,7 @@ public class JobTrigger {
 
         // 查询任务分组信息
         JobGroup jobGroup = AdminConfig.getInstance().getJobGroupMapper().selectOne(
-                select(JobGroupDynamicSqlSupport.jobGroup.id, JobGroupDynamicSqlSupport.jobGroup.addressList)
+                select(JobGroupDynamicSqlSupport.id, JobGroupDynamicSqlSupport.addressList)
                         .from(JobGroupDynamicSqlSupport.jobGroup)
                         .where(JobGroupDynamicSqlSupport.name, isEqualTo(jobInfo.getGroupName())) // name 是唯一的
                         .build().render(RenderingStrategies.MYBATIS3)
@@ -114,7 +114,7 @@ public class JobTrigger {
         }
         LOGGER.info("开始调度-JobId:{},LogId:{},触发类型:{},参数:{},失败重试次数:{},调度时间:{},执行器地址:{}",
                 jobInfo.getId(), jobLog.getId(), triggerType, jobInfo.getExecutorParam(), failRetryCount,
-                DateFormatUtils.format(triggerTime, DATE_TIME_PATTERN), address);
+                DateFormatUtils.format(triggerTime, DATE_TIME_MS_PATTERN), address);
 
         // 4 触发远程执行器
         ResultT<String> triggerResult;

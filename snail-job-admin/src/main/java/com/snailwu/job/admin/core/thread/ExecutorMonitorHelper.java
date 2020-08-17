@@ -43,20 +43,23 @@ public class ExecutorMonitorHelper {
                     // 1. 删除所有不活跃的执行器
                     Date deadDate = DateUtils.addSeconds(new Date(), RegistryConfig.DEAD_TIMEOUT * -1);
                     AdminConfig.getInstance().getJobExecutorMapper().delete(
-                            deleteFrom(jobExecutor).where(updateTime, isLessThanOrEqualTo(deadDate))
+                            deleteFrom(jobExecutor)
+                                    .where(updateTime, isLessThanOrEqualTo(deadDate))
                                     .build().render(RenderingStrategies.MYBATIS3)
                     );
 
                     // 2. 获取所有的分组
                     List<JobGroup> groupList = AdminConfig.getInstance().getJobGroupMapper().selectMany(
-                            select(jobGroup.allColumns()).from(jobGroup)
+                            select(jobGroup.allColumns())
+                                    .from(jobGroup)
                                     .where(jobGroup.type, isEqualTo(RegistryType.AUTO.getValue()))
                                     .build().render(RenderingStrategies.MYBATIS3)
                     );
 
                     // 3. 获取所有的执行器
                     List<JobExecutor> executorList = AdminConfig.getInstance().getJobExecutorMapper().selectMany(
-                            select(jobExecutor.allColumns()).from(jobExecutor)
+                            select(jobExecutor.allColumns())
+                                    .from(jobExecutor)
                                     .build().render(RenderingStrategies.MYBATIS3)
                     );
 

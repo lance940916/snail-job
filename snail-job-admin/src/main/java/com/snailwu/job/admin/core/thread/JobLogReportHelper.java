@@ -3,6 +3,7 @@ package com.snailwu.job.admin.core.thread;
 import com.snailwu.job.admin.core.conf.AdminConfig;
 import com.snailwu.job.admin.core.model.JobLog;
 import com.snailwu.job.admin.core.model.JobLogReport;
+import com.snailwu.job.admin.mapper.JobLogDynamicSqlSupport;
 import com.snailwu.job.admin.mapper.JobLogReportDynamicSqlSupport;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
@@ -13,8 +14,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.snailwu.job.admin.mapper.JobLogDynamicSqlSupport.jobLog;
-import static com.snailwu.job.admin.mapper.JobLogDynamicSqlSupport.triggerTime;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
 /**
@@ -46,11 +45,11 @@ public class JobLogReportHelper {
 
                 // 不断统计当天的任务执行情况
                 List<JobLog> jobLogList = AdminConfig.getInstance().getJobLogMapper().selectMany(
-                        select(jobLog.id, jobLog.triggerCode, jobLog.execCode)
-                                .from(jobLog)
+                        select(JobLogDynamicSqlSupport.id, JobLogDynamicSqlSupport.triggerCode, JobLogDynamicSqlSupport.execCode)
+                                .from(JobLogDynamicSqlSupport.jobLog)
                                 .where()
-                                .and(triggerTime, isGreaterThanOrEqualTo(beginTime))
-                                .and(triggerTime, isLessThan(endTime))
+                                .and(JobLogDynamicSqlSupport.triggerTime, isGreaterThanOrEqualTo(beginTime))
+                                .and(JobLogDynamicSqlSupport.triggerTime, isLessThan(endTime))
                                 .build().render(RenderingStrategies.MYBATIS3)
                 );
                 int successCount = 0;

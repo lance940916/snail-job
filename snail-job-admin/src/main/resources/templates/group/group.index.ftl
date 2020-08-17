@@ -137,7 +137,7 @@
             elem: '#dataTableID',
             url: '${contextPath}/group',
             cols: [[
-                {field: 'id', title: 'ID', fixed: 'left', width: 50, unresize: true},
+                {field: 'id', title: 'ID', fixed: 'left', width: 100, unresize: true},
                 {field: 'title', title: '名称'},
                 {field: 'name', title: '唯一标识'},
                 {field: 'type', title: '注册类型', templet: '#typeTpl'},
@@ -175,17 +175,12 @@
                 }
                 htmlContent += '</div>';
                 layer.open({
+                    resize: false,
                     content: htmlContent
                 });
             } else if (eventName === 'edit') {
                 // 把信息都回显上去
-                form.val('editForm', {
-                    'id': data.id,
-                    'title': data.title,
-                    'name': data.name,
-                    'type': data.type,
-                    'address_list': data.address_list
-                });
+                form.val('editForm', data);
                 form.render('radio');
 
                 // 回显
@@ -193,6 +188,7 @@
                     type: 1,
                     title: '编辑分组信息',
                     area: '350px',
+                    resize: false,
                     content: $('#editLayer')
                 })
             } else if (eventName === 'del') {
@@ -210,6 +206,14 @@
                 });
             }
         });
+        // 表格单击事件
+        table.on('row(dataTable)', function(obj){
+            if (obj.tr.hasClass("snail-bg-selected")) {
+                obj.tr.removeClass('snail-bg-selected');
+            } else {
+                obj.tr.addClass('snail-bg-selected').siblings().removeClass('snail-bg-selected');
+            }
+        });
     }();
 
     // 添加弹窗
@@ -221,6 +225,7 @@
             type: 1,
             title: '添加分组信息',
             area: '350px',
+            resize: false,
             content: $('#editLayer')
         })
     })
@@ -235,8 +240,12 @@
             contentType: 'application/json',
             data: JSON.stringify(field),
             success: function (ret) {
-                layer.close(layer.index);
-                layer.alert('保存成功');
+                if (ret.code !== 200) {
+                    layer.alert(ret.msg);
+                    return;
+                }
+                layer.closeAll('page');
+                layer.alert("保存成功");
 
                 // 刷新表格
                 table.reload('dataTableID');

@@ -29,18 +29,23 @@
             <form class="layui-form layui-form-pane">
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <button id="addBtn" type="button" class="layui-btn layui-btn-normal">新增</button>
+                        <label class="layui-form-label">分组</label>
+                        <div class="layui-input-block">
+                            <select id="searchGroupNameID" name="groupName" autocomplete="off">
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">名称</label>
                         <div class="layui-input-block">
-                            <input type="text" name="groupName" class="layui-input" />
+                            <input type="text" name="name" class="layui-input" autocomplete="off" />
                         </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">负责人</label>
                         <div class="layui-input-block">
-                            <input type="text" name="author" class="layui-input" />
+                            <input type="text" name="author" class="layui-input" autocomplete="off" />
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -60,76 +65,84 @@
 </div>
 
 <#-- 编辑 -->
-<div id="editLayer" class="layui-row" style="display:none;">
-    <div class="layui-col-lg10 layui-col-lg-offset1">
-        <form id="editFormID" class="layui-form layui-form-pane" pane style="margin-top: 20px;">
+<div id="editLayer" class="layui-row" style="display:none;margin-right: 20px;">
+    <div class="layui-col-lg12">
+        <form id="editFormID" class="layui-form" pane style="margin-top: 20px;" lay-filter="editForm">
             <div class="layui-form-item layui-hide">
-                <div class="layui-input-block">
-                    <input type="text" name="id" class="layui-input" />
+                <div class="layui-input-inline">
+                    <input class="layui-input" name="id" value="" />
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">任务名称</label>
-                <div class="layui-input-block">
-                    <input type="text" name="name" required lay-verify="required" class="layui-input" />
+                <div class="layui-inline">
+                    <label class="layui-form-label">任务名称</label>
+                    <div class="layui-input-inline">
+                        <input class="layui-input" name="name" required lay-verify="required" autocomplete="off" />
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">Cron</label>
+                    <div class="layui-input-inline">
+                        <input class="layui-input" name="cron" required lay-verify="required" autocomplete="off" />
+                    </div>
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">分组</label>
-                <div class="layui-input-block">
-                    <select name="group_name" required lay-verify="required">
-                        <option value="">请选择</option>
-                    </select>
+                <div class="layui-inline">
+                    <label class="layui-form-label">路由策略</label>
+                    <div class="layui-input-inline">
+                        <select name="executor_route_strategy" required lay-verify="required">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">任务分组</label>
+                    <div class="layui-input-inline">
+                        <select id="editGroupNameId" name="group_name" required lay-verify="required">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">CRON表达式</label>
-                <div class="layui-input-block">
-                    <input type="text" name="cron" required lay-verify="required" class="layui-input" />
+                <div class="layui-inline">
+                    <label class="layui-form-label">负责人</label>
+                    <div class="layui-input-inline">
+                        <input class="layui-input" name="author" required lay-verify="required" autocomplete="off" />
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">报警邮箱</label>
+                    <div class="layui-input-inline">
+                        <input class="layui-input" name="alarm_email" autocomplete="off" />
+                    </div>
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">负责人</label>
-                <div class="layui-input-block">
-                    <input type="text" name="author" class="layui-input" />
+                <div class="layui-inline">
+                    <label class="layui-form-label">超时时间</label>
+                    <div class="layui-input-inline">
+                        <input class="layui-input" name="executor_timeout" autocomplete="off" />
+                    </div>
                 </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">报警邮箱</label>
-                <div class="layui-input-block">
-                    <input type="text" name="alarm_email" class="layui-input" />
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">路由策略</label>
-                <div class="layui-input-block">
-                    <select name="executor_route_strategy" required lay-verify="required">
-                        <option value="">请选择</option>
-                    </select>
+                <div class="layui-inline">
+                    <label class="layui-form-label">重试次数</label>
+                    <div class="layui-input-inline">
+                        <input class="layui-input" name="executor_fail_retry_count" autocomplete="off" />
+                    </div>
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">JobHandler</label>
-                <div class="layui-input-block">
-                    <input type="text" name="executor_handler" required lay-verify="required" class="layui-input" />
+                <div class="layui-input-inline">
+                    <input class="layui-input" name="executor_handler" required lay-verify="required" autocomplete="off" />
                 </div>
             </div>
-            <div class="layui-form-item">
+            <div class="layui-form-item layui-form-text">
                 <label class="layui-form-label">执行参数</label>
                 <div class="layui-input-block">
-                    <input type="text" name="executor_param" class="layui-input" />
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">超时时间</label>
-                <div class="layui-input-block">
-                    <input type="number" name="executor_timeout" class="layui-input" />
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">失败重试次数</label>
-                <div class="layui-input-block">
-                    <input type="number" name="executor_fail_retry_count" class="layui-input" />
+                    <textarea class="layui-textarea" name="executor_param" placeholder=""></textarea>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -141,30 +154,51 @@
     </div>
 </div>
 
+<div id="execLayer" class="layui-row" style="display:none;margin-right: 20px;">
+    <div class="layui-col-lg12">
+        <form id="execFormId" class="layui-form" pane style="margin-top: 20px;" lay-filter="execForm">
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">执行参数</label>
+                <div class="layui-input-block">
+                    <textarea class="layui-textarea" name="executor_param" placeholder=""></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button lay-submit class="layui-btn" lay-filter="execBtn">执行</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <#-- 公共 JS -->
 <@netCommon.commonScript />
 
 <#-- 表格工具栏 -->
-<script type="text/html" id="showOperate">
-    <ul class="layui-nav">
-        <li class="layui-nav-item">
-            <a class="layui-btn layui-btn-sm" href="javascript:void(0);">操作</a>
-            <dl class="layui-nav-child"> <!-- 二级菜单 -->
-                <dd><a class="layui-btn layui-btn-sm" lay-event="exec">执行一次</a></dd>
-                <dd><a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a></dd>
-                <dd><a class="layui-btn layui-btn-sm" lay-event="del">删除</a></dd>
-                <dd><hr></dd>
-                <dd><a class="layui-btn layui-btn-sm" lay-event="del">下次执行时间</a></dd>
-            </dl>
-        </li>
-    </ul>
+<script type="text/html" id="toolbarID">
+    <div class="layui-btn-group">
+        <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
+        <button class="layui-btn layui-btn-sm" lay-event="edit">编辑</button>
+        <button class="layui-btn layui-btn-sm" lay-event="copy">复制</button>
+        <button class="layui-btn layui-btn-sm" lay-event="del">删除</button>
+    </div>
+    <div class="layui-btn-group">
+        <button class="layui-btn layui-btn-sm" lay-event="exec">执行一次</button>
+        <button class="layui-btn layui-btn-sm" lay-event="nextTriggerTime">下次执行时间</button>
+        <button class="layui-btn layui-btn-sm" lay-event="log">查询日志</button>
+    </div>
+    <div class="layui-btn-group">
+        <button class="layui-btn layui-btn-sm" lay-event="start">启动</button>
+        <button class="layui-btn layui-btn-sm" lay-event="stop">停止</button>
+    </div>
 </script>
 
 <script type="text/html" id="triggerStatusTpl">
-    {{# if(d.triggerStatus == 0){ }}
-        已停止
-    {{# } else if(d.triggerStatus == 1){ }}
-        运行中
+    {{# if(d.trigger_status == 0){ }}
+        <input type="checkbox" lay-skin="switch" lay-text="运行中|已停止" disabled>
+    {{# } else if(d.trigger_status == 1){ }}
+        <input type="checkbox" checked lay-skin="switch" lay-text="运行中|已停止" disabled>
     {{# } }}
 </script>
 
@@ -174,22 +208,27 @@
     let table = layui.table;
     let $ = layui.jquery;
     let form = layui.form;
+    let cur_selected_obj = undefined;
 
     !function() {
         // 渲染表格
         table.render({
             elem: '#dataTableID',
             url: '${contextPath}/info',
+            toolbar: '#toolbarID',
+            defaultToolbar: [],
             cols: [[
-                {field: 'id', title: 'ID', fixed: 'left', width: 50, unresize: true},
-                {field: 'description', title: '描述'},
+                {field: 'id', title: 'ID', fixed: 'left', width: 100, unresize: true},
+                {field: 'name', title: '名称'},
                 {field: 'cron', title: 'CRON表达式'},
-                {field: 'executorHandler', title: '方法'},
+                {field: 'executor_handler', title: '方法名'},
                 {field: 'author', title: '负责人'},
-                {field: 'triggerStatus', title: '状态', templet: '#triggerStatusTpl'},
-                {fixed: 'right', title: '操作', toolbar: '#showOperate'},
+                {field: 'trigger_status', title: '状态', templet: '#triggerStatusTpl'},
             ]],
             page: true,
+            response: {
+                statusCode: 200
+            },
             parseData: function(res) {
                 return {
                     "code": res.code,
@@ -199,77 +238,191 @@
                 };
             }
         });
-        table.on('tool(dataTable)', function(obj){
-            let data = obj.data;
-            let eventName = obj.event;
-            if (eventName === 'edit') {
-                // 把信息都回显上去
-                form.val('editForm', {
-                    'id': data.id,
-                    'title': data.title,
-                    'name': data.name,
-                    'type': data.type,
-                    'addressList': data.addressList
-                });
-                form.render('radio');
 
-                // 回显
-                layer.open({
-                    type: 1,
-                    title: '编辑分组信息',
-                    area: '350px',
-                    content: $('#editLayer')
-                })
-            } else if (eventName === 'del') {
-                // 删除
-                layer.confirm('是否删除该条记录?', {icon: 3, title:'提示'}, function(index){
-                    layer.close(index);
-                    $.ajax({
-                        url: '${contextPath}/group/' + data.id,
-                        type: 'post',
-                        data: {
-                            _method: 'delete'
-                        },
-                        success: function (ret) {
-                            layer.alert('删除成功');
-
-                            // 刷新表格
-                            table.reload('dataTable');
-                        }
-                    })
-                });
+        // 渲染分组下拉框
+        $.get('${contextPath}/group/list_all', function (ret) {
+            if (ret.code !== 200) {
+                layer.error('渲染任务分组异常');
+                return;
             }
+            let contentArray = ret.content;
+            contentArray.forEach(function (item) {
+                $('#searchGroupNameID').append("<option value='" + item.name + "'>" + item.name + "</option>")
+                $('#editGroupNameId').append("<option value='" + item.name + "'>" + item.name + "</option>")
+            })
+            form.render();
+        });
+
+        // 渲染路由策略
+        $.get('${contextPath}/info/list_route', function (ret) {
+            if (ret.code !== 200) {
+                layer.error('渲染路由策略异常');
+                return;
+            }
+            let contentArray = ret.content;
+            $("select[name='executor_route_strategy']").each(function (index, elem) {
+                let _this = $(this);
+                contentArray.forEach(function (item) {
+                    _this.append("<option value='" + item.name + "'>" + item.desc + "</option>")
+                })
+            })
+            form.render();
         });
     }();
 
-    // 添加弹窗
-    $('#addBtn').click(function () {
-        $('#editFormID')[0].reset();
-        form.render('radio');
+    // 表格单击事件
+    table.on('row(dataTable)', function(obj){
+        if (obj.tr.hasClass("snail-bg-selected")) {
+            obj.tr.removeClass('snail-bg-selected');
+            cur_selected_obj = undefined;
+        } else {
+            obj.tr.addClass('snail-bg-selected').siblings().removeClass('snail-bg-selected');
+            cur_selected_obj = obj;
+        }
+    });
 
-        layer.open({
-            type: 1,
-            title: '添加分组信息',
-            area: '350px',
-            content: $('#editLayer')
-        })
-    })
+    // 表格工具栏事件
+    table.on('toolbar(dataTable)', function(obj){
+        let eventName = obj.event;
+        if (eventName !== 'add' && cur_selected_obj === undefined) {
+            layer.msg('请先选择一行数据');
+            return;
+        }
+        let eLayer = $('#editLayer');
+        switch(eventName){
+            case 'add':
+                $('#editFormID')[0].reset();
+                layer.open({
+                    type: 1,
+                    title: '添加任务',
+                    area: '700px',
+                    resize: false,
+                    content: eLayer
+                })
+                break;
+            case 'edit':
+                form.val('editForm', cur_selected_obj.data);
+                form.render('radio');
+                layer.open({
+                    type: 1,
+                    title: '编辑任务',
+                    area: '700px',
+                    resize: false,
+                    content: eLayer
+                })
+                break;
+            case 'copy':
+                $.post('${contextPath}/info/copy/' + cur_selected_obj.data.id, function (ret) {
+                    if (ret.code === 200) {
+                        cur_selected_obj = undefined;
+                        table.reload('dataTableID');
+                    } else {
+                        layer.alert(ret.msg);
+                    }
+                });
+                break;
+            case 'del':
+                layer.confirm('是否删除该条记录?', {icon: 3, title:'提示'}, function(index){
+                    layer.close(index);
+                    $.ajax({
+                        url: '${contextPath}/info/' + cur_selected_obj.data.id,
+                        type: 'post',
+                        data: {_method: 'delete'},
+                        success: function (ret) {
+                            // 刷新表格
+                            cur_selected_obj = undefined;
+                            table.reload('dataTableID');
+                        }
+                    })
+                });
+                break;
+            case 'exec':
+                layer.open({
+                    type: 1,
+                    title: '执行任务',
+                    area: '700px',
+                    resize: false,
+                    content: $('#execLayer')
+                })
+                break;
+            case 'nextTriggerTime':
+                let cron = cur_selected_obj.data.cron;
+                $.get('${contextPath}/info/next_trigger_time', {cron: cron}, function (ret) {
+                    if (ret.code !== 200) {
+                        layer.alert(ret.msg);
+                        return;
+                    }
+                    let htmlContent = '<div>';
+                    let execTimeArray = ret.content;
+                    for (let i = 0; i < execTimeArray.length; i++) {
+                        htmlContent +=  (i + 1) + ': ' + execTimeArray[i];
+                        htmlContent += '<br/>';
+                    }
+                    htmlContent += '</div>';
+                    layer.open({
+                        resize: false,
+                        content: htmlContent
+                    });
+                });
+                break;
+            case 'log':
+                layer.msg('查询日志');
+                break;
+            case 'start':
+                if (cur_selected_obj.data.trigger_status === 0) {
+                    $.post('${contextPath}/info/start/' + cur_selected_obj.data.id, function (ret) {
+                        if (ret.code === 200) {
+                            layer.alert('启动成功');
+                            cur_selected_obj = undefined;
+                            table.reload('dataTableID');
+                        } else {
+                            layer.alert(ret.msg);
+                        }
+                    });
+                } else {
+                    layer.alert('任务已启动');
+                }
+                break;
+            case 'stop':
+                if (cur_selected_obj.data.trigger_status === 1) {
+                    $.post('${contextPath}/info/stop/' + cur_selected_obj.data.id, function (ret) {
+                        if (ret.code === 200) {
+                            layer.alert('停止成功');
+                            cur_selected_obj = undefined;
+                            table.reload('dataTableID');
+                        } else {
+                            layer.alert(ret.msg);
+                        }
+                    });
+                } else {
+                    layer.alert('任务已停止');
+                }
+                break;
+            default:
+                layer.msg('未知事件');
+        }
+    });
 
     // 编辑表单提交
     form.on('submit(saveBtn)', function (data) {
         let field = data.field;
         let method = field.id === '' ? 'post' : 'put';
         $.ajax({
-            url: '${contextPath}/group?_method=' + method,
+            url: '${contextPath}/info?_method=' + method,
             type: 'post',
             contentType: 'application/json',
             data: JSON.stringify(field),
             success: function (ret) {
-                layer.close(layer.index);
-                layer.alert('保存成功');
+                if (ret.code !== 200) {
+                    layer.alert(ret.msg);
+                    return;
+                }
+                layer.closeAll('page');
+                layer.alert("保存成功");
 
                 // 刷新表格
-                table.reload('dataTable');
+                cur_selected_obj = undefined;
+                table.reload('dataTableID');
             }
         });
         return false;
@@ -277,18 +430,22 @@
 
     // 搜索提交
     form.on('submit(searchBtn)', function (data) {
-        let field = data.field;
-        layer.alert(JSON.stringify(field));
-        table.reload('dataTable', {
-            where: {
-                title: field.title,
-                name: field.name
-            },
+        cur_selected_obj = undefined;
+        table.reload('dataTableID', {
+            where: data.field,
             page: {
                 curr: 1
             }
         });
         return false;
+    });
+
+    // 执行一次
+    form.on('submit(execBtn)', function (data) {
+        let id = cur_selected_obj.data.id;
+        $.post('${contextPath}/exec/' + id, {exec_param: data.executor_param}, function (ret) {
+            layer.closeAll('page');
+        });
     });
 </script>
 </body>

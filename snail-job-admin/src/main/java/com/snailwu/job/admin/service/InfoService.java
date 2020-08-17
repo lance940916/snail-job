@@ -3,11 +3,12 @@ package com.snailwu.job.admin.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.snailwu.job.admin.constant.JobConstants;
+import com.snailwu.job.admin.controller.request.JobInfoSearchRequest;
 import com.snailwu.job.admin.core.cron.CronExpression;
 import com.snailwu.job.admin.core.model.JobInfo;
 import com.snailwu.job.admin.mapper.JobInfoDynamicSqlSupport;
 import com.snailwu.job.admin.mapper.JobInfoMapper;
-import com.snailwu.job.admin.request.JobInfoSearchRequest;
+import com.snailwu.job.core.exception.SnailJobException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
@@ -57,9 +58,9 @@ public class InfoService {
 
         JobInfo updateJobInfo = new JobInfo();
         updateJobInfo.setId(id);
+        updateJobInfo.setTriggerStatus((byte) 1);
         updateJobInfo.setTriggerLastTime(0L);
         updateJobInfo.setTriggerNextTime(triggerNextTime.getTime());
-        updateJobInfo.setTriggerStatus((byte) 1);
         jobInfoMapper.updateByPrimaryKeySelective(updateJobInfo);
     }
 
@@ -75,9 +76,9 @@ public class InfoService {
 
         JobInfo updateJobInfo = new JobInfo();
         updateJobInfo.setId(id);
+        updateJobInfo.setTriggerStatus((byte) 0);
         updateJobInfo.setTriggerLastTime(0L);
         updateJobInfo.setTriggerNextTime(0L);
-        updateJobInfo.setTriggerStatus((byte) 0);
         jobInfoMapper.updateByPrimaryKeySelective(updateJobInfo);
     }
 
@@ -86,13 +87,16 @@ public class InfoService {
      */
     public PageInfo<JobInfo> list(JobInfoSearchRequest searchRequest) {
         String groupName = searchRequest.getGroupName();
-        String author = searchRequest.getAuthor();
         groupName = StringUtils.isEmpty(groupName) ? null : groupName;
+        String name = searchRequest.getName();
+        name = StringUtils.isEmpty(name) ? null : ("%" + name + "%");
+        String author = searchRequest.getAuthor();
         author = StringUtils.isEmpty(author) ? null : ("%" + author + "%");
 
         SelectStatementProvider statementProvider = select(JobInfoDynamicSqlSupport.jobInfo.allColumns())
                 .from(JobInfoDynamicSqlSupport.jobInfo)
                 .where()
+                .and(JobInfoDynamicSqlSupport.name, isLikeWhenPresent(name))
                 .and(JobInfoDynamicSqlSupport.groupName, isEqualToWhenPresent(groupName))
                 .and(JobInfoDynamicSqlSupport.author, isLikeWhenPresent(author))
                 .build().render(RenderingStrategies.MYBATIS3);
@@ -138,4 +142,21 @@ public class InfoService {
         }
     }
 
+    /**
+     * 复制一个任务
+     */
+    public void copy(Integer id) {
+        JobInfo jobInfo = jobInfoMapper.selectByPrimaryKey(id).orElse(null);
+        if (jobInfo == null) {
+            throw new SnailJobException("任务不存在");
+        }
+        jobInfo.setId(null);
+        jobInfo.setName(jobInfo.getName() + "-复制");
+        jobInfo.setCreateTime(null);
+        jobInfo.setUpdateTime(null);
+        jobInfo.setTriggerStatus((byte) 0);
+        jobInfo.setTriggerLastTime(0L);
+        jobInfo.setTriggerNextTime(0L);
+        jobInfoMapper.insertSelective(jobInfo);
+    }
 }

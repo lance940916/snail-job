@@ -3,6 +3,7 @@ package com.snailwu.job.admin.core.thread;
 import com.snailwu.job.admin.core.conf.AdminConfig;
 import com.snailwu.job.admin.core.cron.CronExpression;
 import com.snailwu.job.admin.core.model.JobInfo;
+import com.snailwu.job.admin.mapper.JobInfoDynamicSqlSupport;
 import com.snailwu.job.admin.trigger.TriggerTypeEnum;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
@@ -17,9 +18,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-import static com.snailwu.job.admin.constant.JobConstants.DATE_TIME_PATTERN;
+import static com.snailwu.job.admin.constant.JobConstants.DATE_TIME_MS_PATTERN;
 import static com.snailwu.job.admin.constant.JobConstants.MAX_LIMIT_PRE_READ;
-import static com.snailwu.job.admin.mapper.JobInfoDynamicSqlSupport.*;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
 /**
@@ -83,11 +83,11 @@ public class JobScheduleHelper {
 
                     // 扫描将要待执行的任务，根据任务的执行时间从近到远排序
                     List<JobInfo> jobInfoList = AdminConfig.getInstance().getJobInfoMapper().selectMany(
-                            select(jobInfo.id, jobInfo.cron, jobInfo.triggerNextTime)
-                                    .from(jobInfo)
-                                    .where(triggerStatus, isEqualTo((byte) 1))
-                                    .and(triggerNextTime, isLessThanOrEqualTo(maxTriggerTime))
-                                    .orderBy(jobInfo.triggerNextTime)
+                            select(JobInfoDynamicSqlSupport.id, JobInfoDynamicSqlSupport.cron, JobInfoDynamicSqlSupport.triggerNextTime)
+                                    .from(JobInfoDynamicSqlSupport.jobInfo)
+                                    .where(JobInfoDynamicSqlSupport.triggerStatus, isEqualTo((byte) 1))
+                                    .and(JobInfoDynamicSqlSupport.triggerNextTime, isLessThanOrEqualTo(maxTriggerTime))
+                                    .orderBy(JobInfoDynamicSqlSupport.triggerNextTime)
                                     .limit(MAX_LIMIT_PRE_READ)
                                     .build().render(RenderingStrategies.MYBATIS3)
                     );
@@ -98,7 +98,7 @@ public class JobScheduleHelper {
                         if (triggerNextTime < nowTimeTs) {
                             // 1. 过时的任务 - 忽略调度并更新下次的执行时间
                             LOGGER.warn("任务:{},错失最后一次的触发时间:{}", info.getId(),
-                                    DateFormatUtils.format(triggerNextTime, DATE_TIME_PATTERN));
+                                    DateFormatUtils.format(triggerNextTime, DATE_TIME_MS_PATTERN));
 
                             // 刷新下次调度时间
                             refreshNextValidTime(info, new Date());
@@ -129,11 +129,11 @@ public class JobScheduleHelper {
                     // 更新任务的下次执行时间
                     for (JobInfo info : jobInfoList) {
                         AdminConfig.getInstance().getJobInfoMapper().update(
-                                update(jobInfo)
-                                        .set(triggerLastTime).equalTo(info.getTriggerLastTime())
-                                        .set(triggerNextTime).equalTo(info.getTriggerNextTime())
-                                        .set(triggerStatus).equalTo(info.getTriggerStatus())
-                                        .where(id, isEqualTo(info.getId()))
+                                update(JobInfoDynamicSqlSupport.jobInfo)
+                                        .set(JobInfoDynamicSqlSupport.triggerLastTime).equalTo(info.getTriggerLastTime())
+                                        .set(JobInfoDynamicSqlSupport.triggerNextTime).equalTo(info.getTriggerNextTime())
+                                        .set(JobInfoDynamicSqlSupport.triggerStatus).equalTo(info.getTriggerStatus())
+                                        .where(JobInfoDynamicSqlSupport.id, isEqualTo(info.getId()))
                                         .build().render(RenderingStrategies.MYBATIS3)
                         );
                     }

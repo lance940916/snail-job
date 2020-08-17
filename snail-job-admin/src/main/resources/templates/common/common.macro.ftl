@@ -11,6 +11,7 @@
 <#-- 公共 CSS -->
 <#macro commonStyle>
     <link rel="stylesheet" href="${contextPath}/static/css/layui.css">
+    <link rel="stylesheet" href="${contextPath}/static/css/snail.css">
 </#macro>
 
 <#-- 公共 JS -->

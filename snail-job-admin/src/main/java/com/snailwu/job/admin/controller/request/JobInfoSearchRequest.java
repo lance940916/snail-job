@@ -1,4 +1,4 @@
-package com.snailwu.job.admin.request;
+package com.snailwu.job.admin.controller.request;
 
 /**
  * @author 吴庆龙
@@ -7,6 +7,7 @@ package com.snailwu.job.admin.request;
 public class JobInfoSearchRequest extends BasePageRequest {
 
     private String groupName;
+    private String name;
     private String author;
     private Byte triggerStatus;
 
@@ -16,6 +17,14 @@ public class JobInfoSearchRequest extends BasePageRequest {
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getAuthor() {

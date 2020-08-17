@@ -38,7 +38,7 @@ public class JobFailMonitorHelper {
                 try {
                     // (调度不成功 | 执行不成功的任务) & 为告警的任务日志
                     List<JobLog> jobLogList = AdminConfig.getInstance().getJobLogMapper().selectMany(
-                            select(JobLogDynamicSqlSupport.jobLog.id)
+                            select(JobLogDynamicSqlSupport.id)
                                     .from(JobLogDynamicSqlSupport.jobLog)
                                     .where()
                                     .and(JobLogDynamicSqlSupport.alarmStatus, isEqualTo(DEFAULT.getValue()))

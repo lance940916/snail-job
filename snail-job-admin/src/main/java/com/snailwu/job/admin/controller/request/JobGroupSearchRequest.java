@@ -1,4 +1,4 @@
-package com.snailwu.job.admin.request;
+package com.snailwu.job.admin.controller.request;
 
 /**
  * @author 吴庆龙

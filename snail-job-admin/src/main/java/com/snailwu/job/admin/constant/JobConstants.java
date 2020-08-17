@@ -19,7 +19,8 @@ public interface JobConstants {
     /**
      * 日期时间格式化格式
      */
-    String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss,SSS";
+    String DATE_TIME_MS_PATTERN = "yyyy-MM-dd HH:mm:ss,SSS";
+    String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
     /**
      * 任务执行间隔时间

@@ -1,14 +1,15 @@
 package com.snailwu.job.admin.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.snailwu.job.admin.controller.request.JobGroupSearchRequest;
 import com.snailwu.job.admin.core.model.JobGroup;
-import com.snailwu.job.admin.request.JobGroupSearchRequest;
 import com.snailwu.job.admin.service.GroupService;
 import com.snailwu.job.core.biz.model.ResultT;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author 吴庆龙
@@ -56,6 +57,12 @@ public class GroupController {
     public ResultT<String> delete(@PathVariable("id") Integer id) {
         groupService.delete(id);
         return ResultT.SUCCESS;
+    }
+
+    @GetMapping("/list_all")
+    public ResultT<List<JobGroup>> listAll() {
+        List<JobGroup> list =  groupService.listAll();
+        return new ResultT<>(list);
     }
 
 }

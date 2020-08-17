@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
@@ -85,5 +86,16 @@ public class GroupService {
         } else {
             LOGGER.info("删除失败,记录不存在");
         }
+    }
+
+    /**
+     * 查询所有分组，供下拉框使用
+     */
+    public List<JobGroup> listAll() {
+        return jobGroupMapper.selectMany(
+                select(JobGroupDynamicSqlSupport.id, JobGroupDynamicSqlSupport.name)
+                        .from(JobGroupDynamicSqlSupport.jobGroup)
+                        .build().render(RenderingStrategies.MYBATIS3)
+        );
     }
 }
