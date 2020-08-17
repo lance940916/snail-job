@@ -1,5 +1,10 @@
 package com.snailwu.job.admin.constant;
 
+import com.snailwu.job.admin.core.cron.CronExpression;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author 吴庆龙
  * @date 2020/8/1 2:28 下午
@@ -28,19 +33,14 @@ public interface JobConstants {
     long SCAN_JOB_SLEEP_MS = 10000;
 
     /**
-     * 提前准备任务调度的时间跨度
-     */
-    long SCAN_JOB_PRE_READ_MS = 20000;
-
-    /**
-     * 获取不到锁时休眠时长
-     */
-    long SCAN_JOB_LOCK_FAIL_SLEEP_MS = 5000;
-
-    /**
      * 每次获取任务的最大数量
      * 同时（一秒内）能调度 200 个任务
      */
     int MAX_LIMIT_PRE_READ = 200;
+
+    /**
+     * Cron 表达式对象缓存
+     */
+    Map<String, CronExpression> CRON_CACHE = new HashMap<>();
 
 }
