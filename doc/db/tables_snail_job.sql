@@ -36,9 +36,9 @@ DROP TABLE IF EXISTS `job_info`;
 CREATE TABLE IF NOT EXISTS `job_info`
 (
     `id`                        INT(11)      NOT NULL AUTO_INCREMENT,
-    `group_name`                VARCHAR(32)  NOT NULL COMMENT '任务组名称',
-    `cron`                      VARCHAR(50)  NOT NULL COMMENT '任务CRON表达式',
-    `description`               VARCHAR(255) NOT NULL COMMENT '任务描述',
+    `name`                     VARCHAR(255) NOT NULL COMMENT '任务名称',
+    `group_name`                VARCHAR(32)  NOT NULL COMMENT '组名称',
+    `cron`                      VARCHAR(50)  NOT NULL COMMENT 'CRON表达式',
     `create_time`               DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
     `update_time`               DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
 
@@ -48,7 +48,6 @@ CREATE TABLE IF NOT EXISTS `job_info`
     `executor_route_strategy`   VARCHAR(50)  NOT NULL COMMENT '执行器路由策略',
     `executor_handler`          VARCHAR(255) NOT NULL COMMENT '执行器任务handler',
     `executor_param`            VARCHAR(512) NULL COMMENT '执行器任务参数',
-    `executor_block_strategy`   VARCHAR(50)  NOT NULL COMMENT '阻塞处理策略',
     `executor_timeout`          INT(11)      NOT NULL DEFAULT 0 COMMENT '任务执行超时时间，单位秒',
     `executor_fail_retry_count` TINYINT      NOT NULL DEFAULT 0 COMMENT '失败重试次数',
 

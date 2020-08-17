@@ -108,7 +108,6 @@ public class InfoService {
             // 新增
             // Cron 表达式是否正确
             Validate.isTrue(CronExpression.isValidExpression(info.getCron()), "Cron表达式不正确");
-
             int ret = jobInfoMapper.insertSelective(info);
             if (ret == 1) {
                 LOGGER.info("新增任务成功");
@@ -116,6 +115,7 @@ public class InfoService {
                 LOGGER.error("新增任务失败");
             }
         } else {
+            // 更新
             info.setUpdateTime(new Date());
             int ret = jobInfoMapper.updateByPrimaryKeySelective(info);
             if (ret == 1) {

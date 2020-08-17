@@ -69,23 +69,23 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">描述</label>
+                <label class="layui-form-label">任务名称</label>
                 <div class="layui-input-block">
-                    <input type="text" name="description" required lay-verify="required" class="layui-input" />
+                    <input type="text" name="name" required lay-verify="required" class="layui-input" />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">分组</label>
+                <div class="layui-input-block">
+                    <select name="group_name" required lay-verify="required">
+                        <option value="">请选择</option>
+                    </select>
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">CRON表达式</label>
                 <div class="layui-input-block">
                     <input type="text" name="cron" required lay-verify="required" class="layui-input" />
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">分组</label>
-                <div class="layui-input-block">
-                    <select id="groupNameSelect" name="groupName">
-                        <option value="">请选择</option>
-                    </select>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -97,13 +97,13 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">报警邮箱</label>
                 <div class="layui-input-block">
-                    <input type="text" name="alarmEmail" class="layui-input" />
+                    <input type="text" name="alarm_email" class="layui-input" />
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">路由策略</label>
                 <div class="layui-input-block">
-                    <select id="executorRouteStrategySelect" name="executorRouteStrategy">
+                    <select name="executor_route_strategy" required lay-verify="required">
                         <option value="">请选择</option>
                     </select>
                 </div>
@@ -111,25 +111,25 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">JobHandler</label>
                 <div class="layui-input-block">
-                    <input type="text" name="executorHandler" required lay-verify="required" class="layui-input" />
+                    <input type="text" name="executor_handler" required lay-verify="required" class="layui-input" />
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">任务参数</label>
+                <label class="layui-form-label">执行参数</label>
                 <div class="layui-input-block">
-                    <input type="text" name="executorParam" class="layui-input" />
+                    <input type="text" name="executor_param" class="layui-input" />
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">超时时间</label>
                 <div class="layui-input-block">
-                    <input type="text" name="executorTimeout" required lay-verify="required|number" class="layui-input" />
+                    <input type="number" name="executor_timeout" class="layui-input" />
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">失败重试次数</label>
                 <div class="layui-input-block">
-                    <input type="text" name="executorFailRetryCount" required lay-verify="required|number" class="layui-input" />
+                    <input type="number" name="executor_fail_retry_count" class="layui-input" />
                 </div>
             </div>
             <div class="layui-form-item">
@@ -146,8 +146,16 @@
 
 <#-- 表格工具栏 -->
 <script type="text/html" id="showOperate">
-    <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+    <ul class="layui-nav">
+        <li class="layui-nav-item">
+            <a class="layui-btn layui-btn-sm" href="javascript:void(0);">操作</a>
+            <dl class="layui-nav-child"> <!-- 二级菜单 -->
+                <dd><a class="layui-btn layui-btn-sm" lay-event="exec">执行一次</a></dd>
+                <dd><a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a></dd>
+                <dd><a class="layui-btn layui-btn-sm" lay-event="del">删除</a></dd>
+            </dl>
+        </li>
+    </ul>
 </script>
 
 <script type="text/html" id="triggerStatusTpl">
