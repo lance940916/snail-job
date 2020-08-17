@@ -42,13 +42,15 @@ public class AdminConfig implements InitializingBean, DisposableBean {
     public void afterPropertiesSet() {
         instance = this;
 
+        // 启动所有守护线程
         snailJobScheduler = new SnailJobScheduler();
-        snailJobScheduler.init();
+        snailJobScheduler.startAll();
     }
 
     @Override
     public void destroy() {
-        snailJobScheduler.destroy();
+        // 停止所有守护线程
+        snailJobScheduler.stopAll();
     }
 
     // ---------------------- mapper ----------------------

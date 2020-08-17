@@ -18,7 +18,7 @@ public class SnailJobScheduler {
     /**
      * 启动线程
      */
-    public void init() {
+    public void startAll() {
         // 定时整理注册节点到 group 中
         ExecutorMonitorHelper.start();
 
@@ -38,7 +38,7 @@ public class SnailJobScheduler {
     /**
      * 停止线程
      */
-    public void destroy() {
+    public void stopAll() {
         ExecutorMonitorHelper.stop();
 
         JobFailMonitorHelper.stop();
