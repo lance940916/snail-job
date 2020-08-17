@@ -4,6 +4,7 @@
 <#-- 公共 Head -->
 <#macro commonHead>
     <meta charset="utf-8">
+    <link rel="shortcut icon" href="${contextPath}/static/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 </#macro>
 

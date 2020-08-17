@@ -19,12 +19,6 @@ public class ExecutorRegistryThread {
     public static final Logger LOGGER = LoggerFactory.getLogger(ExecutorRegistryThread.class);
 
     /**
-     * 私有化构造方法
-     */
-    private ExecutorRegistryThread() {
-    }
-
-    /**
      * 注册器线程
      */
     private static Thread registryThread;

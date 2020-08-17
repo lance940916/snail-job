@@ -54,7 +54,7 @@ public class EmailAlarm implements JobAlarm {
         String personal = "分布式任务调度平台";
         String title = "任务调度中心监控报警";
         String content = MessageFormat.format(loadEmailJobAlarmTemplate(),
-                groupName, jobInfo.getId(), jobInfo.getDescription(), alarmContent);
+                groupName, jobInfo.getId(), jobInfo.getName(), alarmContent);
 
         // TODO 发送邮件
 

@@ -27,7 +27,7 @@ import static org.mybatis.dynamic.sql.SqlBuilder.*;
  * @date 2020/6/4 11:23 上午
  */
 public class ExecutorMonitorHelper {
-    public static final Logger LOGGER = LoggerFactory.getLogger(ExecutorMonitorHelper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExecutorMonitorHelper.class);
 
     private static Thread monitorThread;
     private static volatile boolean stopFlag = false;

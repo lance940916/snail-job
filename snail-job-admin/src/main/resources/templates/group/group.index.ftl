@@ -34,13 +34,13 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">名称</label>
                         <div class="layui-input-block">
-                            <input type="text" name="title" class="layui-input" />
+                            <input type="text" name="title" class="layui-input" autocomplete="off" />
                         </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">唯一标识</label>
                         <div class="layui-input-block">
-                            <input type="text" name="name" class="layui-input" />
+                            <input type="text" name="name" class="layui-input" autocomplete="off" />
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -62,7 +62,7 @@
 <#-- 编辑 -->
 <div id="editLayer" class="layui-row" style="display:none;">
     <div class="layui-col-lg10 layui-col-lg-offset1">
-        <form id="editFormID" class="layui-form layui-form-pane" pane style="margin-top: 20px;">
+        <form id="editFormID" class="layui-form layui-form-pane" pane style="margin-top: 20px;" lay-filter="editForm">
             <div class="layui-form-item layui-hide">
                 <div class="layui-input-block">
                     <input type="text" name="id" class="layui-input" />
@@ -71,13 +71,13 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">名称</label>
                 <div class="layui-input-block">
-                    <input type="text" name="title" required lay-verify="required" class="layui-input" />
+                    <input type="text" name="title" required lay-verify="required" class="layui-input" autocomplete="off" />
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">唯一标识</label>
                 <div class="layui-input-block">
-                    <input type="text" name="name" required lay-verify="required" class="layui-input" />
+                    <input type="text" name="name" required lay-verify="required" class="layui-input" autocomplete="off" />
                 </div>
             </div>
             <div class="layui-form-item">
@@ -162,11 +162,16 @@
             let eventName = obj.event;
             if (eventName === 'show') {
                 // 查看地址
-                let addrArray = data.address_list.split(",");
                 let htmlContent = '<div>';
-                for (let i = 0; i < addrArray.length; i++) {
-                    htmlContent +=  (i + 1) + ': ' + addrArray[i];
-                    htmlContent += '<br/>';
+                let addrList = data.address_list;
+                if (addrList === undefined || addrList === '') {
+                    htmlContent += '没有注册的机器';
+                } else {
+                    let addrArray = addrList.split(",");
+                    for (let i = 0; i < addrArray.length; i++) {
+                        htmlContent +=  (i + 1) + ': ' + addrArray[i];
+                        htmlContent += '<br/>';
+                    }
                 }
                 htmlContent += '</div>';
                 layer.open({
@@ -198,10 +203,8 @@
                         url: '${contextPath}/group/' + data.id + '?_method=delete',
                         type: 'post',
                         success: function (ret) {
-                            layer.alert('删除成功');
-
                             // 刷新表格
-                            table.reload('dataTable');
+                            table.reload('dataTableID');
                         }
                     })
                 });
@@ -236,7 +239,7 @@
                 layer.alert('保存成功');
 
                 // 刷新表格
-                table.reload('dataTable');
+                table.reload('dataTableID');
             }
         });
         return false;
@@ -244,9 +247,8 @@
 
     // 搜索提交
     form.on('submit(searchBtn)', function (data) {
-        let searchJson = JSON.stringify(data.field, jsonFilter);
         table.reload('dataTableID', {
-            where: JSON.parse(searchJson),
+            where: data.field,
             page: {
                 curr: 1
             }

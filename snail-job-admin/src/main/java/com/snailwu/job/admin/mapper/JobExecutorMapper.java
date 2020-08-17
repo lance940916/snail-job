@@ -30,35 +30,35 @@ public interface JobExecutorMapper {
     BasicColumn[] selectList = BasicColumn.columnList(id, groupName, address, updateTime);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @SelectProvider(type=SqlProviderAdapter.class, method="select")
+    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
     long count(SelectStatementProvider selectStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @DeleteProvider(type=SqlProviderAdapter.class, method="delete")
+    @DeleteProvider(type = SqlProviderAdapter.class, method = "delete")
     int delete(DeleteStatementProvider deleteStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @InsertProvider(type=SqlProviderAdapter.class, method="insert")
-    @SelectKey(statement="SELECT LAST_INSERT_ID()", keyProperty="record.id", before=false, resultType=Integer.class)
+    @InsertProvider(type = SqlProviderAdapter.class, method = "insert")
+    @SelectKey(statement = "SELECT LAST_INSERT_ID()", keyProperty = "record.id", before = false, resultType = Integer.class)
     int insert(InsertStatementProvider<JobExecutor> insertStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @SelectProvider(type=SqlProviderAdapter.class, method="select")
+    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
     @ResultMap("JobExecutorResult")
     Optional<JobExecutor> selectOne(SelectStatementProvider selectStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @SelectProvider(type=SqlProviderAdapter.class, method="select")
-    @Results(id="JobExecutorResult", value = {
-        @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
-        @Result(column="group_name", property="groupName", jdbcType=JdbcType.VARCHAR),
-        @Result(column="address", property="address", jdbcType=JdbcType.VARCHAR),
-        @Result(column="update_time", property="updateTime", jdbcType=JdbcType.TIMESTAMP)
+    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
+    @Results(id = "JobExecutorResult", value = {
+            @Result(column = "id", property = "id", jdbcType = JdbcType.INTEGER, id = true),
+            @Result(column = "group_name", property = "groupName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "address", property = "address", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "update_time", property = "updateTime", jdbcType = JdbcType.TIMESTAMP)
     })
     List<JobExecutor> selectMany(SelectStatementProvider selectStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @UpdateProvider(type=SqlProviderAdapter.class, method="update")
+    @UpdateProvider(type = SqlProviderAdapter.class, method = "update")
     int update(UpdateStatementProvider updateStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -73,26 +73,26 @@ public interface JobExecutorMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int deleteByPrimaryKey(Integer id_) {
-        return delete(c -> 
-            c.where(id, isEqualTo(id_))
+        return delete(c ->
+                c.where(id, isEqualTo(id_))
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int insert(JobExecutor record) {
         return MyBatis3Utils.insert(this::insert, record, jobExecutor, c ->
-            c.map(groupName).toProperty("groupName")
-            .map(address).toProperty("address")
-            .map(updateTime).toProperty("updateTime")
+                c.map(groupName).toProperty("groupName")
+                        .map(address).toProperty("address")
+                        .map(updateTime).toProperty("updateTime")
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int insertSelective(JobExecutor record) {
         return MyBatis3Utils.insert(this::insert, record, jobExecutor, c ->
-            c.map(groupName).toPropertyWhenPresent("groupName", record::getGroupName)
-            .map(address).toPropertyWhenPresent("address", record::getAddress)
-            .map(updateTime).toPropertyWhenPresent("updateTime", record::getUpdateTime)
+                c.map(groupName).toPropertyWhenPresent("groupName", record::getGroupName)
+                        .map(address).toPropertyWhenPresent("address", record::getAddress)
+                        .map(updateTime).toPropertyWhenPresent("updateTime", record::getUpdateTime)
         );
     }
 
@@ -114,7 +114,7 @@ public interface JobExecutorMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default Optional<JobExecutor> selectByPrimaryKey(Integer id_) {
         return selectOne(c ->
-            c.where(id, isEqualTo(id_))
+                c.where(id, isEqualTo(id_))
         );
     }
 
@@ -140,20 +140,20 @@ public interface JobExecutorMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int updateByPrimaryKey(JobExecutor record) {
         return update(c ->
-            c.set(groupName).equalTo(record::getGroupName)
-            .set(address).equalTo(record::getAddress)
-            .set(updateTime).equalTo(record::getUpdateTime)
-            .where(id, isEqualTo(record::getId))
+                c.set(groupName).equalTo(record::getGroupName)
+                        .set(address).equalTo(record::getAddress)
+                        .set(updateTime).equalTo(record::getUpdateTime)
+                        .where(id, isEqualTo(record::getId))
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int updateByPrimaryKeySelective(JobExecutor record) {
         return update(c ->
-            c.set(groupName).equalToWhenPresent(record::getGroupName)
-            .set(address).equalToWhenPresent(record::getAddress)
-            .set(updateTime).equalToWhenPresent(record::getUpdateTime)
-            .where(id, isEqualTo(record::getId))
+                c.set(groupName).equalToWhenPresent(record::getGroupName)
+                        .set(address).equalToWhenPresent(record::getAddress)
+                        .set(updateTime).equalToWhenPresent(record::getUpdateTime)
+                        .where(id, isEqualTo(record::getId))
         );
     }
 }

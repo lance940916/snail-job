@@ -8,13 +8,13 @@ public class JobInfo {
     private Integer id;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    private String name;
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private String groupName;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private String cron;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    private String description;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Date createTime;
@@ -63,6 +63,16 @@ public class JobInfo {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public String getName() {
+        return name;
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public String getGroupName() {
         return groupName;
     }
@@ -80,16 +90,6 @@ public class JobInfo {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public void setCron(String cron) {
         this.cron = cron;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public String getDescription() {
-        return description;
-    }
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")

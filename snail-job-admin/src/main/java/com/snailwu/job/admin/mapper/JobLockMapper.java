@@ -31,31 +31,31 @@ public interface JobLockMapper {
     BasicColumn[] selectList = BasicColumn.columnList(lockName);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @SelectProvider(type=SqlProviderAdapter.class, method="select")
+    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
     long count(SelectStatementProvider selectStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @DeleteProvider(type=SqlProviderAdapter.class, method="delete")
+    @DeleteProvider(type = SqlProviderAdapter.class, method = "delete")
     int delete(DeleteStatementProvider deleteStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @InsertProvider(type=SqlProviderAdapter.class, method="insert")
+    @InsertProvider(type = SqlProviderAdapter.class, method = "insert")
     int insert(InsertStatementProvider<JobLock> insertStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @SelectProvider(type=SqlProviderAdapter.class, method="select")
+    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
     @ResultMap("JobLockResult")
     Optional<JobLock> selectOne(SelectStatementProvider selectStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @SelectProvider(type=SqlProviderAdapter.class, method="select")
-    @Results(id="JobLockResult", value = {
-        @Result(column="lock_name", property="lockName", jdbcType=JdbcType.VARCHAR, id=true)
+    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
+    @Results(id = "JobLockResult", value = {
+            @Result(column = "lock_name", property = "lockName", jdbcType = JdbcType.VARCHAR, id = true)
     })
     List<JobLock> selectMany(SelectStatementProvider selectStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @UpdateProvider(type=SqlProviderAdapter.class, method="update")
+    @UpdateProvider(type = SqlProviderAdapter.class, method = "update")
     int update(UpdateStatementProvider updateStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -70,22 +70,22 @@ public interface JobLockMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int deleteByPrimaryKey(String lockName_) {
-        return delete(c -> 
-            c.where(lockName, isEqualTo(lockName_))
+        return delete(c ->
+                c.where(lockName, isEqualTo(lockName_))
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int insert(JobLock record) {
         return MyBatis3Utils.insert(this::insert, record, jobLock, c ->
-            c.map(lockName).toProperty("lockName")
+                c.map(lockName).toProperty("lockName")
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int insertSelective(JobLock record) {
         return MyBatis3Utils.insert(this::insert, record, jobLock, c ->
-            c.map(lockName).toPropertyWhenPresent("lockName", record::getLockName)
+                c.map(lockName).toPropertyWhenPresent("lockName", record::getLockName)
         );
     }
 

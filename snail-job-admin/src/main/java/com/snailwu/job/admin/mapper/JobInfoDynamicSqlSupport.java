@@ -15,13 +15,13 @@ public final class JobInfoDynamicSqlSupport {
     public static final SqlColumn<Integer> id = jobInfo.id;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public static final SqlColumn<String> name = jobInfo.name;
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final SqlColumn<String> groupName = jobInfo.groupName;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final SqlColumn<String> cron = jobInfo.cron;
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<String> description = jobInfo.description;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final SqlColumn<Date> createTime = jobInfo.createTime;
@@ -63,11 +63,11 @@ public final class JobInfoDynamicSqlSupport {
     public static final class JobInfo extends SqlTable {
         public final SqlColumn<Integer> id = column("id", JDBCType.INTEGER);
 
+        public final SqlColumn<String> name = column("name", JDBCType.VARCHAR);
+
         public final SqlColumn<String> groupName = column("group_name", JDBCType.VARCHAR);
 
         public final SqlColumn<String> cron = column("cron", JDBCType.VARCHAR);
-
-        public final SqlColumn<String> description = column("description", JDBCType.VARCHAR);
 
         public final SqlColumn<Date> createTime = column("create_time", JDBCType.TIMESTAMP);
 
