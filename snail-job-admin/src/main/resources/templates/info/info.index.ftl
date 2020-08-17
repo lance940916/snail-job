@@ -153,6 +153,8 @@
                 <dd><a class="layui-btn layui-btn-sm" lay-event="exec">执行一次</a></dd>
                 <dd><a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a></dd>
                 <dd><a class="layui-btn layui-btn-sm" lay-event="del">删除</a></dd>
+                <dd><hr></dd>
+                <dd><a class="layui-btn layui-btn-sm" lay-event="del">下次执行时间</a></dd>
             </dl>
         </li>
     </ul>
