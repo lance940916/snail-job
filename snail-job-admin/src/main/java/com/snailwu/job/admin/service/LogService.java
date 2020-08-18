@@ -2,11 +2,12 @@ package com.snailwu.job.admin.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.snailwu.job.admin.controller.entity.JobLogVO;
 import com.snailwu.job.admin.controller.request.JobLogDeleteRequest;
 import com.snailwu.job.admin.controller.request.JobLogSearchRequest;
-import com.snailwu.job.admin.core.model.JobInfo;
 import com.snailwu.job.admin.core.model.JobLog;
 import com.snailwu.job.admin.core.scheduler.SnailJobScheduler;
+import com.snailwu.job.admin.mapper.JobInfoDynamicSqlSupport;
 import com.snailwu.job.admin.mapper.JobLogDynamicSqlSupport;
 import com.snailwu.job.admin.mapper.JobLogMapper;
 import com.snailwu.job.core.biz.ExecutorBiz;
@@ -38,7 +39,7 @@ public class LogService {
     /**
      * 分页查询
      */
-    public PageInfo<JobInfo> list(JobLogSearchRequest searchRequest) {
+    public PageInfo<JobLogVO> list(JobLogSearchRequest searchRequest) {
         // 有开始触发时间必须有结束触发时间
         Date triggerBeginDate = searchRequest.getTriggerBeginDate();
         Date triggerEndDate = searchRequest.getTriggerEndDate();
@@ -46,8 +47,9 @@ public class LogService {
             throw new SnailJobException("必须传结束时间");
         }
 
-        SelectStatementProvider statementProvider = select(JobLogDynamicSqlSupport.jobLog.allColumns())
+        SelectStatementProvider statementProvider = select(JobLogDynamicSqlSupport.jobLog.allColumns(), JobInfoDynamicSqlSupport.name)
                 .from(JobLogDynamicSqlSupport.jobLog)
+                .leftJoin(JobInfoDynamicSqlSupport.jobInfo).on(JobInfoDynamicSqlSupport.id, equalTo(JobLogDynamicSqlSupport.jobId))
                 .where()
                 .and(JobLogDynamicSqlSupport.groupName, isEqualToWhenPresent(searchRequest.getGroupName()))
                 .and(JobLogDynamicSqlSupport.jobId, isEqualToWhenPresent(searchRequest.getJobId()))
@@ -56,7 +58,7 @@ public class LogService {
                 .and(JobLogDynamicSqlSupport.triggerTime, isBetweenWhenPresent(triggerBeginDate).and(triggerEndDate))
                 .build().render(RenderingStrategies.MYBATIS3);
         return PageHelper.startPage(searchRequest.getPage(), searchRequest.getLimit())
-                .doSelectPageInfo(() -> jobLogMapper.selectMany(statementProvider));
+                .doSelectPageInfo(() -> jobLogMapper.selectManyWithJobName(statementProvider));
     }
 
     /**

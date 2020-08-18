@@ -140,4 +140,10 @@ public class InfoController {
         }
     }
 
+    @GetMapping("/list_all")
+    public ResultT<List<JobInfo>> listAll(String groupName) {
+        List<JobInfo> list = infoService.listAll(groupName);
+        return new ResultT<>(list);
+    }
+
 }

@@ -31,7 +31,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">分组</label>
                         <div class="layui-input-block">
-                            <select id="searchGroupNameID" name="groupName" autocomplete="off">
+                            <select id="searchGroupNameID" name="groupName" autocomplete="off" lay-filter="groupNameFilter">
                                 <option value="">请选择</option>
                             </select>
                         </div>
@@ -66,6 +66,7 @@
                     </div>
                     <div class="layui-inline">
                         <button lay-submit class="layui-btn" lay-filter="searchBtn">搜索</button>
+                        <button id="delLogBtn" type="button" class="layui-btn layui-btn-normal">清理日志</button>
                     </div>
                 </div>
             </form>
@@ -84,7 +85,13 @@
     <div class="layui-col-lg12">
         <form id="execFormId" class="layui-form" pane style="margin-top: 20px;" lay-filter="execForm">
             <div class="layui-form-item layui-form-text">
-                <label class="layui-form-label">执行参数</label>
+                <label class="layui-form-label">本次执行地址</label>
+                <div class="layui-input-block">
+                    <textarea class="layui-textarea" name="executor_address" placeholder=""></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">本次执行参数</label>
                 <div class="layui-input-block">
                     <textarea class="layui-textarea" name="executor_param" placeholder=""></textarea>
                 </div>
@@ -101,11 +108,35 @@
 <#-- 公共 JS -->
 <@netCommon.commonScript />
 
-<script type="text/html" id="operateBtnTpl">
+<#-- 单行操作按钮 -->
+<script type="text/html" id="operateToolbar">
     <div class="layui-btn-group">
-        <button type="button" class="layui-btn">详情</button>
-        <button type="button" class="layui-btn ">终止执行</button>
+        <button type="button" class="layui-btn layui-btn-sm" lay-event="show">详情</button>
+        <button type="button" class="layui-btn layui-btn-sm" lay-event="kill">终止执行</button>
     </div>
+</script>
+
+<script type="text/html" id="triggerCodeTpl">
+    {{# if(d.trigger_code == 0){ }}
+    <span style="color: #009688;">默认</span>
+    {{# } else if(d.trigger_code == 200){ }}
+    <span style="color: dodgerblue;">成功</span>
+    {{# } else if(d.trigger_code == 500){ }}
+    <span style="color: red;">失败</span>
+    {{# } else { }}
+    <span style="color: #009688;">未知</span>
+    {{# } }}
+</script>
+<script type="text/html" id="execCodeTpl">
+    {{# if(d.exec_code == 0){ }}
+    <span style="color: #009688;">默认</span>
+    {{# } else if(d.exec_code == 200){ }}
+    <span style="color: dodgerblue;">成功</span>
+    {{# } else if(d.exec_code == 500){ }}
+    <span style="color: red;">失败</span>
+    {{# } else { }}
+    <span style="color: #009688;">未知</span>
+    {{# } }}
 </script>
 
 <script>
@@ -114,7 +145,6 @@
     let table = layui.table;
     let $ = layui.jquery;
     let form = layui.form;
-    let cur_selected_obj = undefined;
 
     !function() {
         // 渲染表格
@@ -122,14 +152,14 @@
             elem: '#dataTableID',
             url: '${contextPath}/log',
             cols: [[
-                {field: 'group_name', title: '执行器'},
-                {field: 'group_name', title: '执行器'},
-                {field: 'trigger_time', title: '调度时间'},
-                {field: 'trigger_code', title: '调度结果'},
-                {field: 'exec_time', title: '执行时间'},
-                {field: 'exec_code', title: '执行结果'},
+                {type: 'numbers'},
+                {field: 'job_name', title: '任务名称'},
+                {field: 'trigger_time', title: '调度时间', minWidth: 165},
+                {field: 'trigger_code', title: '调度结果', templet: '#triggerCodeTpl'},
+                {field: 'exec_time', title: '执行时间', minWidth: 165,},
+                {field: 'exec_code', title: '调度结果', templet: '#execCodeTpl'},
                 {field: 'author', title: '负责人'},
-                {fixed: 'right', title: '操作', toolbar: '#showOperate'},
+                {fixed: 'right', title: '操作', minWidth: 145, toolbar: '#operateToolbar'},
             ]],
             page: true,
             response: {
@@ -152,37 +182,43 @@
                 return;
             }
             let contentArray = ret.content;
+            let htmlContent = "<option value=''>请选择</option>";
             contentArray.forEach(function (item) {
-                $('#searchGroupNameID').append("<option value='" + item.name + "'>" + item.title + "</option>")
+                htmlContent += "<option value='" + item.name + "'>" + item.title + "</option>";
             })
-            form.render();
-        });
-
-        // 渲染路由策略
-        $.get('${contextPath}/info/list_route', function (ret) {
-            if (ret.code !== 200) {
-                layer.error('渲染路由策略异常');
-                return;
-            }
-            let contentArray = ret.content;
-            $("select[name='executor_route_strategy']").each(function (index, elem) {
-                let _this = $(this);
-                contentArray.forEach(function (item) {
-                    _this.append("<option value='" + item.name + "'>" + item.desc + "</option>")
-                })
-            })
+            $('#searchGroupNameID option').remove();
+            $('#searchGroupNameID').append(htmlContent);
             form.render();
         });
     }();
 
     // 监听执行器的变更
-    form.on('', function (data) {
-
+    form.on('select(groupNameFilter)', function (data) {
+        if (data.value === '') {
+            $('#searchJobID option').remove();
+            $('#searchJobID').append("<option value=''>请选择</option>");
+            form.render();
+            return;
+        }
+        // 渲染路由策略
+        $.get('${contextPath}/info/list_all', {groupName: data.value}, function (ret) {
+            if (ret.code !== 200) {
+                layer.error('渲染路由策略异常');
+                return;
+            }
+            let contentArray = ret.content;
+            let htmlContent = "<option value=''>请选择</option>";
+            contentArray.forEach(function (item) {
+                htmlContent += "<option value='" + item.id + "'>" + item.name + "</option>";
+            })
+            $('#searchJobID option').remove();
+            $('#searchJobID').append(htmlContent);
+            form.render();
+        });
     });
 
     // 搜索提交
     form.on('submit(searchBtn)', function (data) {
-        cur_selected_obj = undefined;
         table.reload('dataTableID', {
             where: data.field,
             page: {
@@ -190,14 +226,6 @@
             }
         });
         return false;
-    });
-
-    // 执行一次
-    form.on('submit(execBtn)', function (data) {
-        let id = cur_selected_obj.data.id;
-        $.post('${contextPath}/exec/' + id, {exec_param: data.executor_param}, function (ret) {
-            layer.closeAll('page');
-        });
     });
 </script>
 </body>

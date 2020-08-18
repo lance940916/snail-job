@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
@@ -154,5 +155,17 @@ public class InfoService {
         jobInfo.setTriggerLastTime(0L);
         jobInfo.setTriggerNextTime(0L);
         jobInfoMapper.insertSelective(jobInfo);
+    }
+
+    /**
+     * 列出分组下的所有任务
+     */
+    public List<JobInfo> listAll(String groupName) {
+        return jobInfoMapper.selectMany(
+                select(JobInfoDynamicSqlSupport.id, JobInfoDynamicSqlSupport.name)
+                        .from(JobInfoDynamicSqlSupport.jobInfo)
+                        .where(JobInfoDynamicSqlSupport.groupName, isEqualTo(groupName))
+                        .build().render(RenderingStrategies.MYBATIS3)
+        );
     }
 }

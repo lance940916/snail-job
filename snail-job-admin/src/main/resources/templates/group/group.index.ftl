@@ -111,9 +111,11 @@
 </script>
 
 <#-- 表格工具栏 -->
-<script type="text/html" id="showOperate">
-    <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+<script type="text/html" id="operateToolbar">
+    <div class="layui-btn-group">
+        <button class="layui-btn layui-btn-sm" lay-event="edit">编辑</button>
+        <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</button>
+    </div>
 </script>
 
 <script type="text/html" id="typeTpl">
@@ -142,7 +144,7 @@
                 {field: 'name', title: '唯一标识'},
                 {field: 'type', title: '注册类型', templet: '#typeTpl'},
                 {title: '执行器地址', toolbar: '#showExecAddr'},
-                {fixed: 'right', title: '操作', toolbar: '#showOperate'},
+                {fixed: 'right', title: '操作', toolbar: '#operateToolbar'},
             ]],
             page: true,
             response: {
@@ -186,7 +188,7 @@
                 // 回显
                 layer.open({
                     type: 1,
-                    title: '编辑分组信息',
+                    title: '编辑执行器信息',
                     area: '350px',
                     resize: false,
                     content: $('#editLayer')
@@ -223,7 +225,7 @@
 
         layer.open({
             type: 1,
-            title: '添加分组信息',
+            title: '添加执行器信息',
             area: '350px',
             resize: false,
             content: $('#editLayer')

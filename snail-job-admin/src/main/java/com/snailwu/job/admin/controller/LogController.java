@@ -1,9 +1,9 @@
 package com.snailwu.job.admin.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.snailwu.job.admin.controller.entity.JobLogVO;
 import com.snailwu.job.admin.controller.request.JobLogDeleteRequest;
 import com.snailwu.job.admin.controller.request.JobLogSearchRequest;
-import com.snailwu.job.admin.core.model.JobInfo;
 import com.snailwu.job.admin.service.LogService;
 import com.snailwu.job.core.biz.model.ResultT;
 import org.springframework.validation.annotation.Validated;
@@ -26,8 +26,8 @@ public class LogController {
      * 分页查询
      */
     @GetMapping
-    public ResultT<PageInfo<JobInfo>> list(JobLogSearchRequest searchRequest) {
-        PageInfo<JobInfo> pageInfo = logService.list(searchRequest);
+    public ResultT<PageInfo<JobLogVO>> list(JobLogSearchRequest searchRequest) {
+        PageInfo<JobLogVO> pageInfo = logService.list(searchRequest);
         return new ResultT<>(pageInfo);
     }
 

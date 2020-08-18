@@ -91,7 +91,7 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">路由策略</label>
                     <div class="layui-input-inline">
-                        <select name="executor_route_strategy" required lay-verify="required">
+                        <select id="editExecutorRouteStrategyID" name="executor_route_strategy" required lay-verify="required">
                             <option value="">请选择</option>
                         </select>
                     </div>
@@ -99,7 +99,7 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">任务分组</label>
                     <div class="layui-input-inline">
-                        <select id="editGroupNameId" name="group_name" required lay-verify="required">
+                        <select id="editGroupNameID" name="group_name" required lay-verify="required">
                             <option value="">请选择</option>
                         </select>
                     </div>
@@ -216,7 +216,8 @@
             toolbar: '#toolbarID',
             defaultToolbar: [],
             cols: [[
-                {field: 'id', title: 'ID', fixed: 'left', width: 100, unresize: true},
+                {type: 'numbers'},
+                {field: 'id', title: '任务ID'},
                 {field: 'name', title: '名称'},
                 {field: 'cron', title: 'CRON表达式'},
                 {field: 'executor_handler', title: '方法名'},
@@ -244,10 +245,16 @@
                 return;
             }
             let contentArray = ret.content;
+            let htmlContentSearch = "<option value=''>请选择</option>";
+            let htmlContentEdit = "<option value=''>请选择</option>";
             contentArray.forEach(function (item) {
-                $('#searchGroupNameID').append("<option value='" + item.name + "'>" + item.title + "</option>")
-                $('#editGroupNameId').append("<option value='" + item.name + "'>" + item.title + "</option>")
+                htmlContentSearch += "<option value='" + item.name + "'>" + item.title + "</option>";
+                htmlContentEdit += "<option value='" + item.name + "'>" + item.title + "</option>";
             })
+            $('#searchGroupNameID option').remove();
+            $('#searchGroupNameID').append(htmlContentSearch);
+            $('#editGroupNameID option').remove();
+            $('#editGroupNameID').append(htmlContentEdit);
             form.render();
         });
 
@@ -258,12 +265,12 @@
                 return;
             }
             let contentArray = ret.content;
-            $("select[name='executor_route_strategy']").each(function (index, elem) {
-                let _this = $(this);
-                contentArray.forEach(function (item) {
-                    _this.append("<option value='" + item.name + "'>" + item.desc + "</option>")
-                })
+            let htmlContent = "<option value=''>请选择</option>";
+            contentArray.forEach(function (item) {
+                htmlContent += "<option value='" + item.name + "'>" + item.desc + "</option>";
             })
+            $('#editExecutorRouteStrategyID option').remove();
+            $('#editExecutorRouteStrategyID').append(htmlContent);
             form.render();
         });
     }();

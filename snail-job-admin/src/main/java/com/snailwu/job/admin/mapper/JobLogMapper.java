@@ -1,5 +1,6 @@
 package com.snailwu.job.admin.mapper;
 
+import com.snailwu.job.admin.controller.entity.JobLogVO;
 import com.snailwu.job.admin.core.model.JobLog;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
@@ -66,6 +67,13 @@ public interface JobLogMapper {
             @Result(column = "alarm_status", property = "alarmStatus", jdbcType = JdbcType.TINYINT)
     })
     List<JobLog> selectMany(SelectStatementProvider selectStatement);
+
+    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
+    @Results(id = "JobLogResultWithJobName", value = {
+            @Result(column = "name", property = "jobName", jdbcType = JdbcType.VARCHAR),
+    })
+    @ResultMap({"JobLogResult", "JobLogResultWithJobName"})
+    List<JobLogVO> selectManyWithJobName(SelectStatementProvider selectStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @UpdateProvider(type = SqlProviderAdapter.class, method = "update")
