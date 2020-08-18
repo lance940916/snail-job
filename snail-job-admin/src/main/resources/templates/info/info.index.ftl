@@ -196,7 +196,7 @@
 
 <script type="text/html" id="triggerStatusTpl">
     <input type="checkbox" lay-skin="switch" lay-text="运行中|已停止" disabled
-    {{# if(d.trigger_status == 1){ }} checked {{# } }}
+        {{# if(d.trigger_status == 1){ }} checked {{# } }}
     >
 </script>
 
