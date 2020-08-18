@@ -1,6 +1,5 @@
 package com.snailwu.job.admin.service.impl;
 
-import com.snailwu.job.admin.core.conf.AdminConfig;
 import com.snailwu.job.admin.core.model.JobExecutor;
 import com.snailwu.job.admin.core.model.JobLog;
 import com.snailwu.job.admin.mapper.JobExecutorDynamicSqlSupport;
@@ -41,7 +40,7 @@ public class AdminBizImpl implements AdminBiz {
     public ResultT<String> callback(CallbackParam callbackParam) {
         // 查询任务日志
         JobLog jobLog = jobLogMapper.selectOne(
-                select(JobLogDynamicSqlSupport.jobLog.id, JobLogDynamicSqlSupport.execCode)
+                select(JobLogDynamicSqlSupport.id, JobLogDynamicSqlSupport.execCode)
                         .from(JobLogDynamicSqlSupport.jobLog)
                         .where(JobLogDynamicSqlSupport.id, isEqualTo(callbackParam.getLogId()))
                         .build().render(RenderingStrategies.MYBATIS3)
@@ -59,7 +58,7 @@ public class AdminBizImpl implements AdminBiz {
         updateJobLog.setExecTime(callbackParam.getExecTime());
         updateJobLog.setExecCode(callbackParam.getExecCode());
         updateJobLog.setExecMsg(callbackParam.getExecMsg());
-        AdminConfig.getInstance().getJobLogMapper().updateByPrimaryKeySelective(updateJobLog);
+        jobLogMapper.updateByPrimaryKeySelective(updateJobLog);
         return ResultT.SUCCESS;
     }
 

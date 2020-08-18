@@ -26,9 +26,8 @@ public class GroupController {
      * 分页列表
      */
     @GetMapping
-    public ResultT<PageInfo<JobGroup>> list(JobGroupSearchRequest request) {
-        PageInfo<JobGroup> pageInfo = groupService.list(request.getTitle(), request.getName(),
-                request.getPage(), request.getLimit());
+    public ResultT<PageInfo<JobGroup>> list(JobGroupSearchRequest searchRequest) {
+        PageInfo<JobGroup> pageInfo = groupService.list(searchRequest);
         return new ResultT<>(pageInfo);
     }
 

@@ -12,6 +12,9 @@ public class JobInfoSearchRequest extends BasePageRequest {
     private Byte triggerStatus;
 
     public String getGroupName() {
+        if (groupName == null || groupName.length() == 0) {
+            return null;
+        }
         return groupName;
     }
 
@@ -20,7 +23,10 @@ public class JobInfoSearchRequest extends BasePageRequest {
     }
 
     public String getName() {
-        return name;
+        if (name == null || name.length() == 0) {
+            return null;
+        }
+        return "%" + name + "%";
     }
 
     public void setName(String name) {
@@ -28,7 +34,10 @@ public class JobInfoSearchRequest extends BasePageRequest {
     }
 
     public String getAuthor() {
-        return author;
+        if (author == null || author.length() == 0) {
+            return null;
+        }
+        return "%" + author + "%";
     }
 
     public void setAuthor(String author) {

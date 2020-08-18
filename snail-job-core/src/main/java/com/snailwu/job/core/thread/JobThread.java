@@ -106,7 +106,7 @@ public class JobThread extends Thread {
             logIdSet.add(triggerParam.getLogId());
             return ResultT.SUCCESS;
         }
-        return ResultT.FAIL;
+        return new ResultT<>(ResultT.FAIL_CODE, "任务已经被执行");
     }
 
     /**

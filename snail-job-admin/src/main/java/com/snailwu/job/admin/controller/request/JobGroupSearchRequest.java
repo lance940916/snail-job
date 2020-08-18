@@ -10,7 +10,10 @@ public class JobGroupSearchRequest extends BasePageRequest {
     private String name;
 
     public String getTitle() {
-        return title;
+        if (title == null || title.length() == 0) {
+            return null;
+        }
+        return "%" + title + "%";
     }
 
     public void setTitle(String title) {
@@ -18,7 +21,10 @@ public class JobGroupSearchRequest extends BasePageRequest {
     }
 
     public String getName() {
-        return name;
+        if (name == null || name.length() == 0) {
+            return null;
+        }
+        return "%" + name + "%";
     }
 
     public void setName(String name) {

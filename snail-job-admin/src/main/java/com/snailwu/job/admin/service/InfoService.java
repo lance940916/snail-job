@@ -9,7 +9,6 @@ import com.snailwu.job.admin.core.model.JobInfo;
 import com.snailwu.job.admin.mapper.JobInfoDynamicSqlSupport;
 import com.snailwu.job.admin.mapper.JobInfoMapper;
 import com.snailwu.job.core.exception.SnailJobException;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
@@ -87,11 +86,8 @@ public class InfoService {
      */
     public PageInfo<JobInfo> list(JobInfoSearchRequest searchRequest) {
         String groupName = searchRequest.getGroupName();
-        groupName = StringUtils.isEmpty(groupName) ? null : groupName;
         String name = searchRequest.getName();
-        name = StringUtils.isEmpty(name) ? null : ("%" + name + "%");
         String author = searchRequest.getAuthor();
-        author = StringUtils.isEmpty(author) ? null : ("%" + author + "%");
 
         SelectStatementProvider statementProvider = select(JobInfoDynamicSqlSupport.jobInfo.allColumns())
                 .from(JobInfoDynamicSqlSupport.jobInfo)

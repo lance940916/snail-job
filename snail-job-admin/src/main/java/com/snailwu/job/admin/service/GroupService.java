@@ -2,10 +2,10 @@ package com.snailwu.job.admin.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.snailwu.job.admin.controller.request.JobGroupSearchRequest;
 import com.snailwu.job.admin.core.model.JobGroup;
 import com.snailwu.job.admin.mapper.JobGroupDynamicSqlSupport;
 import com.snailwu.job.admin.mapper.JobGroupMapper;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
@@ -33,16 +33,14 @@ public class GroupService {
     /**
      * 分页列表
      */
-    public PageInfo<JobGroup> list(String title, String name, Integer pageNum, Integer pageSize) {
-        title = StringUtils.isEmpty(title) ? null : ("%" + title + "%");
-        name = StringUtils.isEmpty(name) ? null : ("%" + name + "%");
+    public PageInfo<JobGroup> list(JobGroupSearchRequest searchRequest) {
         SelectStatementProvider statementProvider = select(JobGroupDynamicSqlSupport.jobGroup.allColumns())
                 .from(JobGroupDynamicSqlSupport.jobGroup)
                 .where()
-                .and(JobGroupDynamicSqlSupport.title, isLikeWhenPresent(title))
-                .and(JobGroupDynamicSqlSupport.name, isLikeWhenPresent(name))
+                .and(JobGroupDynamicSqlSupport.title, isLikeWhenPresent(searchRequest.getTitle()))
+                .and(JobGroupDynamicSqlSupport.name, isLikeWhenPresent(searchRequest.getName()))
                 .build().render(RenderingStrategies.MYBATIS3);
-        return PageHelper.startPage(pageNum, pageSize)
+        return PageHelper.startPage(searchRequest.getPage(), searchRequest.getLimit())
                 .doSelectPageInfo(() -> jobGroupMapper.selectMany(statementProvider));
     }
 
@@ -93,7 +91,7 @@ public class GroupService {
      */
     public List<JobGroup> listAll() {
         return jobGroupMapper.selectMany(
-                select(JobGroupDynamicSqlSupport.id, JobGroupDynamicSqlSupport.name)
+                select(JobGroupDynamicSqlSupport.id, JobGroupDynamicSqlSupport.name, JobGroupDynamicSqlSupport.title)
                         .from(JobGroupDynamicSqlSupport.jobGroup)
                         .build().render(RenderingStrategies.MYBATIS3)
         );

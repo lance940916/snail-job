@@ -1,13 +1,28 @@
 package com.snailwu.job.admin.service;
 
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.snailwu.job.admin.controller.request.JobLogDeleteRequest;
+import com.snailwu.job.admin.controller.request.JobLogSearchRequest;
 import com.snailwu.job.admin.core.model.JobInfo;
+import com.snailwu.job.admin.core.model.JobLog;
+import com.snailwu.job.admin.core.scheduler.SnailJobScheduler;
+import com.snailwu.job.admin.mapper.JobLogDynamicSqlSupport;
 import com.snailwu.job.admin.mapper.JobLogMapper;
+import com.snailwu.job.core.biz.ExecutorBiz;
+import com.snailwu.job.core.biz.model.KillParam;
+import com.snailwu.job.core.biz.model.ResultT;
+import com.snailwu.job.core.exception.SnailJobException;
+import org.mybatis.dynamic.sql.render.RenderingStrategies;
+import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
+
+import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
 /**
  * @author 吴庆龙
@@ -20,16 +35,59 @@ public class LogService {
     @Resource
     private JobLogMapper jobLogMapper;
 
+    /**
+     * 分页查询
+     */
+    public PageInfo<JobInfo> list(JobLogSearchRequest searchRequest) {
+        // 有开始触发时间必须有结束触发时间
+        Date triggerBeginDate = searchRequest.getTriggerBeginDate();
+        Date triggerEndDate = searchRequest.getTriggerEndDate();
+        if (triggerBeginDate != null && triggerEndDate == null) {
+            throw new SnailJobException("必须传结束时间");
+        }
 
-    public PageInfo<JobInfo> list(Integer pageNum, Integer pageSize) {
-        return null;
+        SelectStatementProvider statementProvider = select(JobLogDynamicSqlSupport.jobLog.allColumns())
+                .from(JobLogDynamicSqlSupport.jobLog)
+                .where()
+                .and(JobLogDynamicSqlSupport.groupName, isEqualToWhenPresent(searchRequest.getGroupName()))
+                .and(JobLogDynamicSqlSupport.jobId, isEqualToWhenPresent(searchRequest.getJobId()))
+                .and(JobLogDynamicSqlSupport.triggerCode, isEqualToWhenPresent(searchRequest.getTriggerCode()))
+                .and(JobLogDynamicSqlSupport.execCode, isEqualToWhenPresent(searchRequest.getExecCode()))
+                .and(JobLogDynamicSqlSupport.triggerTime, isBetweenWhenPresent(triggerBeginDate).and(triggerEndDate))
+                .build().render(RenderingStrategies.MYBATIS3);
+        return PageHelper.startPage(searchRequest.getPage(), searchRequest.getLimit())
+                .doSelectPageInfo(() -> jobLogMapper.selectMany(statementProvider));
     }
 
-    public void delete(Integer id) {
-
+    /**
+     * 根据时间批量删除日志
+     */
+    public void deleteByTime(JobLogDeleteRequest deleteRequest) {
+        jobLogMapper.delete(
+                deleteFrom(JobLogDynamicSqlSupport.jobLog)
+                        .where()
+                        .and(JobLogDynamicSqlSupport.groupName, isEqualToWhenPresent(deleteRequest.getGroupName()))
+                        .and(JobLogDynamicSqlSupport.jobId, isEqualToWhenPresent(deleteRequest.getJobId()))
+                        .and(JobLogDynamicSqlSupport.triggerTime, isBetween(deleteRequest.getBeginDate()).and(deleteRequest.getEndDate()))
+                        .build().render(RenderingStrategies.MYBATIS3)
+        );
     }
 
-    public void saveOrUpdate(JobInfo jobInfo) {
-
+    /**
+     * 终止任务
+     */
+    public ResultT<String> killTrigger(Long logId) {
+        // 查询任务
+        JobLog jobLog = jobLogMapper.selectOne(
+                select(JobLogDynamicSqlSupport.id, JobLogDynamicSqlSupport.jobId, JobLogDynamicSqlSupport.executorAddress)
+                        .from(JobLogDynamicSqlSupport.jobLog)
+                        .where(JobLogDynamicSqlSupport.id, isEqualTo(logId))
+                        .build().render(RenderingStrategies.MYBATIS3)
+        ).orElse(null);
+        if (jobLog == null) {
+            throw new SnailJobException("Log记录不存在");
+        }
+        ExecutorBiz executorBiz = SnailJobScheduler.getExecutorBiz(jobLog.getExecutorAddress());
+        return executorBiz.kill(new KillParam(jobLog.getJobId(), logId));
     }
 }

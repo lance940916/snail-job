@@ -245,8 +245,8 @@
             }
             let contentArray = ret.content;
             contentArray.forEach(function (item) {
-                $('#searchGroupNameID').append("<option value='" + item.name + "'>" + item.name + "</option>")
-                $('#editGroupNameId').append("<option value='" + item.name + "'>" + item.name + "</option>")
+                $('#searchGroupNameID').append("<option value='" + item.name + "'>" + item.title + "</option>")
+                $('#editGroupNameId').append("<option value='" + item.name + "'>" + item.title + "</option>")
             })
             form.render();
         });

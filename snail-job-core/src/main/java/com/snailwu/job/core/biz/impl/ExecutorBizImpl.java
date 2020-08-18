@@ -68,7 +68,7 @@ public class ExecutorBizImpl implements ExecutorBiz {
         // 获取调度线程
         JobThread jobThread = SnailJobExecutor.loadJobThread(killParam.getJobId());
         if (jobThread == null) {
-            return new ResultT<>(ResultT.SUCCESS_CODE, "任务对应的调度线程不存在.");
+            return new ResultT<>(ResultT.FAIL_CODE, "任务对应的调度线程不存在.");
         }
         // 移除任务
         return jobThread.removeJobQueue(killParam.convertTriggerParam());
