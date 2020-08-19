@@ -15,7 +15,7 @@
     <@netCommon.commonHeader />
 
     <#-- 左侧菜单栏 -->
-    <@netCommon.commonLeft "info" />
+    <@netCommon.commonLeft "log" />
 
     <div class="layui-body">
         <!-- 内容主体区域 -->
@@ -31,7 +31,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">分组</label>
                         <div class="layui-input-block">
-                            <select id="searchGroupNameID" name="groupName" autocomplete="off" lay-filter="groupNameFilter">
+                            <select id="searchGroupNameID" name="groupName" autocomplete="off" lay-filter="searchGroupNameFilter">
                                 <option value="">请选择</option>
                             </select>
                         </div>
@@ -66,7 +66,7 @@
                     </div>
                     <div class="layui-inline">
                         <button lay-submit class="layui-btn" lay-filter="searchBtn">搜索</button>
-                        <button id="delLogBtn" type="button" class="layui-btn layui-btn-normal">清理日志</button>
+                        <button id="showDelLogLayerBtn" type="button" class="layui-btn layui-btn-normal">清理日志</button>
                     </div>
                 </div>
             </form>
@@ -81,9 +81,10 @@
     <@netCommon.commonFooter />
 </div>
 
-<div id="execLayer" class="layui-row" style="display:none;margin-right: 20px;">
+<#-- 日志详情弹窗 -->
+<div id="logDetailLayer" class="layui-row" style="display:none;margin-right: 20px;">
     <div class="layui-col-lg12">
-        <form id="execFormId" class="layui-form" pane style="margin-top: 20px;" lay-filter="execForm">
+        <form id="logDetailFormId" class="layui-form" pane style="margin-top: 20px;" lay-filter="logDetailForm">
             <div class="layui-form-item layui-form-text">
                 <label class="layui-form-label">本次执行地址</label>
                 <div class="layui-input-block">
@@ -96,9 +97,44 @@
                     <textarea class="layui-textarea" name="executor_param" placeholder=""></textarea>
                 </div>
             </div>
+        </form>
+    </div>
+</div>
+
+<#-- 清理日志弹窗 -->
+<div id="delLogLayer" class="layui-row" style="display:none;margin-right: 20px;">
+    <div class="layui-col-lg12">
+        <blockquote class="layui-elem-quote layui-bg-red">注意：如不选择分组和任务将清空所选时间段内的所有日志！！！</blockquote>
+        <form id="delLogFormID" class="layui-form" pane style="margin-top: 20px;" lay-filter="delLogForm">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">执行器</label>
+                    <div class="layui-input-inline">
+                        <select id="delGroupNameID" name="group_name" autocomplete="off"
+                                lay-filter="delGroupNameFilter">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">任务</label>
+                    <div class="layui-input-inline">
+                        <select id="delJobID" name="job_id" autocomplete="off">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">时间范围</label>
+                <div class="layui-input-block">
+                    <input type="text" id="timeRangeID" name="time_range" class="layui-input" required lay-verify="required"
+                           placeholder="请选择时间范围" autocomplete="off" />
+                </div>
+            </div>
             <div class="layui-form-item">
                 <div class="layui-input-block">
-                    <button lay-submit class="layui-btn" lay-filter="execBtn">执行</button>
+                    <button lay-submit class="layui-btn layui-btn-fluid" lay-filter="delLogBtn">点击清理</button>
                 </div>
             </div>
         </form>
@@ -111,7 +147,7 @@
 <#-- 单行操作按钮 -->
 <script type="text/html" id="operateToolbar">
     <div class="layui-btn-group">
-        <button type="button" class="layui-btn layui-btn-sm" lay-event="show">详情</button>
+        <button type="button" class="layui-btn layui-btn-sm" lay-event="show">日志详情</button>
         <button type="button" class="layui-btn layui-btn-sm" lay-event="kill">终止执行</button>
     </div>
 </script>
@@ -145,6 +181,7 @@
     let table = layui.table;
     let $ = layui.jquery;
     let form = layui.form;
+    let laydate = layui.laydate;
 
     !function() {
         // 渲染表格
@@ -157,8 +194,7 @@
                 {field: 'trigger_time', title: '调度时间', minWidth: 165},
                 {field: 'trigger_code', title: '调度结果', templet: '#triggerCodeTpl'},
                 {field: 'exec_time', title: '执行时间', minWidth: 165,},
-                {field: 'exec_code', title: '调度结果', templet: '#execCodeTpl'},
-                {field: 'author', title: '负责人'},
+                {field: 'exec_code', title: '执行结果', templet: '#execCodeTpl'},
                 {fixed: 'right', title: '操作', minWidth: 145, toolbar: '#operateToolbar'},
             ]],
             page: true,
@@ -186,17 +222,56 @@
             contentArray.forEach(function (item) {
                 htmlContent += "<option value='" + item.name + "'>" + item.title + "</option>";
             })
+            // 渲染查询条件的分组
             $('#searchGroupNameID option').remove();
             $('#searchGroupNameID').append(htmlContent);
+
+            // 渲染清理日志的分组
+            $('#delGroupNameID option').remove();
+            $('#delGroupNameID').append(htmlContent);
             form.render();
         });
+
+        // 渲染时间组件
+        laydate.render({
+            elem: '#timeRangeID',
+            type: 'date',
+            range: true,
+            format: 'yyyy-MM-dd HH:mm:ss'
+        })
     }();
 
+    table.on('tool(dataTable)', function (obj) {
+        let data = obj.data;
+        let eventName = obj.event;
+        if (eventName === 'show') {
+            // 详情
+            layer.alert('日志详情');
+        } else if (eventName === 'kill') {
+            // 终止
+            layer.alert('终止任务');
+        } else {
+            layer.alert('这是神马操作？？？');
+        }
+    });
+
     // 监听执行器的变更
-    form.on('select(groupNameFilter)', function (data) {
+    form.on('select(searchGroupNameFilter)', onGroupNameChange);
+    form.on('select(delGroupNameFilter)', onGroupNameChange);
+    function onGroupNameChange(data) {
+        let $elem = $(data.elem);
+        let $this = undefined;
+        if ($elem.attr("id") === 'searchGroupNameID') {
+            $this = $('#searchJobID');
+        } else if ($elem.attr("id") === 'delGroupNameID') {
+            $this = $('#delJobID');
+        } else {
+            layer.alert('内部错误');
+            return false;
+        }
         if (data.value === '') {
-            $('#searchJobID option').remove();
-            $('#searchJobID').append("<option value=''>请选择</option>");
+            $this.find('option').remove();
+            $this.append("<option value=''>请选择</option>");
             form.render();
             return;
         }
@@ -211,11 +286,11 @@
             contentArray.forEach(function (item) {
                 htmlContent += "<option value='" + item.id + "'>" + item.name + "</option>";
             })
-            $('#searchJobID option').remove();
-            $('#searchJobID').append(htmlContent);
+            $this.children().remove();
+            $this.append(htmlContent);
             form.render();
         });
-    });
+    }
 
     // 搜索提交
     form.on('submit(searchBtn)', function (data) {
@@ -227,6 +302,47 @@
         });
         return false;
     });
+
+    // 监听清理日志按钮
+    $('#showDelLogLayerBtn').click(function () {
+        // 弹窗，选择要清理的时间段
+        layer.open({
+            type: 1,
+            title: '删除日志',
+            area: '700px',
+            resize: false,
+            offset: '100px',
+            content: $('#delLogLayer')
+        })
+    });
+    form.on('submit(delLogBtn)', function (data) {
+        let field = data.field;
+
+        // 拆分时间范围为两个时间字段
+        let tr = field.time_range;
+        let timeArray = tr.split(' - ');
+        delete field.time_range;
+        field.begin_date = timeArray[0];
+        field.end_date = timeArray[1];
+
+        // 请求删除
+        $.ajax({
+            url: '${contextPath}/log/batch_delete',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(field),
+            success: function (ret) {
+                if (ret.code === 200) {
+                    layer.closeAll('page');
+                    layer.alert('删除成功');
+                } else {
+                    layer.alert('服务器内部错误');
+                }
+            }
+        });
+        return false;
+    });
+
 </script>
 </body>
 </html>

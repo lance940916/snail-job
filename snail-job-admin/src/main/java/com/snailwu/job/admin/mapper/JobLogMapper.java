@@ -70,9 +70,22 @@ public interface JobLogMapper {
 
     @SelectProvider(type = SqlProviderAdapter.class, method = "select")
     @Results(id = "JobLogResultWithJobName", value = {
+            @Result(column = "id", property = "id", jdbcType = JdbcType.BIGINT, id = true),
+            @Result(column = "job_id", property = "jobId", jdbcType = JdbcType.INTEGER),
+            @Result(column = "group_name", property = "groupName", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "executor_address", property = "executorAddress", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "executor_handler", property = "executorHandler", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "executor_param", property = "executorParam", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "fail_retry_count", property = "failRetryCount", jdbcType = JdbcType.TINYINT),
+            @Result(column = "trigger_time", property = "triggerTime", jdbcType = JdbcType.TIMESTAMP),
+            @Result(column = "trigger_code", property = "triggerCode", jdbcType = JdbcType.INTEGER),
+            @Result(column = "trigger_msg", property = "triggerMsg", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "exec_time", property = "execTime", jdbcType = JdbcType.TIMESTAMP),
+            @Result(column = "exec_code", property = "execCode", jdbcType = JdbcType.INTEGER),
+            @Result(column = "exec_msg", property = "execMsg", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "alarm_status", property = "alarmStatus", jdbcType = JdbcType.TINYINT),
             @Result(column = "name", property = "jobName", jdbcType = JdbcType.VARCHAR),
     })
-    @ResultMap({"JobLogResult", "JobLogResultWithJobName"})
     List<JobLogVO> selectManyWithJobName(SelectStatementProvider selectStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")

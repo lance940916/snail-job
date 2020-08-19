@@ -35,7 +35,7 @@ public class LogController {
      * 删除日志
      */
     @PostMapping("/batch_delete")
-    public ResultT<String> deleteByTime(@Validated JobLogDeleteRequest deleteRequest) {
+    public ResultT<String> deleteByTime(@Validated @RequestBody JobLogDeleteRequest deleteRequest) {
         logService.deleteByTime(deleteRequest);
         return ResultT.SUCCESS;
     }

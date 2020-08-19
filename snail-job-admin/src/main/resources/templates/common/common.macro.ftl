@@ -17,14 +17,6 @@
 <#-- 公共 JS -->
 <#macro commonScript>
     <script src="${contextPath}/static/layui.all.js"></script>
-    <script>
-        function jsonFilter(key, value) {
-            if (value === '') {
-                return undefined;
-            }
-            return value;
-        }
-    </script>
 </#macro>
 
 <#-- Header -->
@@ -71,9 +63,9 @@
 
 <#-- 底部栏 -->
 <#macro commonFooter>
-    <div class="layui-footer">
+    <#--<div class="layui-footer">
         <strong>
             Copyright &copy; 2020-${.now?string('yyyy')} 蜗牛大师
         </strong>
-    </div>
+    </div>-->
 </#macro>

@@ -56,6 +56,7 @@ public class LogService {
                 .and(JobLogDynamicSqlSupport.triggerCode, isEqualToWhenPresent(searchRequest.getTriggerCode()))
                 .and(JobLogDynamicSqlSupport.execCode, isEqualToWhenPresent(searchRequest.getExecCode()))
                 .and(JobLogDynamicSqlSupport.triggerTime, isBetweenWhenPresent(triggerBeginDate).and(triggerEndDate))
+                .orderBy(JobLogDynamicSqlSupport.triggerTime.descending())
                 .build().render(RenderingStrategies.MYBATIS3);
         return PageHelper.startPage(searchRequest.getPage(), searchRequest.getLimit())
                 .doSelectPageInfo(() -> jobLogMapper.selectManyWithJobName(statementProvider));

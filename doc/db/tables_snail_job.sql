@@ -81,7 +81,8 @@ CREATE TABLE IF NOT EXISTS `job_log`
     `exec_msg`         VARCHAR(1024) NULL COMMENT '执行-结果信息',
 
     `alarm_status`     TINYINT       NOT NULL DEFAULT '0' COMMENT '告警状态：0-默认、1-无需告警、2-告警成功、3-告警失败',
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    INDEX `idx_tt`(`trigger_time` DESC)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
