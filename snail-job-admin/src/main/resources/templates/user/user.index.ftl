@@ -21,7 +21,9 @@
         <!-- 内容主体区域 -->
         <div style="padding: 15px;">
 
-            USER PAGE
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>用户管理</legend>
+            </fieldset>
 
         </div>
     </div>

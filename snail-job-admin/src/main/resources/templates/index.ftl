@@ -28,15 +28,15 @@
                 <tr>
                     <td style="width: 100px;font-size: large;font-weight: bold;">任务数量</td>
                     <td>
-                        <span id="total-job-amount"></span>
+                        <span>1</span>
                     </td>
                     <td style="width: 100px;font-size: large;font-weight: bold;">执行器数量</td>
                     <td>
-                        <span id="total-executor-amount"></span>
+                        <span>3</span>
                     </td>
                     <td style="width: 100px;font-size: large;font-weight: bold;">调度次数</td>
                     <td>
-                        <span id="total-trigger-amount"></span>
+                        <span>5</span>
                     </td>
                 </tr>
                 </tbody>
@@ -51,15 +51,15 @@
 <@netCommon.commonScript />
 <script>
     // 如何避免别人通过直接请求接口获取数据
-    layui.use(['element', 'jquery'], function () {
-        let element = layui.element;
-        let $ = layui.jquery;
+    let element = layui.element;
+    let $ = layui.jquery;
 
-        $('#total-job-amount').text(8);
-        $('#total-executor-amount').text(3);
-        $('#total-trigger-amount').text(23);
+    !function () {
+        layer.msg('Hello Job');
 
-    });
+
+    }();
+
 </script>
 </body>
 </html>

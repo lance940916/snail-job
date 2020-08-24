@@ -82,7 +82,8 @@ public class LogService {
     public ResultT<String> killTrigger(Long logId) {
         // 查询任务
         JobLog jobLog = jobLogMapper.selectOne(
-                select(JobLogDynamicSqlSupport.id, JobLogDynamicSqlSupport.jobId, JobLogDynamicSqlSupport.executorAddress)
+                select(JobLogDynamicSqlSupport.id, JobLogDynamicSqlSupport.jobId, JobLogDynamicSqlSupport.execCode,
+                        JobLogDynamicSqlSupport.executorAddress)
                         .from(JobLogDynamicSqlSupport.jobLog)
                         .where(JobLogDynamicSqlSupport.id, isEqualTo(logId))
                         .build().render(RenderingStrategies.MYBATIS3)
@@ -90,7 +91,11 @@ public class LogService {
         if (jobLog == null) {
             throw new SnailJobException("Log记录不存在");
         }
-        ExecutorBiz executorBiz = SnailJobScheduler.getExecutorBiz(jobLog.getExecutorAddress());
-        return executorBiz.kill(new KillParam(jobLog.getJobId(), logId));
+        if (jobLog.getExecCode() == 0) {
+            ExecutorBiz executorBiz = SnailJobScheduler.getExecutorBiz(jobLog.getExecutorAddress());
+            return executorBiz.kill(new KillParam(jobLog.getJobId(), logId));
+        } else {
+            return new ResultT<>(ResultT.FAIL_CODE, "任务已经执行完毕");
+        }
     }
 }

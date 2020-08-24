@@ -86,15 +86,15 @@
     <div class="layui-col-lg12">
         <form id="logDetailFormId" class="layui-form" pane style="margin-top: 20px;" lay-filter="logDetailForm">
             <div class="layui-form-item layui-form-text">
-                <label class="layui-form-label">本次执行地址</label>
+                <label class="layui-form-label">执行地址</label>
                 <div class="layui-input-block">
-                    <textarea class="layui-textarea" name="executor_address" placeholder=""></textarea>
+                    <input class="layui-text" name="executor_address" disabled />
                 </div>
             </div>
             <div class="layui-form-item layui-form-text">
-                <label class="layui-form-label">本次执行参数</label>
+                <label class="layui-form-label">执行参数</label>
                 <div class="layui-input-block">
-                    <textarea class="layui-textarea" name="executor_param" placeholder=""></textarea>
+                    <textarea class="layui-textarea" name="executor_param" disabled></textarea>
                 </div>
             </div>
         </form>
@@ -146,15 +146,13 @@
 
 <#-- 单行操作按钮 -->
 <script type="text/html" id="operateToolbar">
-    <div class="layui-btn-group">
-        <button type="button" class="layui-btn layui-btn-sm" lay-event="show">日志详情</button>
-        <button type="button" class="layui-btn layui-btn-sm" lay-event="kill">终止执行</button>
-    </div>
+    <button type="button" class="layui-btn layui-btn-sm" lay-event="kill">终止执行</button>
 </script>
 
+<#-- 转义表格字段 -->
 <script type="text/html" id="triggerCodeTpl">
     {{# if(d.trigger_code == 0){ }}
-    <span style="color: #009688;">默认</span>
+    <span style="color: #009688;">未调度</span>
     {{# } else if(d.trigger_code == 200){ }}
     <span style="color: dodgerblue;">成功</span>
     {{# } else if(d.trigger_code == 500){ }}
@@ -165,7 +163,7 @@
 </script>
 <script type="text/html" id="execCodeTpl">
     {{# if(d.exec_code == 0){ }}
-    <span style="color: #009688;">默认</span>
+    <span style="color: #009688;">未执行</span>
     {{# } else if(d.exec_code == 200){ }}
     <span style="color: dodgerblue;">成功</span>
     {{# } else if(d.exec_code == 500){ }}
@@ -173,6 +171,9 @@
     {{# } else { }}
     <span style="color: #009688;">未知</span>
     {{# } }}
+</script>
+<script type="text/html" id="showExecParam">
+    <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="show">查看</a>
 </script>
 
 <script>
@@ -191,6 +192,9 @@
             cols: [[
                 {type: 'numbers'},
                 {field: 'job_name', title: '任务名称'},
+                {field: 'executor_address', title: '执行地址'},
+                {field: 'executor_handler', title: 'JobHandler'},
+                {title: '执行参数', toolbar: '#showExecParam'},
                 {field: 'trigger_time', title: '调度时间', minWidth: 165},
                 {field: 'trigger_code', title: '调度结果', templet: '#triggerCodeTpl'},
                 {field: 'exec_time', title: '执行时间', minWidth: 165,},
@@ -245,11 +249,23 @@
         let data = obj.data;
         let eventName = obj.event;
         if (eventName === 'show') {
-            // 详情
-            layer.alert('日志详情');
+            layer.open({
+                resize: false,
+                content: data.executor_param
+            });
         } else if (eventName === 'kill') {
             // 终止
-            layer.alert('终止任务');
+            $.ajax({
+                url: '${contextPath}/log/kill/' + data.id,
+                type: 'POST',
+                success: function (ret) {
+                    if (ret.code === 200) {
+                        layer.alert('终止成功');
+                    } else {
+                        layer.alert(ret.msg);
+                    }
+                }
+            });
         } else {
             layer.alert('这是神马操作？？？');
         }
