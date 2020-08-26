@@ -18,7 +18,7 @@ import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
 /**
  * 监控失败的调度
- * 1. 失败重试
+ * 1. 失败重试(只会重试调度失败的，执行失败的不会重试)
  * 2. 告警
  *
  * @author 吴庆龙
@@ -37,18 +37,14 @@ public class JobFailMonitorHelper {
         monitorThread = new Thread(() -> {
             while (!stopFlag) {
                 try {
-                    // (调度不成功 | 执行不成功的任务) & 为告警的任务日志
+                    // 调度不成功 & 未告警的任务日志
                     List<JobLog> jobLogList = AdminConfig.getInstance().getJobLogMapper().selectMany(
                             select(JobLogDynamicSqlSupport.id)
                                     .from(JobLogDynamicSqlSupport.jobLog)
                                     .where()
                                     .and(JobLogDynamicSqlSupport.alarmStatus, isEqualTo(DEFAULT.getValue()))
-                                    .and(
-                                        // 调度不成功
-                                        JobLogDynamicSqlSupport.triggerCode, isNotEqualTo(200),
-                                        // 执行不成功
-                                        or(JobLogDynamicSqlSupport.execCode, isNotIn(0, 200))
-                                    ).build().render(RenderingStrategies.MYBATIS3)
+                                    .and(JobLogDynamicSqlSupport.triggerCode, isNotEqualTo(200))
+                                    .build().render(RenderingStrategies.MYBATIS3)
                     );
                     for (JobLog jobLog : jobLogList) {
                         // 锁定这条数据，依赖数据库的锁
