@@ -26,7 +26,7 @@ import java.util.Properties;
 @ComponentScan({
         "com.snailwu.job.admin.service",
         "com.snailwu.job.admin.core.alarm",
-//        "com.snailwu.job.admin.core.conf",
+        "com.snailwu.job.admin.core.conf",
 })
 @MapperScan("com.snailwu.job.admin.mapper")
 public class RootConfig {

@@ -39,7 +39,7 @@ public class GlobalRestExceptionHandler {
         while (iter.hasNext()) {
             sb.append(";");
             sb.append(error.getField());
-            sb.append(": ");
+            sb.append(":");
             sb.append(error.getDefaultMessage());
         }
         return new ResultT<>(ResultT.FAIL_CODE, sb.toString());

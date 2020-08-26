@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static com.snailwu.job.core.enums.AlarmStatus.*;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
@@ -111,6 +112,15 @@ public class JobFailMonitorHelper {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                }
+
+                // 休眠
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    if (!stopFlag) {
+                        LOGGER.error("休眠异常.", e);
+                    }
                 }
             }
         });
