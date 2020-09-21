@@ -10,7 +10,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
@@ -122,19 +121,4 @@ public class RootConfig {
         return sender;
     }
 
-    public static void main(String[] args) {
-        JavaMailSenderImpl sender = new JavaMailSenderImpl();
-        sender.setHost("smtp.qiye.aliyun.com");
-        sender.setPort(465);
-        sender.setUsername("mattermost@zerosportsai.com");
-        sender.setPassword("Zerosports2019");
-        sender.setProtocol(DEFAULT_PROTOCOL);
-
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("mattermost@zerosportsai.com");
-        message.setTo("snail.wu@foxmail.com");
-        message.setSubject("Hello Test");
-        message.setText("Hello Body");
-        sender.send(message);
-    }
 }
