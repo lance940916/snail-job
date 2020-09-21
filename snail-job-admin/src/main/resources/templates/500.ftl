@@ -21,7 +21,6 @@
         <div style="padding: 15px;">
 
             <h1>500 服务器内部错误</h1>
-            <hr>
 
         </div>
     </div>

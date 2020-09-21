@@ -10,12 +10,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
-import java.util.Optional;
 import java.util.Properties;
 
 /**
@@ -101,24 +98,6 @@ public class RootConfig {
         PageInterceptor pageInterceptor = new PageInterceptor();
         pageInterceptor.setProperties(properties);
         return pageInterceptor;
-    }
-
-    /**
-     * JavaMailSender
-     */
-    private static final String DEFAULT_PROTOCOL = "smtp";
-
-    @Bean
-    public JavaMailSender javaMailSender() {
-        JavaMailSenderImpl sender = new JavaMailSenderImpl();
-        sender.setHost(prop.getEnv("alarm.mail.host"));
-        sender.setPort(prop.getEnv("alarm.mail.port", Integer.class));
-        sender.setUsername(prop.getEnv("alarm.mail.username"));
-        sender.setPassword(prop.getEnv("alarm.mail.password"));
-        String protocol = Optional.ofNullable(prop.getEnv("alarm.mail.protocol"))
-                .orElse(DEFAULT_PROTOCOL);
-        sender.setProtocol(protocol);
-        return sender;
     }
 
 }

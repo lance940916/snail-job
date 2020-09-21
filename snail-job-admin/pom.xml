@@ -17,8 +17,6 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.test.skip>true</maven.test.skip>
-
-        <snail-job-core.version>1.0-SNAPSHOT</snail-job-core.version>
     </properties>
 
     <dependencies>
@@ -26,7 +24,7 @@
         <dependency>
             <groupId>com.snailwu</groupId>
             <artifactId>snail-job-core</artifactId>
-            <version>${snail-job-core.version}</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <!-- hibernate-validator -->
