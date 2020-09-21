@@ -1,7 +1,7 @@
 package com.snailwu.job.admin.service;
 
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.github.pagehelper.page.PageMethod;
 import com.snailwu.job.admin.controller.request.JobGroupSearchRequest;
 import com.snailwu.job.admin.core.model.JobGroup;
 import com.snailwu.job.admin.mapper.JobGroupDynamicSqlSupport;
@@ -39,8 +39,9 @@ public class GroupService {
                 .where()
                 .and(JobGroupDynamicSqlSupport.title, isLikeWhenPresent(searchRequest.getTitle()))
                 .and(JobGroupDynamicSqlSupport.name, isLikeWhenPresent(searchRequest.getName()))
-                .build().render(RenderingStrategies.MYBATIS3);
-        return PageHelper.startPage(searchRequest.getPage(), searchRequest.getLimit())
+                .build()
+                .render(RenderingStrategies.MYBATIS3);
+        return PageMethod.startPage(searchRequest.getPage(), searchRequest.getLimit())
                 .doSelectPageInfo(() -> jobGroupMapper.selectMany(statementProvider));
     }
 
@@ -54,7 +55,8 @@ public class GroupService {
                     select(count(JobGroupDynamicSqlSupport.id))
                             .from(JobGroupDynamicSqlSupport.jobGroup)
                             .where(JobGroupDynamicSqlSupport.name, isEqualTo(group.getName()))
-                            .build().render(RenderingStrategies.MYBATIS3)
+                            .build()
+                            .render(RenderingStrategies.MYBATIS3)
             );
             Validate.isTrue(count == 0, "groupName已经存在.");
             int ret = jobGroupMapper.insertSelective(group);
@@ -91,9 +93,11 @@ public class GroupService {
      */
     public List<JobGroup> listAll() {
         return jobGroupMapper.selectMany(
-                select(JobGroupDynamicSqlSupport.id, JobGroupDynamicSqlSupport.name, JobGroupDynamicSqlSupport.title)
+                select(JobGroupDynamicSqlSupport.id, JobGroupDynamicSqlSupport.name,
+                        JobGroupDynamicSqlSupport.title)
                         .from(JobGroupDynamicSqlSupport.jobGroup)
-                        .build().render(RenderingStrategies.MYBATIS3)
+                        .build()
+                        .render(RenderingStrategies.MYBATIS3)
         );
     }
 }

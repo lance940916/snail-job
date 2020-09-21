@@ -92,11 +92,11 @@ public class JobLogReportHelper {
                     // 更新
                     AdminConfig.getInstance().getJobLogReportMapper().update(
                             update(JobLogReportDynamicSqlSupport.jobLogReport)
-                            .set(JobLogReportDynamicSqlSupport.runningCount).equalTo(runningCount)
-                            .set(JobLogReportDynamicSqlSupport.successCount).equalTo(successCount)
-                            .set(JobLogReportDynamicSqlSupport.failCount).equalTo(failCount)
-                            .where(JobLogReportDynamicSqlSupport.triggerDay, isEqualTo(beginTime))
-                            .build().render(RenderingStrategies.MYBATIS3)
+                                    .set(JobLogReportDynamicSqlSupport.runningCount).equalTo(runningCount)
+                                    .set(JobLogReportDynamicSqlSupport.successCount).equalTo(successCount)
+                                    .set(JobLogReportDynamicSqlSupport.failCount).equalTo(failCount)
+                                    .where(JobLogReportDynamicSqlSupport.triggerDay, isEqualTo(beginTime))
+                                    .build().render(RenderingStrategies.MYBATIS3)
                     );
                 }
                 long costMs = System.currentTimeMillis() - startTs;

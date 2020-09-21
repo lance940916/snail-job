@@ -17,7 +17,7 @@ import static com.snailwu.job.core.utils.JobHttpUtil.JOB_ACCESS_TOKEN;
 
 /**
  * 校验AccessToken的切面
- *
+ * <p>
  * 校验 Client 的 AccessToken 是否正确
  *
  * @author 吴庆龙

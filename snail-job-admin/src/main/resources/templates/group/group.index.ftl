@@ -34,13 +34,13 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">名称</label>
                         <div class="layui-input-block">
-                            <input type="text" name="title" class="layui-input" autocomplete="off" />
+                            <input type="text" name="title" class="layui-input" autocomplete="off"/>
                         </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">唯一标识</label>
                         <div class="layui-input-block">
-                            <input type="text" name="name" class="layui-input" autocomplete="off" />
+                            <input type="text" name="name" class="layui-input" autocomplete="off"/>
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -65,19 +65,21 @@
         <form id="editFormID" class="layui-form layui-form-pane" pane style="margin-top: 20px;" lay-filter="editForm">
             <div class="layui-form-item layui-hide">
                 <div class="layui-input-block">
-                    <input type="text" name="id" class="layui-input" />
+                    <input type="text" name="id" class="layui-input"/>
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">名称</label>
                 <div class="layui-input-block">
-                    <input type="text" name="title" required lay-verify="required" class="layui-input" autocomplete="off" />
+                    <input type="text" name="title" required lay-verify="required" class="layui-input"
+                           autocomplete="off"/>
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">唯一标识</label>
                 <div class="layui-input-block">
-                    <input type="text" name="name" required lay-verify="required" class="layui-input" autocomplete="off" />
+                    <input type="text" name="name" required lay-verify="required" class="layui-input"
+                           autocomplete="off"/>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -120,9 +122,9 @@
 
 <script type="text/html" id="typeTpl">
     {{# if(d.type == 0){ }}
-        自动注册
+    自动注册
     {{# } else if(d.type == 1){ }}
-        手动注册
+    手动注册
     {{# } }}
 </script>
 
@@ -133,7 +135,7 @@
     let $ = layui.jquery;
     let form = layui.form;
 
-    !function() {
+    !function () {
         // 渲染表格
         table.render({
             elem: '#dataTableID',
@@ -150,7 +152,7 @@
             response: {
                 statusCode: 200
             },
-            parseData: function(res) {
+            parseData: function (res) {
                 return {
                     "code": res.code,
                     "msg": res.msg,
@@ -159,7 +161,7 @@
                 };
             }
         });
-        table.on('tool(dataTable)', function(obj){
+        table.on('tool(dataTable)', function (obj) {
             let data = obj.data;
             let eventName = obj.event;
             if (eventName === 'show') {
@@ -171,7 +173,7 @@
                 } else {
                     let addrArray = addrList.split(",");
                     for (let i = 0; i < addrArray.length; i++) {
-                        htmlContent +=  (i + 1) + ': ' + addrArray[i];
+                        htmlContent += (i + 1) + ': ' + addrArray[i];
                         htmlContent += '<br/>';
                     }
                 }
@@ -195,7 +197,7 @@
                 })
             } else if (eventName === 'del') {
                 // 删除
-                layer.confirm('是否删除该条记录?', {icon: 3, title:'提示'}, function(index){
+                layer.confirm('是否删除该条记录?', {icon: 3, title: '提示'}, function (index) {
                     layer.close(index);
                     $.ajax({
                         url: '${contextPath}/group/' + data.id + '?_method=delete',
@@ -209,7 +211,7 @@
             }
         });
         // 表格单击事件
-        table.on('row(dataTable)', function(obj){
+        table.on('row(dataTable)', function (obj) {
             if (obj.tr.hasClass("snail-bg-selected")) {
                 obj.tr.removeClass('snail-bg-selected');
             } else {

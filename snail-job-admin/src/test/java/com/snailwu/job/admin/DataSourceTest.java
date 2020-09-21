@@ -1,7 +1,6 @@
 package com.snailwu.job.admin;
 
 import com.snailwu.job.admin.config.RootConfig;
-import com.snailwu.job.admin.service.InfoService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;

@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 public class RequestLogAspect {
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestLogAspect.class);
 
-//    @Around("execution(* com.snailwu.job.admin.controller..*(..)))")
+    //    @Around("execution(* com.snailwu.job.admin.controller..*(..)))")
     public Object around(ProceedingJoinPoint pjp) {
         // 1. 打印请求参数
         Object[] args = pjp.getArgs();

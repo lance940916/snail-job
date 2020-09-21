@@ -1,8 +1,6 @@
 package com.snailwu.job.admin;
 
 import com.snailwu.job.admin.config.RootConfig;
-import com.snailwu.job.admin.core.model.JobInfo;
-import com.snailwu.job.admin.mapper.JobInfoMapper;
 import com.snailwu.job.admin.service.InfoService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -7,14 +7,18 @@ import com.snailwu.job.admin.core.model.JobInfo;
 import com.snailwu.job.admin.core.model.JobLog;
 import com.snailwu.job.admin.mapper.JobGroupDynamicSqlSupport;
 import com.snailwu.job.core.biz.model.ResultT;
+import org.apache.commons.lang3.StringUtils;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+import javax.mail.internet.MimeMessage;
 import java.text.MessageFormat;
 import java.util.Optional;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 import static org.mybatis.dynamic.sql.SqlBuilder.select;
 
@@ -26,13 +30,14 @@ import static org.mybatis.dynamic.sql.SqlBuilder.select;
  */
 @Component
 public class EmailAlarm implements JobAlarm {
-    public static final Logger log = LoggerFactory.getLogger(EmailAlarm.class);
+
+    @Resource
+    private JavaMailSender mailSender;
 
     @Override
     public boolean doAlarm(JobInfo jobInfo, JobLog jobLog) {
-        boolean alarmResult = true;
-        if (jobInfo == null || jobInfo.getAlarmEmail() == null || jobInfo.getAlarmEmail().trim().length() > 0) {
-            return alarmResult;
+        if (jobInfo == null || StringUtils.isEmpty(jobInfo.getAlarmEmail())) {
+            return false;
         }
 
         String alarmContent = "Alarm Job LogId=" + jobInfo.getId();
@@ -57,6 +62,9 @@ public class EmailAlarm implements JobAlarm {
                 groupName, jobInfo.getId(), jobInfo.getName(), alarmContent);
 
         // TODO 发送邮件
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, UTF_8.name());
+
 
         return false;
     }

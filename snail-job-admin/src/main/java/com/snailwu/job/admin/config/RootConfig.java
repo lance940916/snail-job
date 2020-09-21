@@ -10,9 +10,13 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+import java.util.Optional;
 import java.util.Properties;
 
 /**
@@ -32,23 +36,23 @@ import java.util.Properties;
 public class RootConfig {
 
     @Resource
-    private PropConfig propConfig;
+    private PropConfig prop;
 
     /* ---------- 数据源 ---------- */
     @Bean
     public DataSource dataSource() {
         HikariDataSource dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl(propConfig.getRequiredEnv("hikari.url"));
-        dataSource.setUsername(propConfig.getRequiredEnv("hikari.username"));
-        dataSource.setPassword(propConfig.getRequiredEnv("hikari.password"));
-        dataSource.setDriverClassName(propConfig.getRequiredEnv("hikari.driver-class-name"));
-        dataSource.setConnectionTimeout(propConfig.getRequiredEnv("hikari.connection-timeout", Long.class));
-        dataSource.setIdleTimeout(propConfig.getRequiredEnv("hikari.idle-timeout", Long.class));
-        dataSource.setConnectionTestQuery(propConfig.getRequiredEnv("hikari.connection-test-query"));
-        dataSource.setMinimumIdle(propConfig.getRequiredEnv("hikari.minimum-idle", Integer.class));
-        dataSource.setMaximumPoolSize(propConfig.getRequiredEnv("hikari.maximum-pool-size", Integer.class));
-        dataSource.setPoolName(propConfig.getRequiredEnv("hikari.pool-name"));
-        dataSource.setMaxLifetime(propConfig.getRequiredEnv("hikari.max-life-time", Long.class));
+        dataSource.setJdbcUrl(prop.getRequiredEnv("hikari.url"));
+        dataSource.setUsername(prop.getRequiredEnv("hikari.username"));
+        dataSource.setPassword(prop.getRequiredEnv("hikari.password"));
+        dataSource.setDriverClassName(prop.getRequiredEnv("hikari.driver-class-name"));
+        dataSource.setConnectionTimeout(prop.getRequiredEnv("hikari.connection-timeout", Long.class));
+        dataSource.setIdleTimeout(prop.getRequiredEnv("hikari.idle-timeout", Long.class));
+        dataSource.setConnectionTestQuery(prop.getRequiredEnv("hikari.connection-test-query"));
+        dataSource.setMinimumIdle(prop.getRequiredEnv("hikari.minimum-idle", Integer.class));
+        dataSource.setMaximumPoolSize(prop.getRequiredEnv("hikari.maximum-pool-size", Integer.class));
+        dataSource.setPoolName(prop.getRequiredEnv("hikari.pool-name"));
+        dataSource.setMaxLifetime(prop.getRequiredEnv("hikari.max-life-time", Long.class));
         return dataSource;
     }
 
@@ -100,4 +104,37 @@ public class RootConfig {
         return pageInterceptor;
     }
 
+    /**
+     * JavaMailSender
+     */
+    private static final String DEFAULT_PROTOCOL = "smtp";
+
+    @Bean
+    public JavaMailSender javaMailSender() {
+        JavaMailSenderImpl sender = new JavaMailSenderImpl();
+        sender.setHost(prop.getEnv("alarm.mail.host"));
+        sender.setPort(prop.getEnv("alarm.mail.port", Integer.class));
+        sender.setUsername(prop.getEnv("alarm.mail.username"));
+        sender.setPassword(prop.getEnv("alarm.mail.password"));
+        String protocol = Optional.ofNullable(prop.getEnv("alarm.mail.protocol"))
+                .orElse(DEFAULT_PROTOCOL);
+        sender.setProtocol(protocol);
+        return sender;
+    }
+
+    public static void main(String[] args) {
+        JavaMailSenderImpl sender = new JavaMailSenderImpl();
+        sender.setHost("smtp.qiye.aliyun.com");
+        sender.setPort(465);
+        sender.setUsername("mattermost@zerosportsai.com");
+        sender.setPassword("Zerosports2019");
+        sender.setProtocol(DEFAULT_PROTOCOL);
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("mattermost@zerosportsai.com");
+        message.setTo("snail.wu@foxmail.com");
+        message.setSubject("Hello Test");
+        message.setText("Hello Body");
+        sender.send(message);
+    }
 }

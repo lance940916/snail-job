@@ -1,7 +1,7 @@
 package com.snailwu.job.admin.service;
 
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.github.pagehelper.page.PageMethod;
 import com.snailwu.job.admin.constant.JobConstants;
 import com.snailwu.job.admin.controller.request.JobInfoSearchRequest;
 import com.snailwu.job.admin.core.cron.CronExpression;
@@ -35,8 +35,7 @@ public class InfoService {
     private JobInfoMapper jobInfoMapper;
 
     /**
-     * 开始运行任务
-     * 任务在 {@link com.snailwu.job.admin.constant.JobConstants#SCAN_JOB_SLEEP_MS} 秒后生效
+     * 开始运行任务 任务在 {@link com.snailwu.job.admin.constant.JobConstants#SCAN_JOB_SLEEP_MS} 秒后生效
      */
     public void start(Integer id) {
         JobInfo jobInfo = jobInfoMapper.selectByPrimaryKey(id).orElse(null);
@@ -90,14 +89,16 @@ public class InfoService {
         String name = searchRequest.getName();
         String author = searchRequest.getAuthor();
 
-        SelectStatementProvider statementProvider = select(JobInfoDynamicSqlSupport.jobInfo.allColumns())
-                .from(JobInfoDynamicSqlSupport.jobInfo)
-                .where()
-                .and(JobInfoDynamicSqlSupport.name, isLikeWhenPresent(name))
-                .and(JobInfoDynamicSqlSupport.groupName, isEqualToWhenPresent(groupName))
-                .and(JobInfoDynamicSqlSupport.author, isLikeWhenPresent(author))
-                .build().render(RenderingStrategies.MYBATIS3);
-        return PageHelper.startPage(searchRequest.getPage(), searchRequest.getLimit())
+        SelectStatementProvider statementProvider =
+                select(JobInfoDynamicSqlSupport.jobInfo.allColumns())
+                        .from(JobInfoDynamicSqlSupport.jobInfo)
+                        .where()
+                        .and(JobInfoDynamicSqlSupport.name, isLikeWhenPresent(name))
+                        .and(JobInfoDynamicSqlSupport.groupName, isEqualToWhenPresent(groupName))
+                        .and(JobInfoDynamicSqlSupport.author, isLikeWhenPresent(author))
+                        .build()
+                        .render(RenderingStrategies.MYBATIS3);
+        return PageMethod.startPage(searchRequest.getPage(), searchRequest.getLimit())
                 .doSelectPageInfo(() -> jobInfoMapper.selectMany(statementProvider));
     }
 
@@ -165,7 +166,7 @@ public class InfoService {
                 select(JobInfoDynamicSqlSupport.id, JobInfoDynamicSqlSupport.name)
                         .from(JobInfoDynamicSqlSupport.jobInfo)
                         .where(JobInfoDynamicSqlSupport.groupName, isEqualTo(groupName))
-                        .build().render(RenderingStrategies.MYBATIS3)
-        );
+                        .build()
+                        .render(RenderingStrategies.MYBATIS3));
     }
 }

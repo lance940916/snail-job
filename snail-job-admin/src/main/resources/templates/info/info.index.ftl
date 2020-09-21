@@ -39,13 +39,13 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">名称</label>
                         <div class="layui-input-block">
-                            <input type="text" name="name" class="layui-input" autocomplete="off" />
+                            <input type="text" name="name" class="layui-input" autocomplete="off"/>
                         </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">负责人</label>
                         <div class="layui-input-block">
-                            <input type="text" name="author" class="layui-input" autocomplete="off" />
+                            <input type="text" name="author" class="layui-input" autocomplete="off"/>
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -70,20 +70,20 @@
         <form id="editFormID" class="layui-form" pane style="margin-top: 20px;" lay-filter="editForm">
             <div class="layui-form-item layui-hide">
                 <div class="layui-input-inline">
-                    <input class="layui-input" name="id" value="" />
+                    <input class="layui-input" name="id" value=""/>
                 </div>
             </div>
             <div class="layui-form-item">
                 <div class="layui-inline">
                     <label class="layui-form-label">任务名称</label>
                     <div class="layui-input-inline">
-                        <input class="layui-input" name="name" required lay-verify="required" autocomplete="off" />
+                        <input class="layui-input" name="name" required lay-verify="required" autocomplete="off"/>
                     </div>
                 </div>
                 <div class="layui-inline">
                     <label class="layui-form-label">Cron</label>
                     <div class="layui-input-inline">
-                        <input class="layui-input" name="cron" required lay-verify="required" autocomplete="off" />
+                        <input class="layui-input" name="cron" required lay-verify="required" autocomplete="off"/>
                     </div>
                 </div>
             </div>
@@ -91,7 +91,8 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">路由策略</label>
                     <div class="layui-input-inline">
-                        <select id="editExecutorRouteStrategyID" name="executor_route_strategy" required lay-verify="required">
+                        <select id="editExecutorRouteStrategyID" name="executor_route_strategy" required
+                                lay-verify="required">
                             <option value="">请选择</option>
                         </select>
                     </div>
@@ -109,13 +110,13 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">负责人</label>
                     <div class="layui-input-inline">
-                        <input class="layui-input" name="author" required lay-verify="required" autocomplete="off" />
+                        <input class="layui-input" name="author" required lay-verify="required" autocomplete="off"/>
                     </div>
                 </div>
                 <div class="layui-inline">
                     <label class="layui-form-label">报警邮箱</label>
                     <div class="layui-input-inline">
-                        <input class="layui-input" name="alarm_email" autocomplete="off" />
+                        <input class="layui-input" name="alarm_email" autocomplete="off"/>
                     </div>
                 </div>
             </div>
@@ -123,20 +124,21 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">超时时间</label>
                     <div class="layui-input-inline">
-                        <input class="layui-input" name="executor_timeout" autocomplete="off" />
+                        <input class="layui-input" name="executor_timeout" autocomplete="off"/>
                     </div>
                 </div>
                 <div class="layui-inline">
                     <label class="layui-form-label">重试次数</label>
                     <div class="layui-input-inline">
-                        <input class="layui-input" name="executor_fail_retry_count" autocomplete="off" />
+                        <input class="layui-input" name="executor_fail_retry_count" autocomplete="off"/>
                     </div>
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">JobHandler</label>
                 <div class="layui-input-inline">
-                    <input class="layui-input" name="executor_handler" required lay-verify="required" autocomplete="off" />
+                    <input class="layui-input" name="executor_handler" required lay-verify="required"
+                           autocomplete="off"/>
                 </div>
             </div>
             <div class="layui-form-item layui-form-text">
@@ -196,7 +198,7 @@
 
 <script type="text/html" id="triggerStatusTpl">
     <input type="checkbox" lay-skin="switch" lay-text="运行中|已停止" disabled
-        {{# if(d.trigger_status == 1){ }} checked {{# } }}
+           {{# if(d.trigger_status== 1){ }} checked {{# } }}
     >
 </script>
 
@@ -208,7 +210,7 @@
     let form = layui.form;
     let cur_selected_obj = undefined;
 
-    !function() {
+    !function () {
         // 渲染表格
         table.render({
             elem: '#dataTableID',
@@ -228,7 +230,7 @@
             response: {
                 statusCode: 200
             },
-            parseData: function(res) {
+            parseData: function (res) {
                 return {
                     "code": res.code,
                     "msg": res.msg,
@@ -276,7 +278,7 @@
     }();
 
     // 表格单击事件
-    table.on('row(dataTable)', function(obj){
+    table.on('row(dataTable)', function (obj) {
         if (obj.tr.hasClass("snail-bg-selected")) {
             obj.tr.removeClass('snail-bg-selected');
             cur_selected_obj = undefined;
@@ -287,14 +289,14 @@
     });
 
     // 表格工具栏事件
-    table.on('toolbar(dataTable)', function(obj){
+    table.on('toolbar(dataTable)', function (obj) {
         let eventName = obj.event;
         if (eventName !== 'add' && cur_selected_obj === undefined) {
             layer.msg('请先选择一行数据');
             return;
         }
         let eLayer = $('#editLayer');
-        switch(eventName){
+        switch (eventName) {
             case 'add':
                 $('#editFormID')[0].reset();
                 layer.open({
@@ -327,7 +329,7 @@
                 });
                 break;
             case 'del':
-                layer.confirm('是否删除该条记录?', {icon: 3, title:'提示'}, function(index){
+                layer.confirm('是否删除该条记录?', {icon: 3, title: '提示'}, function (index) {
                     layer.close(index);
                     $.ajax({
                         url: '${contextPath}/info/' + cur_selected_obj.data.id,
@@ -360,7 +362,7 @@
                     let htmlContent = '<div>';
                     let execTimeArray = ret.content;
                     for (let i = 0; i < execTimeArray.length; i++) {
-                        htmlContent +=  (i + 1) + ': ' + execTimeArray[i];
+                        htmlContent += (i + 1) + ': ' + execTimeArray[i];
                         htmlContent += '<br/>';
                     }
                     htmlContent += '</div>';

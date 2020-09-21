@@ -1,7 +1,7 @@
 package com.snailwu.job.admin.service;
 
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.github.pagehelper.page.PageMethod;
 import com.snailwu.job.admin.controller.entity.JobLogVO;
 import com.snailwu.job.admin.controller.request.JobLogDeleteRequest;
 import com.snailwu.job.admin.controller.request.JobLogSearchRequest;
@@ -16,13 +16,12 @@ import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.exception.SnailJobException;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
 
+import static com.snailwu.job.admin.mapper.JobLogDynamicSqlSupport.*;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
 /**
@@ -31,7 +30,6 @@ import static org.mybatis.dynamic.sql.SqlBuilder.*;
  */
 @Service
 public class LogService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LogService.class);
 
     @Resource
     private JobLogMapper jobLogMapper;
@@ -47,31 +45,31 @@ public class LogService {
             throw new SnailJobException("必须传结束时间");
         }
 
-        SelectStatementProvider statementProvider = select(JobLogDynamicSqlSupport.jobLog.allColumns(), JobInfoDynamicSqlSupport.name)
-                .from(JobLogDynamicSqlSupport.jobLog)
-                .leftJoin(JobInfoDynamicSqlSupport.jobInfo).on(JobInfoDynamicSqlSupport.id, equalTo(JobLogDynamicSqlSupport.jobId))
+        SelectStatementProvider statementProvider = select(jobLog.allColumns(), JobInfoDynamicSqlSupport.name)
+                .from(jobLog)
+                .leftJoin(JobInfoDynamicSqlSupport.jobInfo).on(JobInfoDynamicSqlSupport.id, equalTo(jobId))
                 .where()
-                .and(JobLogDynamicSqlSupport.groupName, isEqualToWhenPresent(searchRequest.getGroupName()))
-                .and(JobLogDynamicSqlSupport.jobId, isEqualToWhenPresent(searchRequest.getJobId()))
-                .and(JobLogDynamicSqlSupport.triggerCode, isEqualToWhenPresent(searchRequest.getTriggerCode()))
-                .and(JobLogDynamicSqlSupport.execCode, isEqualToWhenPresent(searchRequest.getExecCode()))
-                .and(JobLogDynamicSqlSupport.triggerTime, isBetweenWhenPresent(triggerBeginDate).and(triggerEndDate))
-                .orderBy(JobLogDynamicSqlSupport.triggerTime.descending())
+                .and(groupName, isEqualToWhenPresent(searchRequest.getGroupName()))
+                .and(jobId, isEqualToWhenPresent(searchRequest.getJobId()))
+                .and(triggerCode, isEqualToWhenPresent(searchRequest.getTriggerCode()))
+                .and(execCode, isEqualToWhenPresent(searchRequest.getExecCode()))
+                .and(triggerTime, isBetweenWhenPresent(triggerBeginDate).and(triggerEndDate))
+                .orderBy(triggerTime.descending())
                 .build().render(RenderingStrategies.MYBATIS3);
-        return PageHelper.startPage(searchRequest.getPage(), searchRequest.getLimit())
+        return PageMethod.startPage(searchRequest.getPage(), searchRequest.getLimit())
                 .doSelectPageInfo(() -> jobLogMapper.selectManyWithJobName(statementProvider));
     }
 
     /**
      * 根据时间批量删除日志
      */
-    public void deleteByTime(JobLogDeleteRequest deleteRequest) {
+    public void deleteByTime(JobLogDeleteRequest dr) {
         jobLogMapper.delete(
-                deleteFrom(JobLogDynamicSqlSupport.jobLog)
+                deleteFrom(jobLog)
                         .where()
-                        .and(JobLogDynamicSqlSupport.groupName, isEqualToWhenPresent(deleteRequest.getGroupName()))
-                        .and(JobLogDynamicSqlSupport.jobId, isEqualToWhenPresent(deleteRequest.getJobId()))
-                        .and(JobLogDynamicSqlSupport.triggerTime, isBetween(deleteRequest.getBeginDate()).and(deleteRequest.getEndDate()))
+                        .and(groupName, isEqualToWhenPresent(dr.getGroupName()))
+                        .and(jobId, isEqualToWhenPresent(dr.getJobId()))
+                        .and(triggerTime, isBetween(dr.getBeginDate()).and(dr.getEndDate()))
                         .build().render(RenderingStrategies.MYBATIS3)
         );
     }
@@ -82,10 +80,9 @@ public class LogService {
     public ResultT<String> killTrigger(Long logId) {
         // 查询任务
         JobLog jobLog = jobLogMapper.selectOne(
-                select(JobLogDynamicSqlSupport.id, JobLogDynamicSqlSupport.jobId, JobLogDynamicSqlSupport.execCode,
-                        JobLogDynamicSqlSupport.executorAddress)
+                select(id, jobId, execCode, executorAddress)
                         .from(JobLogDynamicSqlSupport.jobLog)
-                        .where(JobLogDynamicSqlSupport.id, isEqualTo(logId))
+                        .where(id, isEqualTo(logId))
                         .build().render(RenderingStrategies.MYBATIS3)
         ).orElse(null);
         if (jobLog == null) {

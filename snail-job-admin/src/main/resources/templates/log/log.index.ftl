@@ -31,7 +31,8 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">分组</label>
                         <div class="layui-input-block">
-                            <select id="searchGroupNameID" name="groupName" autocomplete="off" lay-filter="searchGroupNameFilter">
+                            <select id="searchGroupNameID" name="groupName" autocomplete="off"
+                                    lay-filter="searchGroupNameFilter">
                                 <option value="">请选择</option>
                             </select>
                         </div>
@@ -88,7 +89,7 @@
             <div class="layui-form-item layui-form-text">
                 <label class="layui-form-label">执行地址</label>
                 <div class="layui-input-block">
-                    <input class="layui-text" name="executor_address" disabled />
+                    <input class="layui-text" name="executor_address" disabled/>
                 </div>
             </div>
             <div class="layui-form-item layui-form-text">
@@ -128,8 +129,9 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">时间范围</label>
                 <div class="layui-input-block">
-                    <input type="text" id="timeRangeID" name="time_range" class="layui-input" required lay-verify="required"
-                           placeholder="请选择时间范围" autocomplete="off" />
+                    <input type="text" id="timeRangeID" name="time_range" class="layui-input" required
+                           lay-verify="required"
+                           placeholder="请选择时间范围" autocomplete="off"/>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -184,7 +186,7 @@
     let form = layui.form;
     let laydate = layui.laydate;
 
-    !function() {
+    !function () {
         // 渲染表格
         table.render({
             elem: '#dataTableID',
@@ -205,7 +207,7 @@
             response: {
                 statusCode: 200
             },
-            parseData: function(res) {
+            parseData: function (res) {
                 return {
                     "code": res.code,
                     "msg": res.msg,
@@ -274,6 +276,7 @@
     // 监听执行器的变更
     form.on('select(searchGroupNameFilter)', onGroupNameChange);
     form.on('select(delGroupNameFilter)', onGroupNameChange);
+
     function onGroupNameChange(data) {
         let $elem = $(data.elem);
         let $this = undefined;

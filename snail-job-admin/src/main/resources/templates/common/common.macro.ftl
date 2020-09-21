@@ -63,9 +63,9 @@
 
 <#-- 底部栏 -->
 <#macro commonFooter>
-    <#--<div class="layui-footer">
-        <strong>
-            Copyright &copy; 2020-${.now?string('yyyy')} 蜗牛大师
-        </strong>
-    </div>-->
+<#--<div class="layui-footer">
+    <strong>
+        Copyright &copy; 2020-${.now?string('yyyy')} 蜗牛大师
+    </strong>
+</div>-->
 </#macro>

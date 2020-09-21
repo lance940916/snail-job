@@ -11,8 +11,6 @@ import com.snailwu.job.core.biz.model.CallbackParam;
 import com.snailwu.job.core.biz.model.RegistryParam;
 import com.snailwu.job.core.biz.model.ResultT;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -26,7 +24,6 @@ import static org.mybatis.dynamic.sql.SqlBuilder.*;
  */
 @Service
 public class AdminBizImpl implements AdminBiz {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AdminBizImpl.class);
 
     @Resource
     private JobExecutorMapper jobExecutorMapper;
@@ -64,18 +61,20 @@ public class AdminBizImpl implements AdminBiz {
 
     @Override
     public ResultT<String> registry(RegistryParam registryParam) {
+        String groupName = registryParam.getGroupName();
+        String address = registryParam.getAddress();
         JobExecutor jobExecutor = jobExecutorMapper.selectOne(
                 select(JobExecutorDynamicSqlSupport.id)
                         .from(JobExecutorDynamicSqlSupport.jobExecutor)
-                        .where(JobExecutorDynamicSqlSupport.groupName, isEqualTo(registryParam.getGroupName()))
-                        .and(JobExecutorDynamicSqlSupport.address, isEqualTo(registryParam.getAddress()))
+                        .where(JobExecutorDynamicSqlSupport.groupName, isEqualTo(groupName))
+                        .and(JobExecutorDynamicSqlSupport.address, isEqualTo(address))
                         .build().render(RenderingStrategies.MYBATIS3)
         ).orElse(null);
         if (jobExecutor == null) {
             // 新增
             jobExecutor = new JobExecutor();
-            jobExecutor.setGroupName(registryParam.getGroupName());
-            jobExecutor.setAddress(registryParam.getAddress());
+            jobExecutor.setGroupName(groupName);
+            jobExecutor.setAddress(address);
             jobExecutor.setUpdateTime(new Date());
             jobExecutorMapper.insertSelective(jobExecutor);
         } else {
@@ -91,8 +90,10 @@ public class AdminBizImpl implements AdminBiz {
         // 直接删除
         jobExecutorMapper.delete(
                 deleteFrom(JobExecutorDynamicSqlSupport.jobExecutor)
-                        .where(JobExecutorDynamicSqlSupport.groupName, isEqualTo(registryParam.getGroupName()))
-                        .and(JobExecutorDynamicSqlSupport.address, isEqualTo(registryParam.getAddress()))
+                        .where(JobExecutorDynamicSqlSupport.groupName,
+                                isEqualTo(registryParam.getGroupName()))
+                        .and(JobExecutorDynamicSqlSupport.address,
+                                isEqualTo(registryParam.getAddress()))
                         .build().render(RenderingStrategies.MYBATIS3)
         );
         return ResultT.SUCCESS;

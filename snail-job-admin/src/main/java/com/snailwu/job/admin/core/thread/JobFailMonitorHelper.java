@@ -27,6 +27,9 @@ import static org.mybatis.dynamic.sql.SqlBuilder.*;
 public class JobFailMonitorHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(JobFailMonitorHelper.class);
 
+    private JobFailMonitorHelper() {
+    }
+
     private static Thread monitorThread;
     private static volatile boolean stopFlag = false;
 

@@ -60,7 +60,7 @@ public class GroupController {
 
     @GetMapping("/list_all")
     public ResultT<List<JobGroup>> listAll() {
-        List<JobGroup> list =  groupService.listAll();
+        List<JobGroup> list = groupService.listAll();
         return new ResultT<>(list);
     }
 

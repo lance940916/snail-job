@@ -33,12 +33,16 @@ import static org.mybatis.dynamic.sql.SqlBuilder.select;
 public class JobTrigger {
     private static final Logger LOGGER = LoggerFactory.getLogger(JobTrigger.class);
 
+    private JobTrigger() {
+    }
+
     /**
      * 触发 Job
      *
      * @param executorParam 执行参数，手动执行时页面填写的会覆盖任务中的参数
      */
-    public static void trigger(int jobId, TriggerTypeEnum triggerType, int failRetryCount, String executorParam) {
+    public static void trigger(int jobId, TriggerTypeEnum triggerType, int failRetryCount,
+                               String executorParam) {
         // 查询任务信息
         JobInfo jobInfo = AdminConfig.getInstance().getJobInfoMapper().selectOne(
                 select(JobInfoDynamicSqlSupport.jobInfo.allColumns())
@@ -55,14 +59,15 @@ public class JobTrigger {
         }
 
         // 查询任务分组信息
+        String groupName = jobInfo.getGroupName();
         JobGroup jobGroup = AdminConfig.getInstance().getJobGroupMapper().selectOne(
                 select(JobGroupDynamicSqlSupport.id, JobGroupDynamicSqlSupport.addressList)
                         .from(JobGroupDynamicSqlSupport.jobGroup)
-                        .where(JobGroupDynamicSqlSupport.name, isEqualTo(jobInfo.getGroupName())) // name 是唯一的
+                        .where(JobGroupDynamicSqlSupport.name, isEqualTo(groupName))
                         .build().render(RenderingStrategies.MYBATIS3)
         ).orElse(null);
         if (jobGroup == null) {
-            LOGGER.error("任务分组信息不存在.name:{}", jobInfo.getGroupName());
+            LOGGER.error("任务分组信息不存在.name:{}", groupName);
             return;
         }
 
@@ -70,7 +75,8 @@ public class JobTrigger {
         String groupAddresses = jobGroup.getAddressList();
 
         // 失败重试次数（如果参数大于，则使用参数的值）
-        int finalFailRetryCount = failRetryCount >= 0 ? failRetryCount : jobInfo.getExecutorFailRetryCount();
+        int finalFailRetryCount = failRetryCount >= 0 ?
+                failRetryCount : jobInfo.getExecutorFailRetryCount();
 
         // 进行调度
         processTrigger(jobInfo, groupAddresses, triggerType, finalFailRetryCount);
@@ -79,12 +85,14 @@ public class JobTrigger {
     /**
      * 进行调度
      */
-    private static void processTrigger(JobInfo jobInfo, String groupAddresses, TriggerTypeEnum triggerType, int failRetryCount) {
+    private static void processTrigger(JobInfo jobInfo, String groupAddresses,
+                                       TriggerTypeEnum triggerType, int failRetryCount) {
         // 调度时间
         Date triggerTime = new Date();
 
         // 执行器路由策略
-        ExecutorRouteStrategyEnum routeStrategy = ExecutorRouteStrategyEnum.match(jobInfo.getExecutorRouteStrategy());
+        ExecutorRouteStrategyEnum routeStrategy = ExecutorRouteStrategyEnum
+                .match(jobInfo.getExecutorRouteStrategy());
 
         // 1 保存日志
         JobLog jobLog = new JobLog();
@@ -107,14 +115,18 @@ public class JobTrigger {
         String address = null;
         if (groupAddresses != null) {
             List<String> addressList = Arrays.asList(groupAddresses.split(","));
-            ResultT<String> routeAddressResult = routeStrategy.getRouter().route(triggerParam, addressList);
+            ResultT<String> routeAddressResult = routeStrategy.getRouter()
+                    .route(triggerParam, addressList);
             if (routeAddressResult.getCode() == ResultT.SUCCESS_CODE) {
                 address = routeAddressResult.getContent();
             }
         }
-        LOGGER.info("开始调度-JobId:{},LogId:{},触发类型:{},参数:{},失败重试次数:{},调度时间:{},执行器地址:{}",
-                jobInfo.getId(), jobLog.getId(), triggerType, jobInfo.getExecutorParam(), failRetryCount,
-                DateFormatUtils.format(triggerTime, DATE_TIME_MS_PATTERN), address);
+        String triggerTimeStr = DateFormatUtils.format(triggerTime, DATE_TIME_MS_PATTERN);
+        LOGGER.info(
+                "开始调度-JobId:{},LogId:{},触发类型:{},参数:{},失败重试次数:{},调度时间:{}, 执行器地址:{}",
+                jobInfo.getId(), jobLog.getId(), triggerType, jobInfo.getExecutorParam(),
+                failRetryCount, triggerTimeStr, address
+        );
 
         // 4 触发远程执行器
         ResultT<String> triggerResult;
