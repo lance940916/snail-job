@@ -8,10 +8,17 @@ package com.snailwu.job.core.enums;
  */
 public class RegistryConfig {
 
-    // 心跳超时时间
-    public static final int BEAT_TIMEOUT = 30; // 秒
+    /**
+     * 心跳间隔时间
+     * 单位：秒
+     */
+    public static final int BEAT_TIME = 30;
 
-    // 主机死亡时间
-    public static final int DEAD_TIMEOUT = BEAT_TIMEOUT * 3; // 秒
+    /**
+     * 主机死亡时间
+     * 规定 心跳三次失败，则认定主机死亡
+     * 单位：秒
+     */
+    public static final int DEAD_TIME = BEAT_TIME * 3;
 
 }

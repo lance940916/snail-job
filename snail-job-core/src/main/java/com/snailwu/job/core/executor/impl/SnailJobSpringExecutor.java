@@ -5,8 +5,6 @@ import com.snailwu.job.core.exception.SnailJobException;
 import com.snailwu.job.core.executor.SnailJobExecutor;
 import com.snailwu.job.core.handler.annotation.SnailJob;
 import com.snailwu.job.core.handler.impl.MethodJobHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.SmartInitializingSingleton;
@@ -19,14 +17,14 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
- * Spring 的执行器节点配置
+ * 依赖于 Spring 框架的扫描器
+ * 扫描标有 @SnailJob 注解的方法注册到 JOB_HANDLER_REPOSITORY 中
  *
  * @author 吴庆龙
  * @date 2020/5/26 10:45 上午
  */
 public class SnailJobSpringExecutor extends SnailJobExecutor
         implements ApplicationContextAware, SmartInitializingSingleton, DisposableBean {
-    public static final Logger LOGGER = LoggerFactory.getLogger(SnailJobSpringExecutor.class);
 
     /**
      * Spring 上下文

@@ -63,7 +63,7 @@ public class ExecutorRegistryThread {
                 // 休眠
                 try {
                     if (!stopFlag) {
-                        TimeUnit.SECONDS.sleep(RegistryConfig.BEAT_TIMEOUT);
+                        TimeUnit.SECONDS.sleep(RegistryConfig.BEAT_TIME);
                     }
                 } catch (InterruptedException e) {
                     // 正常停止的中断忽略

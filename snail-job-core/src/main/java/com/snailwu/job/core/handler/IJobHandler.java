@@ -13,6 +13,12 @@ public abstract class IJobHandler {
     public void init() throws InvocationTargetException, IllegalAccessException {
     }
 
+    /**
+     * 具体的执行逻辑
+     * @param param 参数
+     * @return 返回值
+     * @throws Exception 异常
+     */
     public abstract ResultT<String> execute(String param) throws Exception;
 
     public void destroy() throws InvocationTargetException, IllegalAccessException {

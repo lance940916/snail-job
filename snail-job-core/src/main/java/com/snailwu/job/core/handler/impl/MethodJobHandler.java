@@ -7,14 +7,31 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
+ * 基于方法的任务调度
+ *
  * @author 吴庆龙
  * @date 2020/5/26 11:38 上午
  */
 public class MethodJobHandler extends IJobHandler {
 
+    /**
+     * 目标类
+     */
     private final Object target;
+
+    /**
+     * 目标方法
+     */
     private final Method method;
+
+    /**
+     * 初始化方法
+     */
     private final Method initMethod;
+
+    /**
+     * 销毁方法
+     */
     private final Method destroyMethod;
 
     public MethodJobHandler(Object target, Method method, Method initMethod, Method destroyMethod) {

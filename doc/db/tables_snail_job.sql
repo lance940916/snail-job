@@ -3,30 +3,30 @@ USE `snail_job`;
 
 SHOW TABLES;
 
--- 执行器注册信息
-DROP TABLE IF EXISTS `job_executor`;
-CREATE TABLE IF NOT EXISTS `job_executor`
+-- 节点注册信息
+DROP TABLE IF EXISTS `job_node_info`;
+CREATE TABLE IF NOT EXISTS `job_node_info`
 (
     `id`          INT(11)     NOT NULL AUTO_INCREMENT,
     `group_name`  VARCHAR(32) NOT NULL COMMENT '所属任务组',
-    `address`     VARCHAR(64) NOT NULL COMMENT '执行器地址',
+    `address`     VARCHAR(64) NOT NULL COMMENT '节点地址',
     `update_time` DATETIME    NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),
     INDEX `idx_g_a` (`group_name`, `address`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
--- 任务组信息
-DROP TABLE IF EXISTS `job_group`;
-CREATE TABLE IF NOT EXISTS `job_group`
+-- 应用
+DROP TABLE IF EXISTS `job_application`;
+CREATE TABLE IF NOT EXISTS `job_application`
 (
-    `id`           INT(11)      NOT NULL AUTO_INCREMENT,
-    `title`        VARCHAR(64)  NOT NULL COMMENT '组的标题',
-    `name`         VARCHAR(32)  NOT NULL COMMENT '任务组名称，唯一不重复',
-    `type`         TINYINT      NOT NULL COMMENT '注册类型.自动注册=0;手动注册=1',
-    `address_list` VARCHAR(512) NOT NULL COMMENT '执行器节点地址列表，多地址用逗号分隔',
-    `create_time`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+    `id`           INT(11)            NOT NULL AUTO_INCREMENT,
+    `name`         VARCHAR(32) UNIQUE NOT NULL COMMENT '应用名称',
+    `title`        VARCHAR(64)        NOT NULL COMMENT '标题',
+    `type`         TINYINT            NOT NULL COMMENT '注册类型.自动注册=0;手动注册=1',
+    `address_list` VARCHAR(512)       NOT NULL COMMENT '执行器节点地址列表，多地址用逗号分隔',
+    `create_time`  DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`  DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
@@ -36,7 +36,7 @@ DROP TABLE IF EXISTS `job_info`;
 CREATE TABLE IF NOT EXISTS `job_info`
 (
     `id`                        INT(11)      NOT NULL AUTO_INCREMENT,
-    `name`                     VARCHAR(255) NOT NULL COMMENT '任务名称',
+    `name`                      VARCHAR(255) NOT NULL COMMENT '任务名称',
     `group_name`                VARCHAR(32)  NOT NULL COMMENT '组名称',
     `cron`                      VARCHAR(50)  NOT NULL COMMENT 'CRON表达式',
     `create_time`               DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `job_log`
 
     `alarm_status`     TINYINT       NOT NULL DEFAULT '0' COMMENT '告警状态：0-默认、1-无需告警、2-告警成功、3-告警失败',
     PRIMARY KEY (`id`),
-    INDEX `idx_tt`(`trigger_time` DESC)
+    INDEX `idx_tt` (`trigger_time` DESC)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 

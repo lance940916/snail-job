@@ -57,7 +57,8 @@ public class EmbedServer {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline()
-                                    .addLast(new IdleStateHandler(0, 0, 30))
+                                    .addLast(new IdleStateHandler(0, 0,
+                                            30))
                                     .addLast(new HttpServerCodec())
                                     .addLast(new HttpObjectAggregator(5 * 1024 * 1024))
                                     .addLast(new EmbedHttpServerHandler(executorBiz, accessToken))

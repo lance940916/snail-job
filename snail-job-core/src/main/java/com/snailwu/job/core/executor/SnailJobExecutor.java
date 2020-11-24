@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2020/5/25 2:32 下午
  */
 public class SnailJobExecutor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SnailJobExecutor.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(SnailJobExecutor.class);
 
     /**
      * 调度中心的地址
@@ -131,15 +131,15 @@ public class SnailJobExecutor {
 
     /**
      * 实例化调度中心Client，用来发起请求给调度中心
-     */
-    private void initAdminBiz(String adminAddress, String accessToken) {
-        if (adminAddress == null || adminAddress.trim().length() == 0) {
-            LOGGER.warn("[SnailJob]-没有配置调度中心地址.");
-            return;
-        }
+                */
+        private void initAdminBiz(String adminAddress, String accessToken) {
+            if (adminAddress == null || adminAddress.trim().length() == 0) {
+                LOGGER.warn("[SnailJob]-没有配置调度中心地址.");
+                return;
+            }
 
-        // 实例化调度中心
-        adminBiz = new AdminBizClient(adminAddress.trim(), accessToken);
+            // 实例化调度中心
+            adminBiz = new AdminBizClient(adminAddress.trim(), accessToken);
     }
 
     public static AdminBiz getAdminBiz() {
@@ -152,7 +152,7 @@ public class SnailJobExecutor {
      * 启动执行器的内嵌服务端
      */
     private void startEmbedServer() {
-        // 组装 Address
+        // 组装本地地址，注册到调度中心中
         String executorAddress = "http://" + ip + ":" + port;
 
         // 启动 Netty Server，与 Admin 进行通信
