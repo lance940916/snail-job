@@ -11,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.mail.internet.MimeMessage;
@@ -28,7 +27,7 @@ import static org.mybatis.dynamic.sql.SqlBuilder.select;
  * @author 吴庆龙
  * @date 2020/7/20 5:43 下午
  */
-@Component
+//@Component
 public class EmailAlarm implements JobAlarm {
 
     @Resource
