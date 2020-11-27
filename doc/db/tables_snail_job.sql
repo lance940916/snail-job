@@ -1,33 +1,35 @@
-CREATE database if NOT EXISTS `snail_job` default character set utf8mb4 collate utf8mb4_unicode_ci;
-USE `snail_job`;
+CREATE database if NOT EXISTS `wu_job` default character set utf8mb4;
+USE `wu_job`;
 
 SHOW TABLES;
 
 -- 节点注册信息
-DROP TABLE IF EXISTS `job_node_info`;
-CREATE TABLE IF NOT EXISTS `job_node_info`
+DROP TABLE IF EXISTS `job_node`;
+CREATE TABLE IF NOT EXISTS `job_node`
 (
     `id`          INT(11)     NOT NULL AUTO_INCREMENT,
-    `group_name`  VARCHAR(32) NOT NULL COMMENT '所属任务组',
+    `app_name`    VARCHAR(32) NOT NULL COMMENT '所属应用',
     `address`     VARCHAR(64) NOT NULL COMMENT '节点地址',
-    `update_time` DATETIME    NULL COMMENT '更新时间',
-    PRIMARY KEY (`id`),
+    `create_time` DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    PRIMARY KEY `pk_id` (`id`),
     INDEX `idx_g_a` (`group_name`, `address`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
 -- 应用
-DROP TABLE IF EXISTS `job_application`;
-CREATE TABLE IF NOT EXISTS `job_application`
+DROP TABLE IF EXISTS `job_app`;
+CREATE TABLE IF NOT EXISTS `job_app`
 (
-    `id`           INT(11)            NOT NULL AUTO_INCREMENT,
-    `name`         VARCHAR(32) UNIQUE NOT NULL COMMENT '应用名称',
-    `title`        VARCHAR(64)        NOT NULL COMMENT '标题',
-    `type`         TINYINT            NOT NULL COMMENT '注册类型.自动注册=0;手动注册=1',
-    `address_list` VARCHAR(512)       NOT NULL COMMENT '执行器节点地址列表，多地址用逗号分隔',
-    `create_time`  DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time`  DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-    PRIMARY KEY (`id`)
+    `id`          INT(11)      NOT NULL AUTO_INCREMENT,
+    `app_name`    VARCHAR(32)  NOT NULL COMMENT '应用名称',
+    `title`       VARCHAR(64)  NOT NULL COMMENT '标题',
+    `type`        TINYINT      NOT NULL COMMENT '注册类型.自动注册=0;手动注册=1',
+    `addresses`   VARCHAR(512) NOT NULL COMMENT '执行器节点地址列表，多地址用逗号分隔',
+    `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY `pk_id` (`id`),
+    UNIQUE KEY `uk_app_name` (`app_name`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
@@ -35,25 +37,25 @@ CREATE TABLE IF NOT EXISTS `job_application`
 DROP TABLE IF EXISTS `job_info`;
 CREATE TABLE IF NOT EXISTS `job_info`
 (
-    `id`                        INT(11)      NOT NULL AUTO_INCREMENT,
-    `name`                      VARCHAR(255) NOT NULL COMMENT '任务名称',
-    `group_name`                VARCHAR(32)  NOT NULL COMMENT '组名称',
-    `cron`                      VARCHAR(50)  NOT NULL COMMENT 'CRON表达式',
-    `create_time`               DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
-    `update_time`               DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+    `id`                    INT(11)      NOT NULL AUTO_INCREMENT,
+    `name`                  VARCHAR(255) NOT NULL COMMENT '任务名称',
+    `app_name`              VARCHAR(32)  NOT NULL COMMENT '组名称',
+    `cron`                  VARCHAR(50)  NOT NULL COMMENT 'CRON表达式',
+    `create_time`           DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+    `update_time`           DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
 
-    `author`                    VARCHAR(64)  NULL COMMENT '负责人',
-    `alarm_email`               VARCHAR(255) NULL COMMENT '报警邮箱',
+    `author`                VARCHAR(64)  NOT NULL DEFAULT '' COMMENT '负责人',
+    `alarm_email`           VARCHAR(255) NOT NULL DEFAULT '' COMMENT '报警邮箱',
 
-    `executor_route_strategy`   VARCHAR(50)  NOT NULL COMMENT '执行器路由策略',
-    `executor_handler`          VARCHAR(255) NOT NULL COMMENT '执行器任务handler',
-    `executor_param`            VARCHAR(512) NULL COMMENT '执行器任务参数',
-    `executor_timeout`          INT(11)      NOT NULL DEFAULT 0 COMMENT '任务执行超时时间，单位秒',
-    `executor_fail_retry_count` TINYINT      NOT NULL DEFAULT 0 COMMENT '失败重试次数',
+    `exec_route_strategy`   VARCHAR(50)  NOT NULL DEFAULT '' COMMENT '执行器路由策略',
+    `exec_handler`          VARCHAR(255) NOT NULL DEFAULT '' COMMENT '执行器任务handler',
+    `exec_param`            VARCHAR(512) NOT NULL DEFAULT '' COMMENT '执行器任务参数',
+    `exec_timeout`          INT(11)      NOT NULL DEFAULT 0 COMMENT '任务执行超时时间，单位秒',
+    `exec_fail_retry_count` TINYINT      NOT NULL DEFAULT 0 COMMENT '失败重试次数',
 
-    `trigger_status`            TINYINT      NOT NULL DEFAULT '0' COMMENT '调度状态：0-停止，1-运行',
-    `trigger_last_time`         BIGINT(13)   NOT NULL DEFAULT '0' COMMENT '上次调度时间',
-    `trigger_next_time`         BIGINT(13)   NOT NULL DEFAULT '0' COMMENT '下次调度时间',
+    `trigger_status`        TINYINT      NOT NULL DEFAULT 0 COMMENT '调度状态：0-停止，1-运行',
+    `trigger_last_time`     BIGINT(13)   NOT NULL DEFAULT 0 COMMENT '上次调度时间',
+    `trigger_next_time`     BIGINT(13)   NOT NULL DEFAULT 0 COMMENT '下次调度时间',
 
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -65,23 +67,23 @@ CREATE TABLE IF NOT EXISTS `job_log`
 (
     `id`               BIGINT(20)    NOT NULL AUTO_INCREMENT,
     `job_id`           INT(11)       NOT NULL COMMENT '任务，主键ID',
-    `group_name`       VARCHAR(32)   NOT NULL COMMENT '任务组名',
+    `app_name`         VARCHAR(32)   NOT NULL COMMENT '任务组名',
 
-    `executor_address` VARCHAR(128)  NULL COMMENT '本次执行的地址',
-    `executor_handler` VARCHAR(64)   NULL COMMENT '执行器任务handler',
-    `executor_param`   VARCHAR(512)  NULL COMMENT '执行器任务参数',
+    `exec_address`     VARCHAR(128)  NOT NULL DEFAULT '' COMMENT '本次执行的地址',
+    `exec_handler`     VARCHAR(64)   NOT NULL DEFAULT '' COMMENT '执行器任务handler',
+    `exec_param`       VARCHAR(512)  NOT NULL DEFAULT '' COMMENT '执行器任务参数',
     `fail_retry_count` TINYINT       NOT NULL DEFAULT 0 COMMENT '失败重试次数',
 
     `trigger_time`     DATETIME      NULL COMMENT '调度-时间',
     `trigger_code`     INT(11)       NOT NULL DEFAULT 0 COMMENT '调度-结果码',
-    `trigger_msg`      VARCHAR(1024) NULL COMMENT '调度-结果信息',
+    `trigger_msg`      VARCHAR(1024) NOT NULL DEFAULT '' COMMENT '调度-结果信息',
 
     `exec_time`        DATETIME      NULL COMMENT '执行-时间',
     `exec_code`        INT(11)       NOT NULL DEFAULT 0 COMMENT '执行-结果码',
-    `exec_msg`         VARCHAR(1024) NULL COMMENT '执行-结果信息',
+    `exec_msg`         VARCHAR(1024) NOT NULL DEFAULT '' COMMENT '执行-结果信息',
 
     `alarm_status`     TINYINT       NOT NULL DEFAULT '0' COMMENT '告警状态：0-默认、1-无需告警、2-告警成功、3-告警失败',
-    PRIMARY KEY (`id`),
+    PRIMARY KEY `pk_id` (`id`),
     INDEX `idx_tt` (`trigger_time` DESC)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
@@ -95,7 +97,7 @@ CREATE TABLE IF NOT EXISTS `job_log_report`
     `running_count` INT(11) NOT NULL DEFAULT 0 COMMENT '运行中-日志数量',
     `success_count` INT(11) NOT NULL DEFAULT 0 COMMENT '执行成功-日志数量',
     `fail_count`    INT(11) NOT NULL DEFAULT 0 COMMENT '执行失败-日志数量',
-    PRIMARY KEY (`id`)
+    PRIMARY KEY `pk_id` (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
@@ -104,7 +106,7 @@ DROP TABLE IF EXISTS `job_lock`;
 CREATE TABLE IF NOT EXISTS `job_lock`
 (
     `lock_name` VARCHAR(50) NOT NULL COMMENT '锁名称',
-    PRIMARY KEY (`lock_name`)
+    PRIMARY KEY `pk_lock_name` (`lock_name`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
