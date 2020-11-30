@@ -1,6 +1,8 @@
 package com.snailwu.job.core.biz.model;
 
 /**
+ * 节点参数
+ *
  * @author 吴庆龙
  * @date 2020/5/25 2:41 下午
  */
@@ -12,16 +14,16 @@ public class RegistryParam {
     private String appName;
 
     /**
-     * 注册节点的地址
+     * 节点的地址
      */
-    private String address;
+    private String nodeAddress;
 
     public RegistryParam() {
     }
 
-    public RegistryParam(String appName, String address) {
+    public RegistryParam(String appName, String nodeAddress) {
         this.appName = appName;
-        this.address = address;
+        this.nodeAddress = nodeAddress;
     }
 
     public String getAppName() {
@@ -32,11 +34,11 @@ public class RegistryParam {
         this.appName = appName;
     }
 
-    public String getAddress() {
-        return address;
+    public String getNodeAddress() {
+        return nodeAddress;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setNodeAddress(String nodeAddress) {
+        this.nodeAddress = nodeAddress;
     }
 }

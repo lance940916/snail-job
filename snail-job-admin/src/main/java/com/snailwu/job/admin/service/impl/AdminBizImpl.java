@@ -60,9 +60,9 @@ public class AdminBizImpl implements AdminBiz {
     }
 
     @Override
-    public ResultT<String> registry(RegistryParam registryParam) {
+    public ResultT<String> registryNode(RegistryParam registryParam) {
         String appName = registryParam.getAppName();
-        String address = registryParam.getAddress();
+        String address = registryParam.getNodeAddress();
         JobNode jobExecutor = jobExecutorMapper.selectOne(
                 select(JobNodeDynamicSqlSupport.id)
                         .from(JobNodeDynamicSqlSupport.jobNode)
@@ -86,14 +86,14 @@ public class AdminBizImpl implements AdminBiz {
     }
 
     @Override
-    public ResultT<String> registryRemove(RegistryParam registryParam) {
+    public ResultT<String> removeNode(RegistryParam registryParam) {
         // 直接删除
         jobExecutorMapper.delete(
                 deleteFrom(JobNodeDynamicSqlSupport.jobNode)
                         .where(JobNodeDynamicSqlSupport.appName,
                                 isEqualTo(registryParam.getAppName()))
                         .and(JobNodeDynamicSqlSupport.address,
-                                isEqualTo(registryParam.getAddress()))
+                                isEqualTo(registryParam.getNodeAddress()))
                         .build().render(RenderingStrategies.MYBATIS3)
         );
         return ResultT.SUCCESS;

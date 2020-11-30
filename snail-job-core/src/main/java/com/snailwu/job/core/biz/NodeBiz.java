@@ -6,8 +6,6 @@ import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.biz.model.TriggerParam;
 
 /**
- * 执行器需要的方法
- *
  * @author 吴庆龙
  * @date 2020/5/25 11:59 上午
  */
@@ -15,22 +13,33 @@ public interface NodeBiz {
 
     /**
      * 执行器是否在线
+     *
+     * @return 响应结果
      */
     ResultT<String> beat();
 
     /**
      * 执行器是否忙碌
+     *
+     * @param idleBeatParam 参数
+     * @return 响应结果
      */
     ResultT<String> idleBeat(IdleBeatParam idleBeatParam);
 
     /**
      * 执行任务
+     *
+     * @param triggerParam 参数
+     * @return 响应结果
      */
     ResultT<String> run(TriggerParam triggerParam);
 
     /**
      * 终止任务
      * true:终止成功;false:终止失败(任务已被执行或任务执行中)
+     *
+     * @param killParam 参数
+     * @return 响应结果
      */
     ResultT<String> kill(KillParam killParam);
 

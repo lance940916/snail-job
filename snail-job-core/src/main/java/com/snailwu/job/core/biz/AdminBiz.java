@@ -22,13 +22,13 @@ public interface AdminBiz {
      * @param registryParam 注册参数
      * @return 注册结果
      */
-    ResultT<String> registry(RegistryParam registryParam);
+    ResultT<String> registryNode(RegistryParam registryParam);
 
     /**
      * 移除客户端
      * @param registryParam 移除参数
      * @return 移除结果
      */
-    ResultT<String> registryRemove(RegistryParam registryParam);
+    ResultT<String> removeNode(RegistryParam registryParam);
 
 }

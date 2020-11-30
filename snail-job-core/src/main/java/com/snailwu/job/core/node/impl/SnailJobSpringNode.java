@@ -1,11 +1,11 @@
-package com.snailwu.job.core.executor.impl;
+package com.snailwu.job.core.node.impl;
 
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.exception.JobException;
-import com.snailwu.job.core.executor.SnailJobExecutor;
-import com.snailwu.job.core.executor.SnailJobNodeProperties;
 import com.snailwu.job.core.handler.annotation.SnailJob;
 import com.snailwu.job.core.handler.impl.MethodJobHandler;
+import com.snailwu.job.core.node.SnailJobNode;
+import com.snailwu.job.core.node.SnailJobNodeProperties;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.SmartInitializingSingleton;
@@ -24,7 +24,7 @@ import java.util.Map;
  * @author 吴庆龙
  * @date 2020/5/26 10:45 上午
  */
-public class SnailJobSpringExecutor extends SnailJobExecutor
+public class SnailJobSpringNode extends SnailJobNode
         implements ApplicationContextAware, SmartInitializingSingleton, DisposableBean {
 
     /**
@@ -32,7 +32,7 @@ public class SnailJobSpringExecutor extends SnailJobExecutor
      */
     private static ApplicationContext applicationContext;
 
-    public SnailJobSpringExecutor(SnailJobNodeProperties configuration) {
+    public SnailJobSpringNode(SnailJobNodeProperties configuration) {
         super(configuration);
     }
 
@@ -129,7 +129,7 @@ public class SnailJobSpringExecutor extends SnailJobExecutor
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        SnailJobSpringExecutor.applicationContext = applicationContext;
+        SnailJobSpringNode.applicationContext = applicationContext;
     }
 
     @Override

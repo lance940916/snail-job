@@ -3,8 +3,8 @@ package com.snailwu.job.core.thread;
 import com.snailwu.job.core.biz.model.CallbackParam;
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.biz.model.TriggerParam;
-import com.snailwu.job.core.executor.SnailJobExecutor;
 import com.snailwu.job.core.handler.IJobHandler;
+import com.snailwu.job.core.node.SnailJobNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,7 +145,7 @@ public class JobThread extends Thread {
                 if (triggerParam == null) {
                     // 30 次获取操作后，没有任务可以处理，则自动销毁线程
                     if (idleTimes > 30 && jobQueue.size() == 0) {
-                        SnailJobExecutor.removeJobThread(jobId, "执行线程空闲，主动终止");
+                        SnailJobNode.removeJobThread(jobId, "执行线程空闲，主动终止");
                     }
                     continue;
                 }
@@ -177,7 +177,7 @@ public class JobThread extends Thread {
                     callbackParam.setExecTime(new Date());
                     callbackParam.setExecCode(execResult.getCode());
                     callbackParam.setExecMsg(execResult.getMsg());
-                    ResultCallbackThread.addCallbackQueue(callbackParam);
+                    CallbackThread.addCallbackQueue(callbackParam);
                 }
             }
         }
@@ -194,7 +194,7 @@ public class JobThread extends Thread {
             callbackParam.setExecCode(ResultT.FAIL_CODE);
             stopReason = stopReason != null ? stopReason : "";
             callbackParam.setExecMsg("任务未执行,执行线程被中断。原因：" + stopReason);
-            ResultCallbackThread.addCallbackQueue(callbackParam);
+            CallbackThread.addCallbackQueue(callbackParam);
         }
 
         // 执行该 JobHandler 的销毁方法

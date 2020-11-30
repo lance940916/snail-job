@@ -3,7 +3,7 @@ package com.snailwu.job.core.thread;
 import com.snailwu.job.core.biz.AdminBiz;
 import com.snailwu.job.core.biz.model.CallbackParam;
 import com.snailwu.job.core.biz.model.ResultT;
-import com.snailwu.job.core.executor.SnailJobExecutor;
+import com.snailwu.job.core.node.SnailJobNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,18 +15,19 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author 吴庆龙
  * @date 2020/5/26 4:43 下午
  */
-public class ResultCallbackThread {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ResultCallbackThread.class);
+public class CallbackThread {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CallbackThread.class);
 
     /**
      * 回调队列
+     * TODO 回调队列的最大值是 Integer.MAX_VALUE，需要优化
      */
     private static final LinkedBlockingQueue<CallbackParam> CALLBACK_QUEUE = new LinkedBlockingQueue<>();
 
     /**
      * 回调线程
      */
-    private static Thread callbackThread;
+    private static Thread thread;
 
     /**
      * 回调线程终止标志
@@ -44,51 +45,56 @@ public class ResultCallbackThread {
      * 启动回调线程
      */
     public static void start() {
-        if (SnailJobExecutor.getAdminBiz() == null) {
-            LOGGER.warn("没有配置调度中心地址。");
+        // 没有配置调度中心，不需要启动
+        if (SnailJobNode.getAdminBiz() == null) {
             return;
         }
 
-        callbackThread = new Thread(() -> {
+        thread = new Thread(() -> {
             while (running) {
                 try {
-                    // 从队列中获取回调参数（回调任务）
+                    // 获取回调任务
                     CallbackParam callbackParam = CALLBACK_QUEUE.take();
 
-                    // 有任务进行回调
+                    // 进行回调
                     doCallback(callbackParam);
                 } catch (InterruptedException e) {
-                    if (running) {
-                        LOGGER.warn("任务结果回调线程被中断。");
-                    }
+                    String errorMsg = running ? "回调线程被正常中断":"回调线程被异常中断";
+                    LOGGER.error(errorMsg);
                 } catch (Exception e) {
+                    // 本次回调失败 TODO 回调失败如何处理？？？
                     LOGGER.error("回调任务发生异常。", e);
                 }
             }
 
             // 线程被中断后，将剩余的回调任务执行完毕，再退出线程
             if (!CALLBACK_QUEUE.isEmpty()) {
-                CALLBACK_QUEUE.forEach(ResultCallbackThread::doCallback);
+                CALLBACK_QUEUE.forEach(callbackParam -> {
+                    try {
+                        // 进行回调
+                        doCallback(callbackParam);
+                    } catch (Exception e) {
+                        // 本次回调失败 TODO 回调失败如何处理？？？
+                        LOGGER.error("回调任务发生异常。", e);
+                    }
+                });
             }
         });
 
-        callbackThread.setDaemon(true);
-        callbackThread.setName("callback-result-thread");
-        callbackThread.start();
+        thread.setDaemon(true);
+        thread.setName("callback-thread");
+        thread.start();
+        LOGGER.info("回调线程-已启动。");
     }
 
     /**
      * 进行回调
      */
     private static void doCallback(CallbackParam callbackParam) {
-        AdminBiz adminBiz = SnailJobExecutor.getAdminBiz();
-        try {
-            ResultT<String> result = adminBiz.callback(callbackParam);
-            if (ResultT.SUCCESS_CODE != result.getCode()) {
-                LOGGER.error("回调失败。原因：{}", result.getMsg());
-            }
-        } catch (Exception e) {
-            LOGGER.error("回调异常。", e);
+        AdminBiz adminBiz = SnailJobNode.getAdminBiz();
+        ResultT<String> result = adminBiz.callback(callbackParam);
+        if (ResultT.SUCCESS_CODE != result.getCode()) {
+            LOGGER.error("回调返回失败。原因：{}", result.toString());
         }
     }
 
@@ -96,13 +102,15 @@ public class ResultCallbackThread {
      * 停止
      */
     public static void stop() {
-        running = true;
-        callbackThread.interrupt();
+        running = false;
+        thread.interrupt();
         try {
-            callbackThread.join();
+            // 主线程等待回调线程执行完毕
+            thread.join();
         } catch (InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
         }
+        LOGGER.info("回调线程-已停止。");
     }
 
 }

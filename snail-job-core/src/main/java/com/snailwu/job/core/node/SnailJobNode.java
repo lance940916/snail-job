@@ -1,11 +1,11 @@
-package com.snailwu.job.core.executor;
+package com.snailwu.job.core.node;
 
 import com.snailwu.job.core.biz.AdminBiz;
 import com.snailwu.job.core.biz.client.AdminBizClient;
 import com.snailwu.job.core.handler.IJobHandler;
 import com.snailwu.job.core.server.EmbedServer;
+import com.snailwu.job.core.thread.CallbackThread;
 import com.snailwu.job.core.thread.JobThread;
-import com.snailwu.job.core.thread.ResultCallbackThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,14 +13,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 执行器配置
- *
- * 需要扫描标有 @SnailJob 注解的方法注册到 JOB_HANDLER_REPOSITORY 中
+ * <p>
+ * 1. 需要扫描标有 @SnailJob 注解的方法注册到 JOB_HANDLER_REPOSITORY 中
  *
  * @author 吴庆龙
  * @date 2020/5/25 2:32 下午
  */
-public abstract class SnailJobExecutor {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(SnailJobExecutor.class);
+public abstract class SnailJobNode {
+    protected static final Logger LOGGER = LoggerFactory.getLogger(SnailJobNode.class);
 
     /**
      * 配置参数
@@ -38,19 +38,21 @@ public abstract class SnailJobExecutor {
     private EmbedServer embedServer;
 
     /**
-     * 存储 JobHandler
+     * key: 任务的名称
+     * value: 任务的具体执行Method
      */
     private static final ConcurrentHashMap<String, IJobHandler> JOB_HANDLER_REPOSITORY = new ConcurrentHashMap<>();
 
     /**
-     * 存储 JobThread
+     * key: 任务的ID
+     * value: 任务对应的执行线程
      */
     private static final ConcurrentHashMap<Integer, JobThread> JOB_THREAD_REPOSITORY = new ConcurrentHashMap<>();
 
     /**
      * 注入配置
      */
-    public SnailJobExecutor(SnailJobNodeProperties configuration) {
+    public SnailJobNode(SnailJobNodeProperties configuration) {
         this.configuration = configuration;
     }
 
@@ -62,7 +64,7 @@ public abstract class SnailJobExecutor {
         initAdminBizClient(configuration.getAdminAddress(), configuration.getAccessToken());
 
         // 启动回调任务执行结果线程
-        ResultCallbackThread.start();
+        CallbackThread.start();
 
         // 启动 Netty 服务，并将节点注册到调度中心
         startEmbedServer();
@@ -72,7 +74,7 @@ public abstract class SnailJobExecutor {
      * 停止任务节点
      */
     public void stop() {
-        ResultCallbackThread.stop();
+        CallbackThread.stop();
 
         stopEmbedServer();
     }
@@ -82,7 +84,7 @@ public abstract class SnailJobExecutor {
      */
     private void initAdminBizClient(String adminAddress, String accessToken) {
         if (adminAddress == null || adminAddress.trim().length() == 0) {
-            LOGGER.warn("[SnailJob]-没有配置调度中心地址，无法连接到调度中心");
+            LOGGER.warn("没有配置调度中心地址，无法执行任务调度。");
             return;
         }
 
@@ -105,7 +107,7 @@ public abstract class SnailJobExecutor {
         String appName = configuration.getAppName();
         String accessToken = configuration.getAccessToken();
 
-        // 组装本地地址，注册到调度中心中
+        // 本地地址，注册到调度中心中
         String hostAddress = "http://" + hostIp + ":" + hostPort;
 
         // 启动 Netty Server，与 Admin 进行通信
@@ -131,7 +133,7 @@ public abstract class SnailJobExecutor {
      */
     public static void registryJobHandler(String name, IJobHandler jobHandler) {
         JOB_HANDLER_REPOSITORY.put(name, jobHandler);
-        LOGGER.info("[SnailJob]-注册JobHandler成功. name:{}, handler:{}", name, jobHandler);
+        LOGGER.info("注册JobHandler成功. name:{}, handler:{}", name, jobHandler);
     }
 
     /**
@@ -151,7 +153,7 @@ public abstract class SnailJobExecutor {
         JobThread jobThread = new JobThread(jobId, handler);
         jobThread.setName("job-id-" + jobId);
         jobThread.start();
-        LOGGER.info("[SnailJob]-注册JobThread成功.jobId:{},handler:{}", jobId, handler);
+        LOGGER.info("注册JobThread成功.jobId:{},handler:{}", jobId, handler);
 
         JobThread oldJobThread = JOB_THREAD_REPOSITORY.put(jobId, jobThread);
         if (oldJobThread != null) {

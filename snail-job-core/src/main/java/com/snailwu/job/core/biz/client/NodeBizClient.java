@@ -12,6 +12,8 @@ import com.snailwu.job.core.utils.SnailJobJsonUtil;
 import static com.snailwu.job.core.constants.JobCoreConstant.URL_SEPARATOR;
 
 /**
+ * Admin 调用 Core 接口的 Client
+ *
  * @author 吴庆龙
  * @date 2020/6/18 11:46 上午
  */

@@ -11,7 +11,7 @@ import com.snailwu.job.core.utils.SnailJobJsonUtil;
 import static com.snailwu.job.core.constants.JobCoreConstant.URL_SEPARATOR;
 
 /**
- * Core 调用 Admin 接口的Client
+ * Core 调用 Admin 接口的 Client
  *
  * @author 吴庆龙
  * @date 2020/5/25 2:50 下午
@@ -45,14 +45,14 @@ public class AdminBizClient implements AdminBiz {
     }
 
     @Override
-    public ResultT<String> registry(RegistryParam registryParam) {
+    public ResultT<String> registryNode(RegistryParam registryParam) {
         String respContent = SnailJobHttpUtil.post(address + "api/registry", accessToken, registryParam);
         return SnailJobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
         });
     }
 
     @Override
-    public ResultT<String> registryRemove(RegistryParam registryParam) {
+    public ResultT<String> removeNode(RegistryParam registryParam) {
         String respContent = SnailJobHttpUtil.post(address + "api/registryRemove", accessToken, registryParam);
         return SnailJobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
         });

@@ -7,7 +7,6 @@ import com.snailwu.job.core.biz.model.KillParam;
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.biz.model.TriggerParam;
 import com.snailwu.job.core.thread.RegistryNodeThread;
-import com.snailwu.job.core.utils.SnailJobHttpUtil;
 import com.snailwu.job.core.utils.SnailJobJsonUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
@@ -23,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 
+import static com.snailwu.job.core.constants.JobCoreConstant.JOB_ACCESS_TOKEN;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
@@ -34,9 +34,13 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * @date 2020/5/22 11:21 上午
  */
 public class EmbedServer {
-    public static final Logger LOGGER = LoggerFactory.getLogger(EmbedServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmbedServer.class);
 
+    /**
+     * Node节点的处理操作
+     */
     private NodeBiz nodeBiz;
+
     private Thread thread;
 
     /**
@@ -59,8 +63,8 @@ public class EmbedServer {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline()
                                     .addLast(new IdleStateHandler(0, 0, 30))
-                                    .addLast(new HttpServerCodec())
-                                    .addLast(new HttpObjectAggregator(5 * 1024 * 1024))
+//                                    .addLast(new HttpServerCodec())
+//                                    .addLast(new HttpObjectAggregator(5 * 1024 * 1024))
                                     .addLast(new EmbedHttpServerHandler(nodeBiz, accessToken))
                             ;
                         }
@@ -126,7 +130,7 @@ public class EmbedServer {
             String uri = msg.uri();
             HttpMethod method = msg.method();
             String requestData = msg.content().toString(StandardCharsets.UTF_8);
-            String headerAccessToken = msg.headers().get(SnailJobHttpUtil.JOB_ACCESS_TOKEN);
+            String headerAccessToken = msg.headers().get(JOB_ACCESS_TOKEN);
 
             // 请求处理
             ResultT<String> result = doService(method, uri, headerAccessToken, requestData);

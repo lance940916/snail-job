@@ -31,12 +31,12 @@ public class ApiController {
 
     @PostMapping("/registry")
     public ResultT<String> registry(@RequestBody RegistryParam registryParam) {
-        return adminBiz.registry(registryParam);
+        return adminBiz.registryNode(registryParam);
     }
 
     @PostMapping("/registryRemove")
     public ResultT<String> registryRemove(@RequestBody RegistryParam registryParam) {
-        return adminBiz.registryRemove(registryParam);
+        return adminBiz.removeNode(registryParam);
     }
 
 }

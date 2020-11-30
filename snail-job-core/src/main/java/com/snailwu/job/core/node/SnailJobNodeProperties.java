@@ -1,4 +1,4 @@
-package com.snailwu.job.core.executor;
+package com.snailwu.job.core.node;
 
 /**
  * @author 吴庆龙
@@ -8,12 +8,13 @@ public class SnailJobNodeProperties {
 
     /**
      * 调度中心的地址
-     * 具体到 Context 根目录, 如: http://localhost:8080/job-admin
+     * 具体到应用目录, 如: http://localhost:8080/job-admin
      */
     private String adminAddress;
 
     /**
      * 本机的外网 IP 地址
+     * 调度中心通过 ip + port 来执行调度
      */
     private String hostIp;
 
@@ -24,12 +25,12 @@ public class SnailJobNodeProperties {
     private int hostPort = 7479;
 
     /**
-     * 执行器组 Name
+     * 应用名称
      */
     private String appName;
 
     /**
-     * AccessToken
+     * 调度中心与节点之间请求的加密
      */
     private String accessToken;
 

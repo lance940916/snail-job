@@ -47,10 +47,10 @@ CREATE TABLE IF NOT EXISTS `job_info`
     `author`                VARCHAR(64)  NOT NULL DEFAULT '' COMMENT '负责人',
     `alarm_email`           VARCHAR(255) NOT NULL DEFAULT '' COMMENT '报警邮箱',
 
-    `exec_route_strategy`   VARCHAR(50)  NOT NULL DEFAULT '' COMMENT '执行器路由策略',
-    `exec_handler`          VARCHAR(255) NOT NULL DEFAULT '' COMMENT '执行器任务handler',
-    `exec_param`            VARCHAR(512) NOT NULL DEFAULT '' COMMENT '执行器任务参数',
-    `exec_timeout`          INT(11)      NOT NULL DEFAULT 0 COMMENT '任务执行超时时间，单位秒',
+    `exec_route_strategy`   VARCHAR(50)  NOT NULL DEFAULT '' COMMENT '执行路由策略',
+    `exec_handler`          VARCHAR(255) NOT NULL DEFAULT '' COMMENT '执行任务handler',
+    `exec_param`            VARCHAR(512) NOT NULL DEFAULT '' COMMENT '执行任务参数',
+    `exec_timeout`          INT(11)      NOT NULL DEFAULT 0 COMMENT '执行超时时间，单位秒',
     `exec_fail_retry_count` TINYINT      NOT NULL DEFAULT 0 COMMENT '失败重试次数',
 
     `trigger_status`        TINYINT      NOT NULL DEFAULT 0 COMMENT '调度状态：0-停止，1-运行',
@@ -70,8 +70,8 @@ CREATE TABLE IF NOT EXISTS `job_log`
     `app_name`         VARCHAR(32)   NOT NULL COMMENT '任务组名',
 
     `exec_address`     VARCHAR(128)  NOT NULL DEFAULT '' COMMENT '本次执行的地址',
-    `exec_handler`     VARCHAR(64)   NOT NULL DEFAULT '' COMMENT '执行器任务handler',
-    `exec_param`       VARCHAR(512)  NOT NULL DEFAULT '' COMMENT '执行器任务参数',
+    `exec_handler`     VARCHAR(64)   NOT NULL DEFAULT '' COMMENT '执行任务handler',
+    `exec_param`       VARCHAR(512)  NOT NULL DEFAULT '' COMMENT '执行任务参数',
     `fail_retry_count` TINYINT       NOT NULL DEFAULT 0 COMMENT '失败重试次数',
 
     `trigger_time`     DATETIME      NULL COMMENT '调度-时间',

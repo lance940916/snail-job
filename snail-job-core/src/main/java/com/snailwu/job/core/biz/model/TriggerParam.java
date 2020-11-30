@@ -1,6 +1,8 @@
 package com.snailwu.job.core.biz.model;
 
 /**
+ * 触发任务参数
+ *
  * @author 吴庆龙
  * @date 2020/5/25 12:05 下午
  */
