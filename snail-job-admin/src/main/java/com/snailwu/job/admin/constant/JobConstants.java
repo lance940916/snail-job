@@ -24,7 +24,7 @@ public interface JobConstants {
 
     /**
      * 每次获取任务的最大数量
-     * 同时（一秒内）能调度 200 个任务
+     * 同时（一秒内）最大能调度 200 个任务
      */
     int MAX_LIMIT_PRE_READ = 200;
 
