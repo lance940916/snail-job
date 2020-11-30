@@ -14,7 +14,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.snailwu.job.core.utils.SnailJobHttpUtil.JOB_ACCESS_TOKEN;
+import static com.snailwu.job.core.constants.JobCoreConstant.JOB_ACCESS_TOKEN;
 
 /**
  * 校验AccessToken的切面

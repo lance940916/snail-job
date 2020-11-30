@@ -26,7 +26,7 @@ import static org.mybatis.dynamic.sql.SqlBuilder.*;
 public class AdminBizImpl implements AdminBiz {
 
     @Resource
-    private JobNodeMapper jobExecutorMapper;
+    private JobNodeMapper jobNodeMapper;
     @Resource
     private JobLogMapper jobLogMapper;
 
@@ -45,7 +45,9 @@ public class AdminBizImpl implements AdminBiz {
         if (jobLog == null) {
             return new ResultT<>(ResultT.FAIL_CODE, "无效的logId");
         }
+        // execCode 只能在回调中进行更改
         if (jobLog.getExecCode() != 0) {
+            // TODO 不能避免高并发重复回调
             return new ResultT<>(ResultT.FAIL_CODE, "重复回调");
         }
 
@@ -63,7 +65,7 @@ public class AdminBizImpl implements AdminBiz {
     public ResultT<String> registryNode(RegistryParam registryParam) {
         String appName = registryParam.getAppName();
         String address = registryParam.getNodeAddress();
-        JobNode jobExecutor = jobExecutorMapper.selectOne(
+        JobNode jobExecutor = jobNodeMapper.selectOne(
                 select(JobNodeDynamicSqlSupport.id)
                         .from(JobNodeDynamicSqlSupport.jobNode)
                         .where(JobNodeDynamicSqlSupport.appName, isEqualTo(appName))
@@ -76,11 +78,11 @@ public class AdminBizImpl implements AdminBiz {
             jobExecutor.setAppName(appName);
             jobExecutor.setAddress(address);
             jobExecutor.setUpdateTime(new Date());
-            jobExecutorMapper.insertSelective(jobExecutor);
+            jobNodeMapper.insertSelective(jobExecutor);
         } else {
             // 更新 update_time
             jobExecutor.setUpdateTime(new Date());
-            jobExecutorMapper.updateByPrimaryKeySelective(jobExecutor);
+            jobNodeMapper.updateByPrimaryKeySelective(jobExecutor);
         }
         return ResultT.SUCCESS;
     }
@@ -88,7 +90,7 @@ public class AdminBizImpl implements AdminBiz {
     @Override
     public ResultT<String> removeNode(RegistryParam registryParam) {
         // 直接删除
-        jobExecutorMapper.delete(
+        jobNodeMapper.delete(
                 deleteFrom(JobNodeDynamicSqlSupport.jobNode)
                         .where(JobNodeDynamicSqlSupport.appName,
                                 isEqualTo(registryParam.getAppName()))

@@ -23,6 +23,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.time.Duration;
 import java.util.List;
 
+import static com.snailwu.job.admin.constant.JobConstants.DATE_TIME_PATTERN;
+
 /**
  * @author 吴庆龙
  * @date 2020/5/22 1:41 下午
@@ -55,7 +57,7 @@ public class WebConfig implements WebMvcConfigurer, ApplicationContextAware {
 
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .applicationContext(applicationContext)
-                .simpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                .simpleDateFormat(DATE_TIME_PATTERN)
                 .failOnUnknownProperties(false)
                 .serializationInclusion(JsonInclude.Include.NON_NULL)
                 .propertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)

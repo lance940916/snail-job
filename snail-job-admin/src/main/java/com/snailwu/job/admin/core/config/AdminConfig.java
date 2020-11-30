@@ -36,7 +36,7 @@ public class AdminConfig implements InitializingBean, DisposableBean {
         return accessToken;
     }
 
-    // ---------------------- XxlJobScheduler ----------------------
+    // ---------------------- JobScheduler ----------------------
 
     private JobScheduler jobScheduler;
 
@@ -46,13 +46,13 @@ public class AdminConfig implements InitializingBean, DisposableBean {
 
         // 启动所有守护线程
         jobScheduler = new JobScheduler();
-//        snailJobScheduler.startAll();
+//        jobScheduler.startAll();
     }
 
     @Override
     public void destroy() {
         // 停止所有守护线程
-//        snailJobScheduler.stopAll();
+//        jobScheduler.stopAll();
     }
 
     // ---------------------- mapper ----------------------

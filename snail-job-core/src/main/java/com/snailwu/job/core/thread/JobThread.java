@@ -221,14 +221,14 @@ public class JobThread extends Thread {
      */
     private ResultT<String> doInvoke(TriggerParam triggerParam) throws Exception {
         // 有超时时间的
-        Integer executorTimeout = triggerParam.getExecutorTimeout();
+        Integer executorTimeout = triggerParam.getExecTimeout();
         if (executorTimeout != null && executorTimeout > 0) {
             // 开启新线程进行执行，控制执行时间
             final TriggerParam triggerParamTmp = triggerParam;
             FutureTask<ResultT<String>> futureTask = new FutureTask<>(new Callable<ResultT<String>>() {
                 @Override
                 public ResultT<String> call() throws Exception {
-                    return jobHandler.execute(triggerParamTmp.getExecutorParams());
+                    return jobHandler.execute(triggerParamTmp.getExecParam());
                 }
             });
             Thread futureThead = new Thread(futureTask);
@@ -246,7 +246,7 @@ public class JobThread extends Thread {
                 return new ResultT<>(ResultT.FAIL_CODE, "任务执行超时");
             }
         } else { // 没有超时时间的，直接执行
-            return jobHandler.execute(triggerParam.getExecutorParams());
+            return jobHandler.execute(triggerParam.getExecParam());
         }
     }
 

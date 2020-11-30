@@ -1,13 +1,12 @@
 package com.snailwu.job.admin.core.route.strategy;
 
-import com.snailwu.job.admin.core.route.ExecutorRouter;
+import com.snailwu.job.admin.core.route.ExecRouter;
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.biz.model.TriggerParam;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -20,7 +19,7 @@ import java.util.TreeMap;
  * @author 吴庆龙
  * @date 2020/6/17 10:11 上午
  */
-public class ExecutorRouteConsistentHash extends ExecutorRouter {
+public class ExecRouteConsistentHash extends ExecRouter {
 
     private static final int VIRTUAL_NODE_NUM = 100;
 
@@ -44,9 +43,9 @@ public class ExecutorRouteConsistentHash extends ExecutorRouter {
         return hasCode & 0xffffffffL;
     }
 
-    public String hashJob(int jobId, List<String> addressList) {
+    public String hashJob(int jobId, String[] addresses) {
         TreeMap<Long, String> addressRing = new TreeMap<>();
-        for (String address : addressList) {
+        for (String address : addresses) {
             for (int i = 0; i < VIRTUAL_NODE_NUM; i++) {
                 long addressHash = hash("SHARD-" + address + "-NONE-" + i);
                 addressRing.put(addressHash, address);
@@ -62,9 +61,9 @@ public class ExecutorRouteConsistentHash extends ExecutorRouter {
     }
 
     @Override
-    public ResultT<String> route(TriggerParam triggerParam, List<String> addressList) {
+    public ResultT<String> route(TriggerParam triggerParam, String[] addresses) {
         try {
-            String address = hashJob(triggerParam.getJobId(), addressList);
+            String address = hashJob(triggerParam.getJobId(), addresses);
             return new ResultT<>(address);
         } catch (Exception e) {
             return new ResultT<>(ResultT.FAIL_CODE, NO_FOUND_ADDRESS_MSG);

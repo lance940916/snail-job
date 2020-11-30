@@ -24,11 +24,11 @@ public class JobLogReportHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(JobLogReportHelper.class);
 
     private static Thread logReportThread;
-    private static volatile boolean stopFlag = false;
+    private static volatile boolean running = true;
 
     public static void start() {
         logReportThread = new Thread(() -> {
-            while (!stopFlag) {
+            while (running) {
                 long startTs = System.currentTimeMillis();
 
                 // 当前天
@@ -44,20 +44,13 @@ public class JobLogReportHelper {
                 Date endTime = cal.getTime();
 
                 // 不断统计当天的任务执行情况
-                List<JobLog> jobLogList = AdminConfig.getInstance().getJobLogMapper().selectMany(
-                        select(JobLogDynamicSqlSupport.id, JobLogDynamicSqlSupport.triggerCode, JobLogDynamicSqlSupport.execCode)
-                                .from(JobLogDynamicSqlSupport.jobLog)
-                                .where()
-                                .and(JobLogDynamicSqlSupport.triggerTime, isGreaterThanOrEqualTo(beginTime))
-                                .and(JobLogDynamicSqlSupport.triggerTime, isLessThan(endTime))
-                                .build().render(RenderingStrategies.MYBATIS3)
-                );
+                List<JobLog> jobLogs = listJobLogs(beginTime, endTime);
                 int successCount = 0;
                 int failCount = 0;
                 int runningCount = 0;
-                for (JobLog item : jobLogList) {
-                    Integer triggerCode = item.getTriggerCode();
-                    Integer execCode = item.getExecCode();
+                for (JobLog log : jobLogs) {
+                    Integer triggerCode = log.getTriggerCode();
+                    Integer execCode = log.getExecCode();
                     if (triggerCode == 200 && execCode == 200) {
                         successCount++;
                     } else if (triggerCode == 200 && execCode == 0) {
@@ -66,7 +59,7 @@ public class JobLogReportHelper {
                         failCount++;
                     }
                 }
-                LOGGER.info("今日任务运行状态统计.运行中:{};成功:{};失败:{}", runningCount, successCount, failCount);
+                LOGGER.info("今日任务运行状态统计。运行中:{};成功:{};失败:{}", runningCount, successCount, failCount);
 
                 // 更新 job_log_report
                 JobLogReport jobLogReport = AdminConfig.getInstance().getJobLogReportMapper().selectOne(
@@ -76,37 +69,28 @@ public class JobLogReportHelper {
                                 .and(JobLogReportDynamicSqlSupport.triggerDay, isEqualTo(beginTime))
                                 .build().render(RenderingStrategies.MYBATIS3)
                 ).orElse(null);
+
+                JobLogReport report = new JobLogReport();
+                report.setRunningCount(runningCount);
+                report.setSuccessCount(successCount);
+                report.setFailCount(failCount);
+                report.setTriggerDay(beginTime);
                 if (jobLogReport == null) {
                     // 新增
-                    JobLogReport report = new JobLogReport();
-                    report.setRunningCount(runningCount);
-                    report.setSuccessCount(successCount);
-                    report.setFailCount(failCount);
-                    report.setTriggerDay(beginTime);
                     AdminConfig.getInstance().getJobLogReportMapper().insertSelective(report);
                 } else {
-                    runningCount += jobLogReport.getRunningCount();
-                    successCount += jobLogReport.getSuccessCount();
-                    failCount += jobLogReport.getFailCount();
-
                     // 更新
-                    AdminConfig.getInstance().getJobLogReportMapper().update(
-                            update(JobLogReportDynamicSqlSupport.jobLogReport)
-                                    .set(JobLogReportDynamicSqlSupport.runningCount).equalTo(runningCount)
-                                    .set(JobLogReportDynamicSqlSupport.successCount).equalTo(successCount)
-                                    .set(JobLogReportDynamicSqlSupport.failCount).equalTo(failCount)
-                                    .where(JobLogReportDynamicSqlSupport.triggerDay, isEqualTo(beginTime))
-                                    .build().render(RenderingStrategies.MYBATIS3)
-                    );
+                    report.setId(jobLogReport.getId());
+                    AdminConfig.getInstance().getJobLogReportMapper().updateByPrimaryKeySelective(report);
                 }
                 long costMs = System.currentTimeMillis() - startTs;
 
-                // 休眠一分钟
+                // 每分钟执行一次
                 try {
                     TimeUnit.MILLISECONDS.sleep(60000 - costMs);
                 } catch (InterruptedException e) {
-                    if (!stopFlag) {
-                        LOGGER.error("任务扫描整理线程.休眠异常", e);
+                    if (!running) {
+                        LOGGER.error("任务扫描整理线程。休眠异常", e);
                     }
                 }
             }
@@ -114,10 +98,28 @@ public class JobLogReportHelper {
         logReportThread.setDaemon(true);
         logReportThread.setName("JobLogReportThread");
         logReportThread.start();
+        LOGGER.info("日志报告线程-已启动。");
+    }
+
+    /**
+     * 列出任务的日志
+     * @param beginTime 开始时间
+     * @param endTime 结束时间
+     * @return 日志列表
+     */
+    private static List<JobLog> listJobLogs(Date beginTime, Date endTime) {
+        return AdminConfig.getInstance().getJobLogMapper().selectMany(
+                select(JobLogDynamicSqlSupport.id, JobLogDynamicSqlSupport.triggerCode, JobLogDynamicSqlSupport.execCode)
+                        .from(JobLogDynamicSqlSupport.jobLog)
+                        .where()
+                        .and(JobLogDynamicSqlSupport.triggerTime, isGreaterThanOrEqualTo(beginTime))
+                        .and(JobLogDynamicSqlSupport.triggerTime, isLessThan(endTime))
+                        .build().render(RenderingStrategies.MYBATIS3)
+        );
     }
 
     public static void stop() {
-        stopFlag = true;
+        running = false;
         logReportThread.interrupt();
         try {
             logReportThread.join();

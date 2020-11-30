@@ -16,10 +16,10 @@ public class TriggerParam {
     /**
      * 执行 handler、参数、堵塞策略、超时时间
      */
-    private String executorHandler;
-    private String executorParams;
-    private String executorBlockStrategy;
-    private Integer executorTimeout;
+    private String execHandler;
+    private String execParam;
+    private String execBlockStrategy;
+    private Integer execTimeout;
 
     /**
      * 任务对应的日志 ID 和 时间。用于进行回调，填充日志
@@ -34,36 +34,36 @@ public class TriggerParam {
         this.jobId = jobId;
     }
 
-    public String getExecutorHandler() {
-        return executorHandler;
+    public String getExecHandler() {
+        return execHandler;
     }
 
-    public void setExecutorHandler(String executorHandler) {
-        this.executorHandler = executorHandler;
+    public void setExecHandler(String execHandler) {
+        this.execHandler = execHandler;
     }
 
-    public String getExecutorParams() {
-        return executorParams;
+    public String getExecParam() {
+        return execParam;
     }
 
-    public void setExecutorParams(String executorParams) {
-        this.executorParams = executorParams;
+    public void setExecParam(String execParam) {
+        this.execParam = execParam;
     }
 
-    public String getExecutorBlockStrategy() {
-        return executorBlockStrategy;
+    public String getExecBlockStrategy() {
+        return execBlockStrategy;
     }
 
-    public void setExecutorBlockStrategy(String executorBlockStrategy) {
-        this.executorBlockStrategy = executorBlockStrategy;
+    public void setExecBlockStrategy(String execBlockStrategy) {
+        this.execBlockStrategy = execBlockStrategy;
     }
 
-    public Integer getExecutorTimeout() {
-        return executorTimeout;
+    public Integer getExecTimeout() {
+        return execTimeout;
     }
 
-    public void setExecutorTimeout(Integer executorTimeout) {
-        this.executorTimeout = executorTimeout;
+    public void setExecTimeout(Integer execTimeout) {
+        this.execTimeout = execTimeout;
     }
 
     public Long getLogId() {

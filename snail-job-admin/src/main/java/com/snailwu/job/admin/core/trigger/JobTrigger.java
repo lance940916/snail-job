@@ -1,7 +1,7 @@
 package com.snailwu.job.admin.core.trigger;
 
 import com.snailwu.job.admin.core.config.AdminConfig;
-import com.snailwu.job.admin.core.route.ExecutorRouteStrategyEnum;
+import com.snailwu.job.admin.core.route.ExecRouteStrategyEnum;
 import com.snailwu.job.admin.core.scheduler.JobScheduler;
 import com.snailwu.job.admin.mapper.JobAppDynamicSqlSupport;
 import com.snailwu.job.admin.mapper.JobInfoDynamicSqlSupport;
@@ -11,16 +11,17 @@ import com.snailwu.job.admin.model.JobLog;
 import com.snailwu.job.core.biz.NodeBiz;
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.biz.model.TriggerParam;
+import com.snailwu.job.core.enums.AlarmStatus;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import static com.snailwu.job.admin.constant.JobConstants.DATE_TIME_MS_PATTERN;
+import static com.snailwu.job.admin.core.route.ExecRouter.NO_FOUND_ADDRESS_MSG;
 import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 import static org.mybatis.dynamic.sql.SqlBuilder.select;
 
@@ -33,16 +34,12 @@ import static org.mybatis.dynamic.sql.SqlBuilder.select;
 public class JobTrigger {
     private static final Logger LOGGER = LoggerFactory.getLogger(JobTrigger.class);
 
-    private JobTrigger() {
-    }
-
     /**
      * 触发 Job
      *
-     * @param executorParam 执行参数，手动执行时页面填写的会覆盖任务中的参数
+     * @param execParam 执行参数，手动执行时页面填写的会覆盖任务中的参数
      */
-    public static void trigger(int jobId, TriggerTypeEnum triggerType, int failRetryCount,
-                               String executorParam) {
+    public static void trigger(int jobId, TriggerTypeEnum triggerType, int failRetryCount, String execParam) {
         // 查询任务信息
         JobInfo jobInfo = AdminConfig.getInstance().getJobInfoMapper().selectOne(
                 select(JobInfoDynamicSqlSupport.jobInfo.allColumns())
@@ -51,50 +48,50 @@ public class JobTrigger {
                         .build().render(RenderingStrategies.MYBATIS3)
         ).orElse(null);
         if (jobInfo == null) {
-            LOGGER.error("无效的任务ID:{}", jobId);
+            LOGGER.error("无效的任务。ID：{}", jobId);
             return;
-        }
-        if (executorParam != null) {
-            jobInfo.setExecParam(executorParam);
         }
 
         // 查询任务分组信息
-        String groupName = jobInfo.getAppName();
+        String appName = jobInfo.getAppName();
         JobApp jobGroup = AdminConfig.getInstance().getJobAppMapper().selectOne(
                 select(JobAppDynamicSqlSupport.id, JobAppDynamicSqlSupport.addresses)
                         .from(JobAppDynamicSqlSupport.jobApp)
-                        .where(JobAppDynamicSqlSupport.appName, isEqualTo(groupName))
+                        .where(JobAppDynamicSqlSupport.appName, isEqualTo(appName))
                         .build().render(RenderingStrategies.MYBATIS3)
         ).orElse(null);
         if (jobGroup == null) {
-            LOGGER.error("任务分组信息不存在.name:{}", groupName);
+            LOGGER.error("任务应用信息不存在。name：{}", appName);
             return;
         }
 
-        // 任务调度地址集合
-        String groupAddresses = jobGroup.getAddresses();
+        // 节点地址集合
+        String addresses = jobGroup.getAddresses();
 
-        // 失败重试次数（如果参数大于，则使用参数的值）
-        int finalFailRetryCount = failRetryCount >= 0 ?
-                failRetryCount : jobInfo.getExecFailRetryCount();
+        // 优先使用传入的调度参数
+        if (execParam != null) {
+            jobInfo.setExecParam(execParam);
+        }
+
+        // 优先使用参数的值
+        int finalFailRetryCount = failRetryCount >= 0 ? failRetryCount : jobInfo.getExecFailRetryCount();
 
         // 进行调度
-        processTrigger(jobInfo, groupAddresses, triggerType, finalFailRetryCount);
+        doTrigger(jobInfo, addresses, triggerType, finalFailRetryCount);
     }
 
     /**
      * 进行调度
      */
-    private static void processTrigger(JobInfo jobInfo, String groupAddresses,
-                                       TriggerTypeEnum triggerType, int failRetryCount) {
+    private static void doTrigger(JobInfo jobInfo, String appAddresses, TriggerTypeEnum triggerType,
+                                  int failRetryCount) {
         // 调度时间
         Date triggerTime = new Date();
 
-        // 执行器路由策略
-        ExecutorRouteStrategyEnum routeStrategy = ExecutorRouteStrategyEnum
-                .match(jobInfo.getExecRouteStrategy());
+        // 执行器路由策略，不可能为null
+        ExecRouteStrategyEnum routeStrategy = ExecRouteStrategyEnum.match(jobInfo.getExecRouteStrategy());
 
-        // 1 保存日志
+        // 保存日志
         JobLog jobLog = new JobLog();
         jobLog.setJobId(jobInfo.getId());
         jobLog.setAppName(jobInfo.getAppName());
@@ -102,66 +99,66 @@ public class JobTrigger {
 
         // 2 初始化触发参数
         TriggerParam triggerParam = new TriggerParam();
-        // 任务ID
         triggerParam.setJobId(jobInfo.getId());
-        // 任务执行相关参数
-        triggerParam.setExecutorHandler(jobInfo.getExecHandler());
-        triggerParam.setExecutorParams(jobInfo.getExecParam());
-        triggerParam.setExecutorTimeout(jobInfo.getExecTimeout());
-        // 任务日志ID
+        triggerParam.setExecHandler(jobInfo.getExecHandler());
+        triggerParam.setExecParam(jobInfo.getExecParam());
+        triggerParam.setExecTimeout(jobInfo.getExecTimeout());
         triggerParam.setLogId(jobLog.getId());
 
-        // 3 选择一个执行器
-        String address = null;
-        if (groupAddresses != null) {
-            List<String> addressList = Arrays.asList(groupAddresses.split(","));
-            ResultT<String> routeAddressResult = routeStrategy.getRouter()
-                    .route(triggerParam, addressList);
+        // 3 选择一个节点执行
+        String nodeAddress = null;
+        if (appAddresses != null) {
+            String[] appAddressArray = StringUtils.split(appAddresses, ",");
+            ResultT<String> routeAddressResult = routeStrategy.getRouter().route(triggerParam, appAddressArray);
             if (routeAddressResult.getCode() == ResultT.SUCCESS_CODE) {
-                address = routeAddressResult.getContent();
+                nodeAddress = routeAddressResult.getContent();
             }
         }
         String triggerTimeStr = DateFormatUtils.format(triggerTime, DATE_TIME_MS_PATTERN);
-        LOGGER.info(
-                "开始调度-JobId:{},LogId:{},触发类型:{},参数:{},失败重试次数:{},调度时间:{}, 执行器地址:{}",
+        LOGGER.info("执行调度-JobId:{},LogId:{},触发类型:{},参数:{},失败重试次数:{},调度时间:{},节点地址:{}",
                 jobInfo.getId(), jobLog.getId(), triggerType, jobInfo.getExecParam(),
-                failRetryCount, triggerTimeStr, address
+                failRetryCount, triggerTimeStr, nodeAddress
         );
 
         // 4 触发远程执行器
         ResultT<String> triggerResult;
-        if (address != null) {
-            triggerResult = runExecutor(triggerParam, address);
+        if (nodeAddress != null) {
+            triggerResult = process(triggerParam, nodeAddress);
         } else {
-            triggerResult = new ResultT<>(ResultT.FAIL_CODE, "未找到可用的执行器");
+            triggerResult = new ResultT<>(ResultT.FAIL_CODE, NO_FOUND_ADDRESS_MSG);
         }
-        LOGGER.info("结束调度-{}", triggerResult);
+        LOGGER.info("完成调度-{}", triggerResult);
 
         // 5 更新 Log
         JobLog updateJobLog = new JobLog();
         updateJobLog.setId(jobLog.getId());
-        // 执行相关字段
-        updateJobLog.setExecAddress(address);
+        // 执行参数
+        updateJobLog.setExecAddress(nodeAddress);
         updateJobLog.setExecHandler(jobInfo.getExecHandler());
         updateJobLog.setExecParam(jobInfo.getExecParam());
         updateJobLog.setFailRetryCount((byte) failRetryCount);
-        // 调度相关字段
+
+        // 无 execTime、execCode和execMsg
+
+        // 调度信息
         updateJobLog.setTriggerTime(triggerTime);
         updateJobLog.setTriggerCode(triggerResult.getCode());
         updateJobLog.setTriggerMsg(triggerResult.getMsg());
+        // 告警状态
+        updateJobLog.setAlarmStatus(AlarmStatus.DEFAULT.getValue());
         AdminConfig.getInstance().getJobLogMapper().updateByPrimaryKeySelective(updateJobLog);
     }
 
     /**
-     * 使用执行器执行任务
+     * 执行任务
      */
-    private static ResultT<String> runExecutor(TriggerParam triggerParam, String address) {
+    private static ResultT<String> process(TriggerParam triggerParam, String address) {
         ResultT<String> result;
         try {
-            NodeBiz nodeBiz = JobScheduler.getExecutorBiz(address);
+            NodeBiz nodeBiz = JobScheduler.obtainOrCreateNodeBiz(address);
             result = nodeBiz.run(triggerParam);
         } catch (Exception e) {
-            LOGGER.error("调度请求异常.执行器:[{}],原因:{}.", address, e.getMessage());
+            LOGGER.error("调度请求异常。", e);
             result = new ResultT<>(ResultT.FAIL_CODE, e.getMessage());
         }
         return result;

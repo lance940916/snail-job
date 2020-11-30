@@ -36,7 +36,7 @@ public class NodeBizImpl implements NodeBiz {
         Integer jobId = triggerParam.getJobId();
 
         // 获取任务指定的 job
-        String executorHandler = triggerParam.getExecutorHandler();
+        String executorHandler = triggerParam.getExecHandler();
         IJobHandler newJobHandler = SnailJobNode.loadJobHandler(executorHandler);
         // 没有找到对应的 newJobHandler 直接报错
         if (newJobHandler == null) {

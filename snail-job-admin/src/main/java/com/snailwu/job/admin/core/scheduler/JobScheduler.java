@@ -20,7 +20,7 @@ public class JobScheduler {
      */
     public void startAll() {
         // 定时整理注册节点到 group 中
-        ExecutorMonitorHelper.start();
+        NodeMonitorHelper.start();
 
         // 失败重试线程
         JobFailMonitorHelper.start();
@@ -39,7 +39,7 @@ public class JobScheduler {
      * 停止线程
      */
     public void stopAll() {
-        ExecutorMonitorHelper.stop();
+        NodeMonitorHelper.stop();
 
         JobFailMonitorHelper.stop();
 
@@ -50,23 +50,26 @@ public class JobScheduler {
         JobTriggerPoolHelper.stop();
     }
 
-    // Executor-Client 库
-    private static final ConcurrentHashMap<String, NodeBiz> EXECUTOR_BIZ_REPOSITORY = new ConcurrentHashMap<>();
+    /**
+     * key: 节点的地址
+     * value: 节点调用类
+     */
+    private static final ConcurrentHashMap<String, NodeBiz> NODE_BIZ_REPOSITORY = new ConcurrentHashMap<>();
 
     /**
-     * 获取访问执行器的biz
+     * 根据地址 获取 NodeBiz
      */
-    public static NodeBiz getExecutorBiz(String address) {
+    public static NodeBiz obtainOrCreateNodeBiz(String address) {
         if (address == null || address.trim().length() == 0) {
             return null;
         }
         address = address.trim();
-        NodeBiz nodeBiz = EXECUTOR_BIZ_REPOSITORY.get(address);
+        NodeBiz nodeBiz = NODE_BIZ_REPOSITORY.get(address);
         if (nodeBiz != null) {
             return nodeBiz;
         }
         nodeBiz = new NodeBizClient(address, AdminConfig.getInstance().getAccessToken());
-        EXECUTOR_BIZ_REPOSITORY.put(address, nodeBiz);
+        NODE_BIZ_REPOSITORY.put(address, nodeBiz);
         return nodeBiz;
     }
 

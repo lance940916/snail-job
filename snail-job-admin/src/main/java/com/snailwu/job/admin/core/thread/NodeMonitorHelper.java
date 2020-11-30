@@ -1,0 +1,123 @@
+package com.snailwu.job.admin.core.thread;
+
+import com.snailwu.job.admin.core.config.AdminConfig;
+import com.snailwu.job.admin.mapper.JobAppDynamicSqlSupport;
+import com.snailwu.job.admin.mapper.JobNodeDynamicSqlSupport;
+import com.snailwu.job.admin.model.JobApp;
+import com.snailwu.job.admin.model.JobNode;
+import com.snailwu.job.core.constants.RegistryConstant;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.mybatis.dynamic.sql.render.RenderingStrategies;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+import static com.snailwu.job.core.enums.RegistryType.AUTO;
+import static org.mybatis.dynamic.sql.SqlBuilder.*;
+
+/**
+ * 将 job_node 表中的数据整理到 job_app 表中
+ *
+ * @author 吴庆龙
+ * @date 2020/6/4 11:23 上午
+ */
+public class NodeMonitorHelper {
+    private static final Logger LOGGER = LoggerFactory.getLogger(NodeMonitorHelper.class);
+
+    private static Thread thread;
+    private static volatile boolean running = true;
+
+    /**
+     * 启动整理注册器线程
+     */
+    public static void start() {
+        thread = new Thread(() -> {
+            while (running) {
+                // 是要用 try-catch 全部代码，保证异常情况不会退出 while 循环
+                try {
+                    // 1. 删除所有不活跃的执行器
+                    Date deadDate = DateUtils.addSeconds(new Date(), RegistryConstant.DEAD_TIME * -1);
+                    AdminConfig.getInstance().getJobNodeMapper().delete(
+                            deleteFrom(JobNodeDynamicSqlSupport.jobNode)
+                                    .where(JobNodeDynamicSqlSupport.updateTime, isLessThanOrEqualTo(deadDate))
+                                    .build().render(RenderingStrategies.MYBATIS3)
+                    );
+
+                    // 2. 获取所有的App
+                    List<JobApp> apps = AdminConfig.getInstance().getJobAppMapper().selectMany(
+                            select(JobAppDynamicSqlSupport.jobApp.allColumns())
+                                    .from(JobAppDynamicSqlSupport.jobApp)
+                                    .where(JobAppDynamicSqlSupport.jobApp.type, isEqualTo(AUTO.getValue()))
+                                    .build().render(RenderingStrategies.MYBATIS3)
+                    );
+
+                    // 3. 获取所有的Node
+                    List<JobNode> nodes = AdminConfig.getInstance().getJobNodeMapper().selectMany(
+                            select(JobNodeDynamicSqlSupport.jobNode.allColumns())
+                                    .from(JobNodeDynamicSqlSupport.jobNode)
+                                    .build().render(RenderingStrategies.MYBATIS3)
+                    );
+
+                    // 4. 合并相同 appName 的执行器地址
+                    Map<String, List<String>> appAddressMap = new HashMap<>();
+                    for (JobNode node : nodes) {
+                        String appName = node.getAppName();
+                        String address = node.getAddress().toLowerCase();
+                        List<String> addresses = appAddressMap.computeIfAbsent(appName, k -> new ArrayList<>());
+                        // 保证没有重复的地址
+                        if (!addresses.contains(address)) {
+                            addresses.add(address);
+                        }
+                    }
+
+                    // 5. 更新 jobApp 中的 address 字段
+                    for (JobApp app : apps) {
+                        List<String> addrList = appAddressMap.get(app.getAppName());
+                        String addresses = StringUtils.join(addrList, ",");
+
+                        // 通过id更新地址列表
+                        AdminConfig.getInstance().getJobAppMapper().update(
+                                update(JobAppDynamicSqlSupport.jobApp)
+                                        .set(JobAppDynamicSqlSupport.addresses).equalTo(addresses)
+                                        .where(JobAppDynamicSqlSupport.id, isEqualTo(app.getId()))
+                                        .build().render(RenderingStrategies.MYBATIS3)
+                        );
+                    }
+                } catch (Exception e) {
+                    LOGGER.error("整理执行器地址发生异常。", e);
+                }
+
+                // 休眠
+                if (running) {
+                    try {
+                        TimeUnit.SECONDS.sleep(RegistryConstant.BEAT_TIME);
+                    } catch (InterruptedException e) {
+                        LOGGER.error("休眠异常。", e);
+                    }
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.setName("node-monitor-thread");
+        thread.start();
+        LOGGER.info("节点整理线程-已启动。");
+    }
+
+    /**
+     * 停止注册
+     */
+    public static void stop() {
+        running = false;
+        thread.interrupt();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        LOGGER.info("节点整理线程-已停止。");
+    }
+
+}

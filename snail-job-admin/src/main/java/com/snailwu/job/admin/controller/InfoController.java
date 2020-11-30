@@ -5,7 +5,7 @@ import com.snailwu.job.admin.controller.entity.RouteEntity;
 import com.snailwu.job.admin.controller.request.JobInfoEditRequest;
 import com.snailwu.job.admin.controller.request.JobInfoSearchRequest;
 import com.snailwu.job.admin.core.cron.CronExpression;
-import com.snailwu.job.admin.core.route.ExecutorRouteStrategyEnum;
+import com.snailwu.job.admin.core.route.ExecRouteStrategyEnum;
 import com.snailwu.job.admin.core.thread.JobTriggerPoolHelper;
 import com.snailwu.job.admin.core.trigger.TriggerTypeEnum;
 import com.snailwu.job.admin.model.JobInfo;
@@ -113,8 +113,8 @@ public class InfoController {
     @GetMapping("/list_route")
     public ResultT<List<RouteEntity>> listRoute() {
         List<RouteEntity> list = new ArrayList<>();
-        ExecutorRouteStrategyEnum[] routeStrategyEnums = ExecutorRouteStrategyEnum.values();
-        for (ExecutorRouteStrategyEnum strategyEnum : routeStrategyEnums) {
+        ExecRouteStrategyEnum[] routeStrategyEnums = ExecRouteStrategyEnum.values();
+        for (ExecRouteStrategyEnum strategyEnum : routeStrategyEnums) {
             list.add(new RouteEntity(strategyEnum.getName(), strategyEnum.getDesc()));
         }
         return new ResultT<>(list);

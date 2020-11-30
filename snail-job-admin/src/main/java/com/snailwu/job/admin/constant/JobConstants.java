@@ -12,16 +12,6 @@ import java.util.Map;
 public interface JobConstants {
 
     /**
-     * 请求ID,在拦截器中放在Header中,作为请求的唯一标识
-     */
-    String REQUEST_ID = "JOB_REQUEST_ID";
-
-    /**
-     * 请求ID,打印在日志中,作为请求的唯一标识
-     */
-    String LOG_ID = "JOB_LOG_ID";
-
-    /**
      * 日期时间格式化格式
      */
     String DATE_TIME_MS_PATTERN = "yyyy-MM-dd HH:mm:ss,SSS";

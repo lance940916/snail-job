@@ -91,7 +91,7 @@ public class LogService {
             throw new JobException("Log记录不存在");
         }
         if (jobLog.getExecCode() == 0) {
-            NodeBiz nodeBiz = JobScheduler.getExecutorBiz(jobLog.getExecAddress());
+            NodeBiz nodeBiz = JobScheduler.obtainOrCreateNodeBiz(jobLog.getExecAddress());
             return nodeBiz.kill(new KillParam(jobLog.getJobId(), logId));
         } else {
             return new ResultT<>(ResultT.FAIL_CODE, "任务已经执行完毕");
