@@ -41,7 +41,7 @@
         <mysql-connector-java.version>8.0.20</mysql-connector-java.version>
         <hikaricp.version>3.4.5</hikaricp.version>
         <freemarker.version>2.3.30</freemarker.version>
-
+        <httpclient.version>4.5.13</httpclient.version>
     </properties>
 
     <!-- 依赖包版本管理 -->
@@ -135,6 +135,12 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${common-lang3.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpclient.version}</version>
             </dependency>
 
             <!-- slf4j -->

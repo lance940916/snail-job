@@ -4,7 +4,7 @@ import com.snailwu.job.admin.core.config.AdminConfig;
 import com.snailwu.job.admin.mapper.JobAppDynamicSqlSupport;
 import com.snailwu.job.admin.model.JobApp;
 import com.snailwu.job.admin.model.JobNode;
-import com.snailwu.job.core.enums.RegistryConfig;
+import com.snailwu.job.core.constants.RegistryConstant;
 import com.snailwu.job.core.enums.RegistryType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -41,7 +41,7 @@ public class ExecutorMonitorHelper {
                 // 是要用 try-catch 全部代码，保证异常情况不会退出 while 循环
                 try {
                     // 1. 删除所有不活跃的执行器
-                    Date deadDate = DateUtils.addSeconds(new Date(), RegistryConfig.DEAD_TIME * -1);
+                    Date deadDate = DateUtils.addSeconds(new Date(), RegistryConstant.DEAD_TIME * -1);
                     AdminConfig.getInstance().getJobNodeMapper().delete(
                             deleteFrom(jobNode)
                                     .where(updateTime, isLessThanOrEqualTo(deadDate))
@@ -94,7 +94,7 @@ public class ExecutorMonitorHelper {
 
                 // 休眠
                 try {
-                    TimeUnit.SECONDS.sleep(RegistryConfig.BEAT_TIME);
+                    TimeUnit.SECONDS.sleep(RegistryConstant.BEAT_TIME);
                 } catch (InterruptedException e) {
                     if (!stopFlag) {
                         LOGGER.error("休眠异常.", e);

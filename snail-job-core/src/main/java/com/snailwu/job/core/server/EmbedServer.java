@@ -6,9 +6,9 @@ import com.snailwu.job.core.biz.model.IdleBeatParam;
 import com.snailwu.job.core.biz.model.KillParam;
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.biz.model.TriggerParam;
-import com.snailwu.job.core.thread.RegistryThread;
-import com.snailwu.job.core.utils.JobHttpUtil;
-import com.snailwu.job.core.utils.JobJsonUtil;
+import com.snailwu.job.core.thread.RegistryNodeThread;
+import com.snailwu.job.core.utils.SnailJobHttpUtil;
+import com.snailwu.job.core.utils.SnailJobJsonUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -37,16 +37,17 @@ public class EmbedServer {
     public static final Logger LOGGER = LoggerFactory.getLogger(EmbedServer.class);
 
     private NodeBiz nodeBiz;
-    private Thread serverThread;
+    private Thread thread;
 
     /**
      * 启 Netty 服务与 admin 进行通信
      *
      * @param httpPort Netty 服务对应的本机端口
      */
-    public void start(int httpPort, String executorAddress, String groupName, String accessToken) {
+    public void start(int httpPort, String nodeAddress, String appName, String accessToken) {
         nodeBiz = new NodeBizImpl();
-        serverThread = new Thread(() -> {
+
+        thread = new Thread(() -> {
             // 启动 Netty
             EventLoopGroup bossGroup = new NioEventLoopGroup();
             EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -57,8 +58,7 @@ public class EmbedServer {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline()
-                                    .addLast(new IdleStateHandler(0, 0,
-                                            30))
+                                    .addLast(new IdleStateHandler(0, 0, 30))
                                     .addLast(new HttpServerCodec())
                                     .addLast(new HttpObjectAggregator(5 * 1024 * 1024))
                                     .addLast(new EmbedHttpServerHandler(nodeBiz, accessToken))
@@ -69,10 +69,10 @@ public class EmbedServer {
             try {
                 // 执行完 bind 之后就可以接受连接了
                 ChannelFuture future = bootstrap.bind(httpPort).sync();
-                LOGGER.info("[SnailJob]-嵌入式Http服务启动成功. 监听端口:{}", httpPort);
+                LOGGER.info("嵌入式Http服务启动成功。监听端口：{}", httpPort);
 
                 // 启动注册节点线程
-                startRegistry(groupName, executorAddress);
+                RegistryNodeThread.start(appName, nodeAddress);
 
                 // 主线程 wait，等待服务端链路关闭，子线程开始监听接受请求
                 future.channel().closeFuture().sync();
@@ -81,12 +81,12 @@ public class EmbedServer {
             } finally {
                 workerGroup.shutdownGracefully();
                 bossGroup.shutdownGracefully();
-                LOGGER.info("[SnailJob]-嵌入式Http服务停止运行");
+                LOGGER.info("嵌入式Http服务停止运行");
             }
         });
-        serverThread.setDaemon(true);
-        serverThread.setName("job-embed-server");
-        serverThread.start();
+        thread.setDaemon(true);
+        thread.setName("job-embed-server");
+        thread.start();
     }
 
     /**
@@ -94,18 +94,23 @@ public class EmbedServer {
      */
     public void stop() {
         // 停止 Netty
-        if (serverThread != null && serverThread.isAlive()) {
-            serverThread.interrupt();
+        if (thread != null && thread.isAlive()) {
+            thread.interrupt();
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
         }
 
         // 停止注册节点线程
-        stopRegistry();
+        RegistryNodeThread.stop();
     }
 
     /**
      * Netty 的 Http 请求处理器
      */
-    public static class EmbedHttpServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+    private static class EmbedHttpServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         private static final Logger LOGGER = LoggerFactory.getLogger(EmbedHttpServerHandler.class);
 
         private final NodeBiz nodeBiz;
@@ -121,7 +126,7 @@ public class EmbedServer {
             String uri = msg.uri();
             HttpMethod method = msg.method();
             String requestData = msg.content().toString(StandardCharsets.UTF_8);
-            String headerAccessToken = msg.headers().get(JobHttpUtil.JOB_ACCESS_TOKEN);
+            String headerAccessToken = msg.headers().get(SnailJobHttpUtil.JOB_ACCESS_TOKEN);
 
             // 请求处理
             ResultT<String> result = doService(method, uri, headerAccessToken, requestData);
@@ -129,9 +134,9 @@ public class EmbedServer {
             // 请求响应
             String responseJson = "";
             try {
-                responseJson = JobJsonUtil.writeValueAsString(result);
+                responseJson = SnailJobJsonUtil.writeValueAsString(result);
             } catch (Exception e) {
-                LOGGER.error("[SnailJob]-序列化JSON异常");
+                LOGGER.error("序列化JSON异常");
             }
             doResponse(ctx, msg, responseJson);
         }
@@ -142,13 +147,13 @@ public class EmbedServer {
         private ResultT<String> doService(HttpMethod httpMethod, String uri, String headerAccessToken, String requestData) {
             // 校验
             if (HttpMethod.POST != httpMethod) {
-                return new ResultT<>(ResultT.FAIL_CODE, "错误的请求,HttpMethod不支持");
+                return new ResultT<>(ResultT.FAIL_CODE, "HttpMethod不支持");
             }
             if (uri == null || uri.trim().length() == 0) {
-                return new ResultT<>(ResultT.FAIL_CODE, "错误的请求,请求地址为空");
+                return new ResultT<>(ResultT.FAIL_CODE, "请求地址为空");
             }
             if (accessToken != null && accessToken.trim().length() > 0 && !accessToken.equals(headerAccessToken)) {
-                return new ResultT<>(ResultT.FAIL_CODE, "错误的请求,AccessToken不正确");
+                return new ResultT<>(ResultT.FAIL_CODE, "AccessToken不正确");
             }
 
             // 映射 uri
@@ -157,21 +162,21 @@ public class EmbedServer {
                     case "/beat":  // 心跳监测
                         return nodeBiz.beat();
                     case "/idleBeat":  // 执行器是否忙碌
-                        IdleBeatParam idleBeatParam = JobJsonUtil.readValue(requestData, IdleBeatParam.class);
+                        IdleBeatParam idleBeatParam = SnailJobJsonUtil.readValue(requestData, IdleBeatParam.class);
                         return nodeBiz.idleBeat(idleBeatParam);
                     case "/run":  // 执行任务
-                        TriggerParam triggerParam = JobJsonUtil.readValue(requestData, TriggerParam.class);
+                        TriggerParam triggerParam = SnailJobJsonUtil.readValue(requestData, TriggerParam.class);
                         return nodeBiz.run(triggerParam);
                     case "/kill":  // 终止任务
-                        KillParam killParam = JobJsonUtil.readValue(requestData, KillParam.class);
+                        KillParam killParam = SnailJobJsonUtil.readValue(requestData, KillParam.class);
                         return nodeBiz.kill(killParam);
-                    case "/log":  // 执行器信息
+                    case "/log":  // TODO 执行器信息
                         return ResultT.SUCCESS;
                     default:
-                        return new ResultT<>(ResultT.FAIL_CODE, "错误的请求,请求地址(" + uri + ")不存在.");
+                        return new ResultT<>(ResultT.FAIL_CODE, "请求地址(" + uri + ")不存在。");
                 }
             } catch (Exception e) {
-                return new ResultT<>(ResultT.FAIL_CODE, "错误的请求.错误信息:" + e.getMessage());
+                return new ResultT<>(ResultT.FAIL_CODE, "服务内部错误：" + e.getMessage());
             }
         }
 
@@ -195,20 +200,6 @@ public class EmbedServer {
             ctx.writeAndFlush(response);
             ctx.close();
         }
-    }
-
-    /**
-     * 启动注册线程
-     */
-    private void startRegistry(String groupName, String executorAddress) {
-        RegistryThread.start(groupName, executorAddress);
-    }
-
-    /**
-     * 停止注册线程
-     */
-    private void stopRegistry() {
-        RegistryThread.stop();
     }
 
 }

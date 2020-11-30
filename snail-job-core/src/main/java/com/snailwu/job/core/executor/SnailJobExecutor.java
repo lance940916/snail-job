@@ -14,86 +14,26 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 执行器配置
  *
+ * 需要扫描标有 @SnailJob 注解的方法注册到 JOB_HANDLER_REPOSITORY 中
+ *
  * @author 吴庆龙
  * @date 2020/5/25 2:32 下午
  */
-public class JobExecutor {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(JobExecutor.class);
+public abstract class SnailJobExecutor {
+    protected static final Logger LOGGER = LoggerFactory.getLogger(SnailJobExecutor.class);
 
     /**
-     * 调度中心的地址
-     * 具体到 Context 根目录, 如: http://localhost:8080/job-admin
+     * 配置参数
      */
-    private String adminAddress;
+    private final SnailJobNodeProperties configuration;
 
     /**
-     * 本机的外网 IP 地址
-     */
-    private String ip;
-
-    /**
-     * 本机与调度中心通讯的端口
-     * 默认 7479
-     */
-    private int port = 7479;
-
-    /**
-     * 执行器组 Name
-     */
-    private String groupName;
-
-    /**
-     * AccessToken
-     */
-    private String accessToken;
-
-    public String getAdminAddress() {
-        return adminAddress;
-    }
-
-    public void setAdminAddress(String adminAddress) {
-        this.adminAddress = adminAddress;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public String getGroupName() {
-        return groupName;
-    }
-
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    /**
-     * 与调度中心通信
+     * 调度中心通信的Client
      */
     private static AdminBiz adminBiz;
 
     /**
-     * 执行器服务端，接收 RPC 请求
+     * 执行器服务端，接收任务调度请求
      */
     private EmbedServer embedServer;
 
@@ -108,11 +48,18 @@ public class JobExecutor {
     private static final ConcurrentHashMap<Integer, JobThread> JOB_THREAD_REPOSITORY = new ConcurrentHashMap<>();
 
     /**
-     * 启动
+     * 注入配置
+     */
+    public SnailJobExecutor(SnailJobNodeProperties configuration) {
+        this.configuration = configuration;
+    }
+
+    /**
+     * 启动任务节点
      */
     public void start() {
         // 实例化 AdminClient 实例
-        initAdminBiz(adminAddress, accessToken);
+        initAdminBizClient(configuration.getAdminAddress(), configuration.getAccessToken());
 
         // 启动回调任务执行结果线程
         ResultCallbackThread.start();
@@ -122,24 +69,25 @@ public class JobExecutor {
     }
 
     /**
-     * 停止
+     * 停止任务节点
      */
     public void stop() {
         ResultCallbackThread.stop();
+
         stopEmbedServer();
     }
 
     /**
      * 实例化调度中心Client，用来发起请求给调度中心
-                */
-        private void initAdminBiz(String adminAddress, String accessToken) {
-            if (adminAddress == null || adminAddress.trim().length() == 0) {
-                LOGGER.warn("[SnailJob]-没有配置调度中心地址.");
-                return;
-            }
+     */
+    private void initAdminBizClient(String adminAddress, String accessToken) {
+        if (adminAddress == null || adminAddress.trim().length() == 0) {
+            LOGGER.warn("[SnailJob]-没有配置调度中心地址，无法连接到调度中心");
+            return;
+        }
 
-            // 实例化调度中心
-            adminBiz = new AdminBizClient(adminAddress.trim(), accessToken);
+        // 实例化调度中心
+        adminBiz = new AdminBizClient(adminAddress.trim(), accessToken);
     }
 
     public static AdminBiz getAdminBiz() {
@@ -152,12 +100,17 @@ public class JobExecutor {
      * 启动执行器的内嵌服务端
      */
     private void startEmbedServer() {
+        String hostIp = configuration.getHostIp();
+        int hostPort = configuration.getHostPort();
+        String appName = configuration.getAppName();
+        String accessToken = configuration.getAccessToken();
+
         // 组装本地地址，注册到调度中心中
-        String executorAddress = "http://" + ip + ":" + port;
+        String hostAddress = "http://" + hostIp + ":" + hostPort;
 
         // 启动 Netty Server，与 Admin 进行通信
         embedServer = new EmbedServer();
-        embedServer.start(port, executorAddress, groupName, accessToken);
+        embedServer.start(hostPort, hostAddress, appName, accessToken);
     }
 
     /**
@@ -216,6 +169,11 @@ public class JobExecutor {
         if (jobThread != null) {
             jobThread.toStop(removeOldReason);
             jobThread.interrupt();
+            try {
+                jobThread.join();
+            } catch (InterruptedException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
         }
     }
 

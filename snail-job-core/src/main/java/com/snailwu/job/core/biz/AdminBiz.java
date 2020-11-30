@@ -12,16 +12,22 @@ public interface AdminBiz {
 
     /**
      * 回调任务执行结果
+     * @param callbackParam 回调参数
+     * @return 回调结果
      */
     ResultT<String> callback(CallbackParam callbackParam);
 
     /**
      * 进行客户端的注册
+     * @param registryParam 注册参数
+     * @return 注册结果
      */
     ResultT<String> registry(RegistryParam registryParam);
 
     /**
      * 移除客户端
+     * @param registryParam 移除参数
+     * @return 移除结果
      */
     ResultT<String> registryRemove(RegistryParam registryParam);
 

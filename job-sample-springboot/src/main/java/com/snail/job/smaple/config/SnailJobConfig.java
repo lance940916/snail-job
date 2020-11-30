@@ -1,6 +1,6 @@
 package com.snail.job.smaple.config;
 
-import com.snailwu.job.core.executor.impl.SnailJobSpringExecutor;
+import com.snailwu.job.core.handler.scanner.SnailJobSpringExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;

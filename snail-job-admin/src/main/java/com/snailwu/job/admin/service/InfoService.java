@@ -58,7 +58,7 @@ public class InfoService {
 
         JobInfo updateJobInfo = new JobInfo();
         updateJobInfo.setId(id);
-        updateJobInfo.setTriggerStatus(TriggerStatus.START.getValue());
+        updateJobInfo.setTriggerStatus(TriggerStatus.RUNNING.getValue());
         updateJobInfo.setTriggerLastTime(0L);
         updateJobInfo.setTriggerNextTime(triggerNextTime.getTime());
         jobInfoMapper.updateByPrimaryKeySelective(updateJobInfo);
@@ -76,7 +76,7 @@ public class InfoService {
 
         JobInfo updateJobInfo = new JobInfo();
         updateJobInfo.setId(id);
-        updateJobInfo.setTriggerStatus(TriggerStatus.STOP.getValue());
+        updateJobInfo.setTriggerStatus(TriggerStatus.STOPPED.getValue());
         updateJobInfo.setTriggerLastTime(0L);
         updateJobInfo.setTriggerNextTime(0L);
         jobInfoMapper.updateByPrimaryKeySelective(updateJobInfo);
@@ -153,7 +153,7 @@ public class InfoService {
         jobInfo.setName(jobInfo.getName() + "-复制");
         jobInfo.setCreateTime(null);
         jobInfo.setUpdateTime(null);
-        jobInfo.setTriggerStatus(TriggerStatus.STOP.getValue());
+        jobInfo.setTriggerStatus(TriggerStatus.STOPPED.getValue());
         jobInfo.setTriggerLastTime(0L);
         jobInfo.setTriggerNextTime(0L);
         jobInfoMapper.insertSelective(jobInfo);

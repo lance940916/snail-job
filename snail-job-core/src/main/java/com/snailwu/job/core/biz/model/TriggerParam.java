@@ -6,16 +6,22 @@ package com.snailwu.job.core.biz.model;
  */
 public class TriggerParam {
 
-    // 任务 ID
+    /**
+     * 任务 ID
+     */
     private Integer jobId;
 
-    // 执行 handler、参数、堵塞策略、超时时间
+    /**
+     * 执行 handler、参数、堵塞策略、超时时间
+     */
     private String executorHandler;
     private String executorParams;
     private String executorBlockStrategy;
     private Integer executorTimeout;
 
-    // 任务对应的日志 ID 和 时间。用于进行回调，填充日志
+    /**
+     * 任务对应的日志 ID 和 时间。用于进行回调，填充日志
+     */
     private Long logId;
 
     public Integer getJobId() {

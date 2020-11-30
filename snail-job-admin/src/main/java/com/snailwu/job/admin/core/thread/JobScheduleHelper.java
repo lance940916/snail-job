@@ -86,7 +86,7 @@ public class JobScheduleHelper {
                     List<JobInfo> jobInfoList = AdminConfig.getInstance().getJobInfoMapper().selectMany(
                             select(JobInfoDynamicSqlSupport.id, JobInfoDynamicSqlSupport.cron, JobInfoDynamicSqlSupport.triggerNextTime)
                                     .from(JobInfoDynamicSqlSupport.jobInfo)
-                                    .where(JobInfoDynamicSqlSupport.triggerStatus, isEqualTo(TriggerStatus.START.getValue()))
+                                    .where(JobInfoDynamicSqlSupport.triggerStatus, isEqualTo(TriggerStatus.RUNNING.getValue()))
                                     .and(JobInfoDynamicSqlSupport.triggerNextTime, isLessThanOrEqualTo(maxTriggerTime))
                                     .orderBy(JobInfoDynamicSqlSupport.triggerNextTime)
                                     .limit(MAX_LIMIT_PRE_READ)
@@ -231,11 +231,11 @@ public class JobScheduleHelper {
         if (nextValidDate == null) {
             info.setTriggerLastTime(0L);
             info.setTriggerNextTime(0L);
-            info.setTriggerStatus(TriggerStatus.STOP.getValue());
+            info.setTriggerStatus(TriggerStatus.STOPPED.getValue());
         } else {
             info.setTriggerLastTime(info.getTriggerNextTime());
             info.setTriggerNextTime(nextValidDate.getTime());
-            info.setTriggerStatus(TriggerStatus.START.getValue());
+            info.setTriggerStatus(TriggerStatus.RUNNING.getValue());
         }
     }
 

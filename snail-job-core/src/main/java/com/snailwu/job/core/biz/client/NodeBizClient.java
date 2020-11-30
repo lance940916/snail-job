@@ -1,11 +1,15 @@
 package com.snailwu.job.core.biz.client;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.snailwu.job.core.biz.NodeBiz;
 import com.snailwu.job.core.biz.model.IdleBeatParam;
 import com.snailwu.job.core.biz.model.KillParam;
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.biz.model.TriggerParam;
-import com.snailwu.job.core.utils.JobHttpUtil;
+import com.snailwu.job.core.utils.SnailJobHttpUtil;
+import com.snailwu.job.core.utils.SnailJobJsonUtil;
+
+import static com.snailwu.job.core.constants.JobCoreConstant.URL_SEPARATOR;
 
 /**
  * @author 吴庆龙
@@ -20,14 +24,9 @@ public class NodeBizClient implements NodeBiz {
      */
     private final String accessToken;
 
-    /**
-     * 超时时间,秒
-     */
-    private final int timeout = 3;
-
     public NodeBizClient(String address, String accessToken) {
-        if (!address.endsWith("/")) {
-            address = address + "/";
+        if (!address.endsWith(URL_SEPARATOR)) {
+            address = address + URL_SEPARATOR;
         }
         this.address = address;
 
@@ -36,22 +35,30 @@ public class NodeBizClient implements NodeBiz {
 
     @Override
     public ResultT<String> beat() {
-        return JobHttpUtil.postBody(address + "beat", accessToken, null, timeout, String.class);
+        String respContent = SnailJobHttpUtil.post(address + "beat", accessToken, null);
+        return SnailJobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
+        });
     }
 
     @Override
     public ResultT<String> idleBeat(IdleBeatParam idleBeatParam) {
-        return JobHttpUtil.postBody(address + "ideaBeat", accessToken, idleBeatParam, timeout, String.class);
+        String respContent = SnailJobHttpUtil.post(address + "ideaBeat", accessToken, idleBeatParam);
+        return SnailJobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
+        });
     }
 
     @Override
     public ResultT<String> run(TriggerParam triggerParam) {
-        return JobHttpUtil.postBody(address + "run", accessToken, triggerParam, timeout, String.class);
+        String respContent = SnailJobHttpUtil.post(address + "run", accessToken, triggerParam);
+        return SnailJobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
+        });
     }
 
     @Override
     public ResultT<String> kill(KillParam killParam) {
-        return JobHttpUtil.postBody(address + "kill", accessToken, killParam, timeout, String.class);
+        String respContent = SnailJobHttpUtil.post(address + "kill", accessToken, killParam);
+        return SnailJobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
+        });
     }
 
 }

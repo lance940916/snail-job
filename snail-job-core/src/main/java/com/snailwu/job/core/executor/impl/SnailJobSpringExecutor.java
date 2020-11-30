@@ -2,8 +2,9 @@ package com.snailwu.job.core.executor.impl;
 
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.exception.JobException;
-import com.snailwu.job.core.executor.JobExecutor;
-import com.snailwu.job.core.handler.annotation.WuJob;
+import com.snailwu.job.core.executor.SnailJobExecutor;
+import com.snailwu.job.core.executor.SnailJobNodeProperties;
+import com.snailwu.job.core.handler.annotation.SnailJob;
 import com.snailwu.job.core.handler.impl.MethodJobHandler;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
@@ -23,13 +24,17 @@ import java.util.Map;
  * @author 吴庆龙
  * @date 2020/5/26 10:45 上午
  */
-public class JobSpringExecutor extends JobExecutor
+public class SnailJobSpringExecutor extends SnailJobExecutor
         implements ApplicationContextAware, SmartInitializingSingleton, DisposableBean {
 
     /**
      * Spring 上下文
      */
     private static ApplicationContext applicationContext;
+
+    public SnailJobSpringExecutor(SnailJobNodeProperties configuration) {
+        super(configuration);
+    }
 
     @Override
     public void afterSingletonsInstantiated() {
@@ -53,12 +58,12 @@ public class JobSpringExecutor extends JobExecutor
         for (String beanName : beanNames) {
             // 扫描 bean 中含有 SnailJob 注解的方法
             Object bean = applicationContext.getBean(beanName);
-            Map<Method, WuJob> methodJobMap = MethodIntrospector.selectMethods(
+            Map<Method, SnailJob> methodJobMap = MethodIntrospector.selectMethods(
                     bean.getClass(),
-                    new MethodIntrospector.MetadataLookup<WuJob>() {
+                    new MethodIntrospector.MetadataLookup<SnailJob>() {
                         @Override
-                        public WuJob inspect(Method method) {
-                            return AnnotatedElementUtils.findMergedAnnotation(method, WuJob.class);
+                        public SnailJob inspect(Method method) {
+                            return AnnotatedElementUtils.findMergedAnnotation(method, SnailJob.class);
                         }
                     }
             );
@@ -66,11 +71,11 @@ public class JobSpringExecutor extends JobExecutor
                 continue;
             }
 
-            for (Map.Entry<Method, WuJob> entry : methodJobMap.entrySet()) {
+            for (Map.Entry<Method, SnailJob> entry : methodJobMap.entrySet()) {
                 Method method = entry.getKey();
-                WuJob wuJob = entry.getValue();
+                SnailJob job = entry.getValue();
 
-                String jobHandlerName = wuJob.name();
+                String jobHandlerName = job.name();
                 if (jobHandlerName.trim().length() == 0) {
                     throw new JobException("[SnailJob]-JobHandler的Name无效, " +
                             "for[" + bean.getClass() + "#" + method.getName() + "]");
@@ -96,18 +101,18 @@ public class JobSpringExecutor extends JobExecutor
                 // 初始化 & 销毁方法
                 Method initMethod = null;
                 Method destroyMethod = null;
-                if (wuJob.init().trim().length() > 0) {
+                if (job.init().trim().length() > 0) {
                     try {
-                        initMethod = bean.getClass().getDeclaredMethod(wuJob.init());
+                        initMethod = bean.getClass().getDeclaredMethod(job.init());
                         initMethod.setAccessible(true);
                     } catch (NoSuchMethodException e) {
                         throw new RuntimeException("[SnailJob]-初始化方法无效, " +
                                 "for[" + bean.getClass() + "#" + method.getName() + "].");
                     }
                 }
-                if (wuJob.destroy().trim().length() > 0) {
+                if (job.destroy().trim().length() > 0) {
                     try {
-                        destroyMethod = bean.getClass().getDeclaredMethod(wuJob.destroy());
+                        destroyMethod = bean.getClass().getDeclaredMethod(job.destroy());
                         destroyMethod.setAccessible(true);
                     } catch (NoSuchMethodException e) {
                         throw new RuntimeException("[SnailJob]-销毁方法无效, " +
@@ -124,7 +129,7 @@ public class JobSpringExecutor extends JobExecutor
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        JobSpringExecutor.applicationContext = applicationContext;
+        SnailJobSpringExecutor.applicationContext = applicationContext;
     }
 
     @Override

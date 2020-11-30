@@ -1,4 +1,4 @@
-package com.snailwu.job.core.enums;
+package com.snailwu.job.core.constants;
 
 /**
  * 注册配置
@@ -6,7 +6,7 @@ package com.snailwu.job.core.enums;
  * @author 吴庆龙
  * @date 2020/5/25 4:16 下午
  */
-public class RegistryConfig {
+public class RegistryConstant {
 
     /**
      * 心跳间隔时间

@@ -8,8 +8,8 @@ package com.snailwu.job.core.enums;
  */
 public enum TriggerStatus {
 
-    STOP("stop", (byte) 0, "停止"),
-    START("start", (byte) 1, "启动"),
+    STOPPED("stopped", (byte) 0, "已停止"),
+    RUNNING("running", (byte) 1, "运行中"),
     ;
 
     private final String name;
