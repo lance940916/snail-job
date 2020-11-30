@@ -85,6 +85,10 @@ public class JobThread extends Thread {
      * 添加任务到任务队列中
      */
     public ResultT<String> addJobQueue(TriggerParam triggerParam) {
+        if (!running) {
+            return ResultT.FAIL;
+        }
+
         // 校验是否重复执行
         if (logIdSet.contains(triggerParam.getLogId())) {
             return new ResultT<>(ResultT.FAIL_CODE, "重复的任务调度。logId：" + triggerParam.getLogId());
@@ -101,6 +105,10 @@ public class JobThread extends Thread {
      * jobId 和 logId 一样即相等
      */
     public ResultT<String> removeJobQueue(TriggerParam triggerParam) {
+        if (!running) {
+            return ResultT.FAIL;
+        }
+
         // 移除时需要获取读写锁，使用 equals 寻找一样的任务进行移除
         boolean removeResult = jobQueue.remove(triggerParam);
         if (removeResult) {
@@ -115,6 +123,9 @@ public class JobThread extends Thread {
      * 该 JobThread 是否忙碌
      */
     public boolean isRunningOrHasQueue() {
+        if (!running) {
+            return true;
+        }
         return runningTask || jobQueue.size() > 0;
     }
 
@@ -245,7 +256,7 @@ public class JobThread extends Thread {
      * 所以需要注意，此处彻底销毁本线程，需要通过共享变量方式
      */
     public void toStop(String stopReason) {
-        this.running = true;
+        this.running = false;
         this.stopReason = stopReason;
     }
 }

@@ -37,6 +37,11 @@ public class SnailJobSpringNode extends SnailJobNode
     }
 
     @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        SnailJobSpringNode.applicationContext = applicationContext;
+    }
+
+    @Override
     public void afterSingletonsInstantiated() {
         // 扫描所有的 JobHandler
         initJobHandlerMethodRepository();
@@ -49,7 +54,7 @@ public class SnailJobSpringNode extends SnailJobNode
      */
     private void initJobHandlerMethodRepository() {
         if (applicationContext == null) {
-            LOGGER.error("[SnailJob]-Spring applicationContext为NULL");
+            LOGGER.error("没有Spring应用的上下文，无法扫描JobHandler");
             return;
         }
 
@@ -77,22 +82,20 @@ public class SnailJobSpringNode extends SnailJobNode
 
                 String jobHandlerName = job.name();
                 if (jobHandlerName.trim().length() == 0) {
-                    throw new JobException("[SnailJob]-JobHandler的Name无效, " +
-                            "for[" + bean.getClass() + "#" + method.getName() + "]");
+                    throw new JobException("JobHandler的Name无效, for[" + bean.getClass() + "#" + method.getName() + "]");
                 }
                 if (loadJobHandler(jobHandlerName) != null) {
-                    throw new RuntimeException("[SnailJob]-JobHandler的Name存在冲突, " +
-                            "for[" + jobHandlerName + "]");
+                    throw new JobException("JobHandler的Name存在冲突, for[" + jobHandlerName + "]");
                 }
 
                 // 检验方法的参数. 1:只有一个参数; 2:参数必须是String类型的; 3:返回值必须是 ResultT 类型
                 if (!(method.getParameterTypes().length == 1 && method.getParameterTypes()[0].isAssignableFrom(String.class))) {
-                    throw new RuntimeException("[SnailJob]-JobHandler的方法入参无效, " +
+                    throw new JobException("JobHandler的方法入参无效, " +
                             "for[" + bean.getClass() + "#" + method.getName() + "], " +
                             "格式如:\" public ReturnT<String> execute(String param) \".");
                 }
                 if (!method.getReturnType().isAssignableFrom(ResultT.class)) {
-                    throw new RuntimeException("[SnailJob]-JobHandler的方法返回值无效, " +
+                    throw new JobException("JobHandler的方法返回值无效, " +
                             "for[" + bean.getClass() + "#" + method.getName() + "], " +
                             "格式如:\" public ReturnT<String> execute(String param) \".");
                 }
@@ -106,8 +109,7 @@ public class SnailJobSpringNode extends SnailJobNode
                         initMethod = bean.getClass().getDeclaredMethod(job.init());
                         initMethod.setAccessible(true);
                     } catch (NoSuchMethodException e) {
-                        throw new RuntimeException("[SnailJob]-初始化方法无效, " +
-                                "for[" + bean.getClass() + "#" + method.getName() + "].");
+                        throw new JobException("初始化方法无效, for[" + bean.getClass() + "#" + method.getName() + "].");
                     }
                 }
                 if (job.destroy().trim().length() > 0) {
@@ -115,21 +117,15 @@ public class SnailJobSpringNode extends SnailJobNode
                         destroyMethod = bean.getClass().getDeclaredMethod(job.destroy());
                         destroyMethod.setAccessible(true);
                     } catch (NoSuchMethodException e) {
-                        throw new RuntimeException("[SnailJob]-销毁方法无效, " +
-                                "for[" + bean.getClass() + "#" + method.getName() + "].");
+                        throw new JobException("销毁方法无效, for[" + bean.getClass() + "#" + method.getName() + "].");
                     }
                 }
 
-                // 注册
+                // 注册 JobHandler
                 MethodJobHandler methodJobHandler = new MethodJobHandler(bean, method, initMethod, destroyMethod);
                 registryJobHandler(jobHandlerName, methodJobHandler);
             }
         }
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        SnailJobSpringNode.applicationContext = applicationContext;
     }
 
     @Override

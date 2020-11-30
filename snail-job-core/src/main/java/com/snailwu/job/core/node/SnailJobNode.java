@@ -38,18 +38,6 @@ public abstract class SnailJobNode {
     private EmbedServer embedServer;
 
     /**
-     * key: 任务的名称
-     * value: 任务的具体执行Method
-     */
-    private static final ConcurrentHashMap<String, IJobHandler> JOB_HANDLER_REPOSITORY = new ConcurrentHashMap<>();
-
-    /**
-     * key: 任务的ID
-     * value: 任务对应的执行线程
-     */
-    private static final ConcurrentHashMap<Integer, JobThread> JOB_THREAD_REPOSITORY = new ConcurrentHashMap<>();
-
-    /**
      * 注入配置
      */
     public SnailJobNode(SnailJobNodeProperties configuration) {
@@ -129,11 +117,17 @@ public abstract class SnailJobNode {
     // -------------------------------- JobHandler
 
     /**
+     * key: 任务的名称
+     * value: 任务的具体执行Method
+     */
+    private static final ConcurrentHashMap<String, IJobHandler> JOB_HANDLER_REPOSITORY = new ConcurrentHashMap<>();
+
+    /**
      * 注册 JobHandler
      */
     public static void registryJobHandler(String name, IJobHandler jobHandler) {
         JOB_HANDLER_REPOSITORY.put(name, jobHandler);
-        LOGGER.info("注册JobHandler成功. name:{}, handler:{}", name, jobHandler);
+        LOGGER.info("注册JobHandler成功. jobHandlerName:{}", name);
     }
 
     /**
@@ -147,19 +141,22 @@ public abstract class SnailJobNode {
     // -------------------------------- JobThread
 
     /**
+     * key: 任务的ID
+     * value: 任务对应的执行线程
+     */
+    private static final ConcurrentHashMap<Integer, JobThread> JOB_THREAD_REPOSITORY = new ConcurrentHashMap<>();
+
+    /**
      * 注册新的 jobThread，如果有相同的 jobId 就进行替换，并将之前的 jobId 对应的线程停止
      */
     public static JobThread registryJobThread(int jobId, IJobHandler handler, String removeOldReason) {
         JobThread jobThread = new JobThread(jobId, handler);
-        jobThread.setName("job-id-" + jobId);
+        jobThread.setName("jobThread-" + jobId);
         jobThread.start();
-        LOGGER.info("注册JobThread成功.jobId:{},handler:{}", jobId, handler);
+        LOGGER.info("创建并启动JobThread成功。jobId：{}", jobId);
 
         JobThread oldJobThread = JOB_THREAD_REPOSITORY.put(jobId, jobThread);
-        if (oldJobThread != null) {
-            oldJobThread.toStop(removeOldReason);
-            oldJobThread.interrupt();
-        }
+        stopJobThread(jobId, removeOldReason, oldJobThread);
         return jobThread;
     }
 
@@ -168,16 +165,30 @@ public abstract class SnailJobNode {
      */
     public static void removeJobThread(int jobId, String removeOldReason) {
         JobThread jobThread = JOB_THREAD_REPOSITORY.remove(jobId);
-        if (jobThread != null) {
-            jobThread.toStop(removeOldReason);
-            jobThread.interrupt();
-            try {
-                jobThread.join();
-            } catch (InterruptedException e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        }
+        stopJobThread(jobId, removeOldReason, jobThread);
     }
+
+    /**
+     * 停止 JobThread
+     * @param jobId 任务ID
+     * @param removeOldReason 停止原因
+     * @param jobThread Thread
+     */
+    private static void stopJobThread(int jobId, String removeOldReason, JobThread jobThread) {
+        if (jobThread == null) {
+            return;
+        }
+
+        jobThread.toStop(removeOldReason);
+        jobThread.interrupt();
+        try {
+            jobThread.join();
+        } catch (InterruptedException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        LOGGER.info("停止JobThread成功。jobId：{}, 原因：{}", jobId, removeOldReason);
+    }
+
 
     /**
      * 加载 JobThread
