@@ -41,13 +41,6 @@ public class JobFailMonitorHelper {
                     // 未告警的任务日志 && 已经有执行结果 || 调度失败的
                     List<JobLog> jobLogs = listNeedAlarmLog();
                     for (JobLog log : jobLogs) {
-                        // 锁定这条数据，依赖数据库的锁
-                        int update = lock(log);
-                        if (update < 1) {
-                            // 锁定失败不操作
-                            continue;
-                        }
-
                         // 查询任务的信息
                         JobInfo jobInfo = AdminConfig.getInstance().getJobInfoMapper().selectOne(
                                 select(JobInfoDynamicSqlSupport.jobInfo.allColumns())
@@ -57,8 +50,8 @@ public class JobFailMonitorHelper {
                         ).orElse(null);
                         if (jobInfo == null) {
                             LOGGER.error("无此任务。任务:{}", log.getJobId());
-                            // 解锁，更新告警状态为无需告警
-                            unlock(log, NOT_ALARM.getValue());
+                            // 更新告警状态为无需告警
+                            updateAlarmStatus(log, NOT_ALARM.getValue());
                             continue;
                         }
 
@@ -79,8 +72,8 @@ public class JobFailMonitorHelper {
                             newAlarmStatus = alarmResult ? ALARM_SUCCESS.getValue() : ALARM_FAIL.getValue();
                         }
 
-                        // unlock
-                        unlock(log, newAlarmStatus);
+                        // 更新告警状态
+                        updateAlarmStatus(log, newAlarmStatus);
                     }
                 } catch (Exception e) {
                     LOGGER.error("任务失败监控异常", e);
@@ -103,28 +96,14 @@ public class JobFailMonitorHelper {
     }
 
     /**
-     * 解锁
+     * 更新告警状态
      */
-    private static void unlock(JobLog log, byte newAlarmStatus) {
+    private static void updateAlarmStatus(JobLog log, byte newAlarmStatus) {
         AdminConfig.getInstance().getJobLogMapper().update(
                 update(JobLogDynamicSqlSupport.jobLog)
                         .set(JobLogDynamicSqlSupport.alarmStatus).equalTo(newAlarmStatus)
                         .where(JobLogDynamicSqlSupport.id, isEqualTo(log.getId()))
                         .and(JobLogDynamicSqlSupport.alarmStatus, isEqualTo(LOCK.getValue()))
-                        .build().render(RenderingStrategies.MYBATIS3)
-        );
-    }
-
-    /**
-     * 加锁
-     */
-    private static int lock(JobLog log) {
-        return AdminConfig.getInstance().getJobLogMapper().update(
-                update(JobLogDynamicSqlSupport.jobLog)
-                        .set(JobLogDynamicSqlSupport.alarmStatus).equalTo(LOCK.getValue())
-                        .where()
-                        .and(JobLogDynamicSqlSupport.id, isEqualTo(log.getId()))
-                        .and(JobLogDynamicSqlSupport.alarmStatus, isEqualTo(DEFAULT.getValue()))
                         .build().render(RenderingStrategies.MYBATIS3)
         );
     }
