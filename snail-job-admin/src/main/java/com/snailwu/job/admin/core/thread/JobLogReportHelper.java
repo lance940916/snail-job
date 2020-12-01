@@ -103,6 +103,7 @@ public class JobLogReportHelper {
 
     /**
      * 列出任务的日志
+     *
      * @param beginTime 开始时间
      * @param endTime 结束时间
      * @return 日志列表

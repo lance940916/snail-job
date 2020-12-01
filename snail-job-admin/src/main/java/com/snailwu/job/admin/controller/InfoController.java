@@ -1,9 +1,9 @@
 package com.snailwu.job.admin.controller;
 
 import com.github.pagehelper.PageInfo;
-import com.snailwu.job.admin.controller.entity.RouteEntity;
 import com.snailwu.job.admin.controller.request.JobInfoEditRequest;
 import com.snailwu.job.admin.controller.request.JobInfoSearchRequest;
+import com.snailwu.job.admin.controller.vo.RouteVO;
 import com.snailwu.job.admin.core.cron.CronExpression;
 import com.snailwu.job.admin.core.route.ExecRouteStrategyEnum;
 import com.snailwu.job.admin.core.thread.JobTriggerPoolHelper;
@@ -111,11 +111,11 @@ public class InfoController {
      * 获取路由策略
      */
     @GetMapping("/list_route")
-    public ResultT<List<RouteEntity>> listRoute() {
-        List<RouteEntity> list = new ArrayList<>();
+    public ResultT<List<RouteVO>> listRoute() {
+        List<RouteVO> list = new ArrayList<>();
         ExecRouteStrategyEnum[] routeStrategyEnums = ExecRouteStrategyEnum.values();
         for (ExecRouteStrategyEnum strategyEnum : routeStrategyEnums) {
-            list.add(new RouteEntity(strategyEnum.getName(), strategyEnum.getDesc()));
+            list.add(new RouteVO(strategyEnum.getName(), strategyEnum.getDesc()));
         }
         return new ResultT<>(list);
     }

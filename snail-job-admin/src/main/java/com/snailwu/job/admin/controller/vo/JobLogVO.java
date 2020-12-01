@@ -1,14 +1,13 @@
-package com.snailwu.job.admin.controller.entity;
+package com.snailwu.job.admin.controller.vo;
 
 import com.snailwu.job.admin.model.JobLog;
 
 /**
- * VO
- *
  * @author 吴庆龙
  * @date 2020/8/17 3:33 下午
  */
 public class JobLogVO extends JobLog {
+
     private String jobName;
 
     public String getJobName() {

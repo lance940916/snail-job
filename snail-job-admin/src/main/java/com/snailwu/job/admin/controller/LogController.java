@@ -1,9 +1,9 @@
 package com.snailwu.job.admin.controller;
 
 import com.github.pagehelper.PageInfo;
-import com.snailwu.job.admin.controller.entity.JobLogVO;
 import com.snailwu.job.admin.controller.request.JobLogDeleteRequest;
 import com.snailwu.job.admin.controller.request.JobLogSearchRequest;
+import com.snailwu.job.admin.controller.vo.JobLogVO;
 import com.snailwu.job.admin.service.LogService;
 import com.snailwu.job.core.biz.model.ResultT;
 import org.springframework.validation.annotation.Validated;
