@@ -17,9 +17,10 @@ public class JobScheduler {
 
     /**
      * 启动线程
+     * 注意顺序
      */
     public void startAll() {
-        // 定时整理注册节点到 group 中
+        // 定时整理注册节点到 app 中
         NodeMonitorHelper.start();
 
         // 失败重试线程
@@ -37,17 +38,18 @@ public class JobScheduler {
 
     /**
      * 停止线程
+     * 注意顺序
      */
     public void stopAll() {
-        NodeMonitorHelper.stop();
-
-        JobFailMonitorHelper.stop();
-
-        JobLogReportHelper.stop();
-
         JobScheduleHelper.stop();
 
         JobTriggerPoolHelper.stop();
+
+        NodeMonitorHelper.stop();
+
+        JobLogReportHelper.stop();
+
+        JobFailMonitorHelper.stop();
     }
 
     /**

@@ -12,7 +12,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import javax.sql.DataSource;
 
 /**
  * @author 吴庆龙
@@ -71,8 +70,6 @@ public class AdminConfig implements InitializingBean, DisposableBean {
     private JobLogReportMapper jobLogReportMapper;
     @Resource
     private JobAlarmComposite jobAlarmComposite;
-    @Resource
-    private DataSource dataSource;
 
     public JobNodeMapper getJobNodeMapper() {
         return jobNodeMapper;
@@ -102,7 +99,4 @@ public class AdminConfig implements InitializingBean, DisposableBean {
         return jobAlarmComposite;
     }
 
-    public DataSource getDataSource() {
-        return dataSource;
-    }
 }
