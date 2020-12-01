@@ -15,14 +15,14 @@
     <@netCommon.commonHeader />
 
     <#-- 左侧菜单栏 -->
-    <@netCommon.commonLeft "group" />
+    <@netCommon.commonLeft "app" />
 
     <div class="layui-body">
         <!-- 内容主体区域 -->
         <div style="padding: 15px;">
 
             <fieldset class="layui-elem-field layui-field-title">
-                <legend>执行器管理</legend>
+                <legend>应用管理</legend>
             </fieldset>
 
             <#-- 搜索 -->
@@ -139,7 +139,7 @@
         // 渲染表格
         table.render({
             elem: '#dataTableID',
-            url: '${contextPath}/group',
+            url: '${contextPath}/app',
             cols: [[
                 {field: 'id', title: 'ID', fixed: 'left', width: 100, unresize: true},
                 {field: 'title', title: '名称'},
@@ -200,7 +200,7 @@
                 layer.confirm('是否删除该条记录?', {icon: 3, title: '提示'}, function (index) {
                     layer.close(index);
                     $.ajax({
-                        url: '${contextPath}/group/' + data.id + '?_method=delete',
+                        url: '${contextPath}/app/' + data.id + '?_method=delete',
                         type: 'post',
                         success: function (ret) {
                             // 刷新表格
@@ -239,7 +239,7 @@
         let field = data.field;
         let method = field.id === '' ? 'post' : 'put';
         $.ajax({
-            url: '${contextPath}/group?_method=' + method,
+            url: '${contextPath}/app?_method=' + method,
             type: 'post',
             contentType: 'application/json',
             data: JSON.stringify(field),

@@ -35,8 +35,6 @@ public class DataSourceConfig {
     private Integer maximumPoolSize;
     @Value("${hikari.max-life-time}")
     private Long maxLifeTime;
-    @Value("${hikari.connection-test-query}")
-    private String connectionTestQuery;
 
     /**
      * 数据库连接池配置
@@ -55,7 +53,6 @@ public class DataSourceConfig {
         dataSource.setMinimumIdle(minimumIdle);
         dataSource.setMaximumPoolSize(maximumPoolSize);
         dataSource.setMaxLifetime(maxLifeTime);
-        dataSource.setConnectionTestQuery(connectionTestQuery);
         return dataSource;
     }
 

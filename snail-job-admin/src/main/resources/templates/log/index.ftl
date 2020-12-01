@@ -218,7 +218,7 @@
         });
 
         // 渲染分组下拉框
-        $.get('${contextPath}/group/list_all', function (ret) {
+        $.get('${contextPath}/app/list_all', function (ret) {
             if (ret.code !== 200) {
                 layer.error('渲染任务分组异常');
                 return;

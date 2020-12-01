@@ -121,10 +121,6 @@ public class JobScheduleHelper {
                 } catch (Exception e) {
                     LOGGER.error("执行任务调度异常。", e);
                 }
-
-                // 计算耗时
-                long costMs = System.currentTimeMillis() - nowTimeTs;
-                LOGGER.info("本次任务扫描整理耗时：{}毫秒", costMs);
             }
         });
         scanJobThread.setDaemon(true);
@@ -158,9 +154,8 @@ public class JobScheduleHelper {
 
                 // 计算耗时。耗时如果大于1秒会造成任务调度时间不准确
                 long costMs = System.currentTimeMillis() - nowTimeTs;
-                LOGGER.info("本次任务调度耗时时间：{}毫秒", costMs);
                 if (costMs > 1000) {
-                    LOGGER.warn("本次任务调度耗时时间过长：{}毫秒", costMs);
+                    LOGGER.warn("执行任务调度耗时过长：{}毫秒!!!", costMs);
                 }
 
                 // 休眠

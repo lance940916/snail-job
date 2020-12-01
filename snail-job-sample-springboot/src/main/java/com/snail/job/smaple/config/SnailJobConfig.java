@@ -21,8 +21,8 @@ public class SnailJobConfig {
         properties.setAdminAddress("http://localhost:8080/snail-job-admin");
         properties.setAppName("default-group");
         properties.setHostIp("127.0.0.1");
-        properties.setHostPort(9999);
-        properties.setAccessToken("hello-job");
+        properties.setHostPort(7479);
+        properties.setAccessToken("c16fb6b0-8c69-40da-a00f-cb54fc05ea53");
 
         return new SnailJobSpringNode(properties);
     }

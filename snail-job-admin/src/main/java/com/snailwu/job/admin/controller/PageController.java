@@ -15,9 +15,9 @@ public class PageController {
         return "index";
     }
 
-    @RequestMapping("/group-page")
-    public String groupPage() {
-        return "group/index";
+    @RequestMapping("/app-page")
+    public String appPage() {
+        return "app/index";
     }
 
     @RequestMapping("/info-page")
