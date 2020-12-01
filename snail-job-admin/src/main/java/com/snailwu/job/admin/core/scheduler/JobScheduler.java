@@ -1,7 +1,9 @@
 package com.snailwu.job.admin.core.scheduler;
 
 import com.snailwu.job.admin.core.config.AdminConfig;
-import com.snailwu.job.admin.core.thread.*;
+import com.snailwu.job.admin.core.thread.JobScheduleHelper;
+import com.snailwu.job.admin.core.thread.JobTriggerPoolHelper;
+import com.snailwu.job.admin.core.thread.NodeMonitorHelper;
 import com.snailwu.job.core.biz.NodeBiz;
 import com.snailwu.job.core.biz.client.NodeBizClient;
 
@@ -24,10 +26,10 @@ public class JobScheduler {
         NodeMonitorHelper.start();
 
         // 失败重试线程
-        JobFailMonitorHelper.start();
+//        JobFailMonitorHelper.start();
 
         // 任务运行结果统计线程
-        JobLogReportHelper.start();
+//        JobLogReportHelper.start();
 
         // 任务触发类线程
         JobTriggerPoolHelper.start();
@@ -45,11 +47,11 @@ public class JobScheduler {
 
         JobTriggerPoolHelper.stop();
 
+//        JobLogReportHelper.stop();
+
+//        JobFailMonitorHelper.stop();
+
         NodeMonitorHelper.stop();
-
-        JobLogReportHelper.stop();
-
-        JobFailMonitorHelper.stop();
     }
 
     /**

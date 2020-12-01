@@ -34,9 +34,6 @@ public class JobTriggerPoolHelper {
                 new LinkedBlockingQueue<>(1000),
                 new JobDefaultThreadFactory()
         );
-
-        // 预先把Core线程启动
-        triggerPool.prestartCoreThread();
         LOGGER.info("调度线程池-已启动。");
     }
 

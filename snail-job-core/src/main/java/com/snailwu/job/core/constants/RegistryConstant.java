@@ -21,4 +21,9 @@ public interface RegistryConstant {
      */
     int DEAD_TIME = BEAT_TIME * 3;
 
+    /**
+     * 整理节点机器地址的时间间隔
+     */
+    int SORT_NODE_ADDRESS_TIME = 10;
+
 }
