@@ -1,3 +1,6 @@
+![Travis (.com) branch](https://img.shields.io/travis/com/wu0916/wu-job/master)
+![GitHub](https://img.shields.io/github/license/wu0916/wu-job)
+
 # 分布式定时任务调度系统
 
 首先这是一个 Demo 项目，适合学习使用。
