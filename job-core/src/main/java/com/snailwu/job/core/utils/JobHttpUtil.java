@@ -25,8 +25,8 @@ import static com.snailwu.job.core.constants.JobCoreConstant.JOB_ACCESS_TOKEN;
  * @author 吴庆龙
  * @date 2020/5/22 4:38 下午
  */
-public class SnailJobHttpUtil {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SnailJobHttpUtil.class);
+public class JobHttpUtil {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JobHttpUtil.class);
 
     private static final HttpClient HTTP_CLIENT;
 
@@ -58,7 +58,7 @@ public class SnailJobHttpUtil {
 
     public static String post(String url, String accessToken, Object bodyObj) {
         // 序列化请求体
-        String bodyContent = SnailJobJsonUtil.writeValueAsString(bodyObj);
+        String bodyContent = JobJsonUtil.writeValueAsString(bodyObj);
 
         // 请求
         HttpPost post = new HttpPost(url);

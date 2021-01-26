@@ -9,19 +9,19 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.snailwu</groupId>
-    <artifactId>snail-job-sample-springboot</artifactId>
+    <artifactId>job-sample-springboot</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>snail-job-sample-springboot</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.snailwu</groupId>
-            <artifactId>snail-job-core</artifactId>
+            <artifactId>job-core</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 

@@ -5,8 +5,8 @@ import com.snailwu.job.core.biz.AdminBiz;
 import com.snailwu.job.core.biz.model.CallbackParam;
 import com.snailwu.job.core.biz.model.RegistryParam;
 import com.snailwu.job.core.biz.model.ResultT;
-import com.snailwu.job.core.utils.SnailJobHttpUtil;
-import com.snailwu.job.core.utils.SnailJobJsonUtil;
+import com.snailwu.job.core.utils.JobHttpUtil;
+import com.snailwu.job.core.utils.JobJsonUtil;
 
 import static com.snailwu.job.core.constants.JobCoreConstant.URL_SEPARATOR;
 
@@ -39,22 +39,22 @@ public class AdminBizClient implements AdminBiz {
 
     @Override
     public ResultT<String> callback(CallbackParam callbackParam) {
-        String respContent = SnailJobHttpUtil.post(address + "api/callback", accessToken, callbackParam);
-        return SnailJobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
+        String respContent = JobHttpUtil.post(address + "api/callback", accessToken, callbackParam);
+        return JobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
         });
     }
 
     @Override
     public ResultT<String> registryNode(RegistryParam registryParam) {
-        String respContent = SnailJobHttpUtil.post(address + "api/registry", accessToken, registryParam);
-        return SnailJobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
+        String respContent = JobHttpUtil.post(address + "api/registry", accessToken, registryParam);
+        return JobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
         });
     }
 
     @Override
     public ResultT<String> removeNode(RegistryParam registryParam) {
-        String respContent = SnailJobHttpUtil.post(address + "api/registryRemove", accessToken, registryParam);
-        return SnailJobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
+        String respContent = JobHttpUtil.post(address + "api/registryRemove", accessToken, registryParam);
+        return JobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
         });
     }
 }

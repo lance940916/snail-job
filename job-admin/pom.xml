@@ -5,11 +5,11 @@
 
     <parent>
         <groupId>com.snailwu</groupId>
-        <artifactId>snail-job</artifactId>
+        <artifactId>wu-job</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>snail-job-admin</artifactId>
+    <artifactId>job-admin</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
 
@@ -19,7 +19,7 @@
         <!-- Snail Job Core -->
         <dependency>
             <groupId>com.snailwu</groupId>
-            <artifactId>snail-job-core</artifactId>
+            <artifactId>job-core</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 

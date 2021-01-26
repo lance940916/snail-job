@@ -7,7 +7,7 @@ import com.snailwu.job.core.biz.model.KillParam;
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.biz.model.TriggerParam;
 import com.snailwu.job.core.thread.RegistryNodeThread;
-import com.snailwu.job.core.utils.SnailJobJsonUtil;
+import com.snailwu.job.core.utils.JobJsonUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -138,7 +138,7 @@ public class EmbedServer {
             // 请求响应
             String responseJson = "";
             try {
-                responseJson = SnailJobJsonUtil.writeValueAsString(result);
+                responseJson = JobJsonUtil.writeValueAsString(result);
             } catch (Exception e) {
                 LOGGER.error("序列化JSON异常");
             }
@@ -166,13 +166,13 @@ public class EmbedServer {
                     case "/beat":  // 心跳监测
                         return nodeBiz.beat();
                     case "/idleBeat":  // 执行器是否忙碌
-                        IdleBeatParam idleBeatParam = SnailJobJsonUtil.readValue(requestData, IdleBeatParam.class);
+                        IdleBeatParam idleBeatParam = JobJsonUtil.readValue(requestData, IdleBeatParam.class);
                         return nodeBiz.idleBeat(idleBeatParam);
                     case "/run":  // 执行任务
-                        TriggerParam triggerParam = SnailJobJsonUtil.readValue(requestData, TriggerParam.class);
+                        TriggerParam triggerParam = JobJsonUtil.readValue(requestData, TriggerParam.class);
                         return nodeBiz.run(triggerParam);
                     case "/kill":  // 终止任务
-                        KillParam killParam = SnailJobJsonUtil.readValue(requestData, KillParam.class);
+                        KillParam killParam = JobJsonUtil.readValue(requestData, KillParam.class);
                         return nodeBiz.kill(killParam);
                     case "/log":  // TODO 执行器信息
                         return ResultT.SUCCESS;

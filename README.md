@@ -1,15 +1,22 @@
-# 蜗牛定时任务调度系统
+# 分布式定时任务调度系统
 
-# 一、项目介绍
+首先这是一个 Demo 项目，适合学习使用。
 
-简单、易用、实时的分布式定时任务调度系统。
+然后项目是参考 [xxl-job](https://github.com/xuxueli/xxl-job) 源码编写。
 
-# 二、job-core 依赖包
+最后项目目前状态：可运行，可调度。
 
-- jackson-databind(2.11.0)
-- netty-all(4.1.50.Final)
+# 技术选型
 
-# 三、功能列表
+- Spring
+- SpringBoot
+- Freemarker
+- MyBatis and dynamic-sql
+- log4j
+- Netty
 
-* [x] 任务定时调度
+# 个人总结（个人观点）
 
+通过和xxl项目相比，能体会到一个好的开源项目作者是要付出很多心血的去维护的。
+
+人多力量大，开源项目得到同志们的支持，也会越来越优秀的，这也是我由心体会到的。

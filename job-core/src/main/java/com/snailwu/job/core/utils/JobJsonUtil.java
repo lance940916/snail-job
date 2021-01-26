@@ -18,7 +18,7 @@ import java.io.IOException;
  * @author 吴庆龙
  * @date 2020/5/22 3:11 下午
  */
-public class SnailJobJsonUtil {
+public class JobJsonUtil {
 
     /**
      * 实例化 ObjectMapper

@@ -6,8 +6,8 @@ import com.snailwu.job.core.biz.model.IdleBeatParam;
 import com.snailwu.job.core.biz.model.KillParam;
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.biz.model.TriggerParam;
-import com.snailwu.job.core.utils.SnailJobHttpUtil;
-import com.snailwu.job.core.utils.SnailJobJsonUtil;
+import com.snailwu.job.core.utils.JobHttpUtil;
+import com.snailwu.job.core.utils.JobJsonUtil;
 
 import static com.snailwu.job.core.constants.JobCoreConstant.URL_SEPARATOR;
 
@@ -37,29 +37,29 @@ public class NodeBizClient implements NodeBiz {
 
     @Override
     public ResultT<String> beat() {
-        String respContent = SnailJobHttpUtil.post(address + "beat", accessToken, null);
-        return SnailJobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
+        String respContent = JobHttpUtil.post(address + "beat", accessToken, null);
+        return JobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
         });
     }
 
     @Override
     public ResultT<String> idleBeat(IdleBeatParam idleBeatParam) {
-        String respContent = SnailJobHttpUtil.post(address + "ideaBeat", accessToken, idleBeatParam);
-        return SnailJobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
+        String respContent = JobHttpUtil.post(address + "ideaBeat", accessToken, idleBeatParam);
+        return JobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
         });
     }
 
     @Override
     public ResultT<String> run(TriggerParam triggerParam) {
-        String respContent = SnailJobHttpUtil.post(address + "run", accessToken, triggerParam);
-        return SnailJobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
+        String respContent = JobHttpUtil.post(address + "run", accessToken, triggerParam);
+        return JobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
         });
     }
 
     @Override
     public ResultT<String> kill(KillParam killParam) {
-        String respContent = SnailJobHttpUtil.post(address + "kill", accessToken, killParam);
-        return SnailJobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
+        String respContent = JobHttpUtil.post(address + "kill", accessToken, killParam);
+        return JobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
         });
     }
 
