@@ -33,21 +33,18 @@ public class AdminConfig implements InitializingBean, DisposableBean {
 
     // ---------------------- JobScheduler ----------------------
 
-    private JobScheduler jobScheduler;
-
     @Override
     public void afterPropertiesSet() {
         instance = this;
 
         // 启动所有守护线程
-        jobScheduler = new JobScheduler();
-        jobScheduler.startAll();
+        JobScheduler.startAll();
     }
 
     @Override
     public void destroy() {
         // 停止所有守护线程
-        jobScheduler.stopAll();
+        JobScheduler.stopAll();
     }
 
     // ---------------------- mapper ----------------------

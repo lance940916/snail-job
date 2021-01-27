@@ -4,8 +4,8 @@ USE `wu_job`;
 SHOW TABLES;
 
 -- 节点注册信息
-DROP TABLE IF EXISTS `job_node`;
-CREATE TABLE IF NOT EXISTS `job_node`
+DROP TABLE IF EXISTS `job_executor`;
+CREATE TABLE IF NOT EXISTS `job_executor`
 (
     `id`          INT(11)     NOT NULL AUTO_INCREMENT,
     `app_name`    VARCHAR(32) NOT NULL COMMENT '所属应用',
