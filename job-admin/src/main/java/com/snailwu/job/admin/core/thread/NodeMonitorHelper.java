@@ -5,7 +5,6 @@ import com.snailwu.job.admin.mapper.JobAppDynamicSqlSupport;
 import com.snailwu.job.admin.mapper.JobNodeDynamicSqlSupport;
 import com.snailwu.job.admin.model.JobApp;
 import com.snailwu.job.admin.model.JobNode;
-import com.snailwu.job.core.constants.RegistryConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;

@@ -9,7 +9,7 @@ import com.snailwu.job.core.biz.model.TriggerParam;
  * @author 吴庆龙
  * @date 2020/5/25 11:59 上午
  */
-public interface NodeBiz {
+public interface ExecutorBiz {
 
     /**
      * 执行器是否在线

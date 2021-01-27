@@ -14,7 +14,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.snailwu.job.core.constants.JobCoreConstant.JOB_ACCESS_TOKEN;
+import static com.snailwu.job.core.constants.CoreConstant.ACCESS_TOKEN;
 
 /**
  * 校验AccessToken的切面
@@ -30,7 +30,7 @@ import static com.snailwu.job.core.constants.JobCoreConstant.JOB_ACCESS_TOKEN;
 public class ApiAccessTokenAspect {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiAccessTokenAspect.class);
 
-    @Value("${job-access-token}")
+    @Value("${access-token}")
     private String accessToken;
 
     @Around("execution(* com.snailwu.job.admin.controller.ApiController.*(..))")
@@ -38,7 +38,7 @@ public class ApiAccessTokenAspect {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
-        String clientAccessToken = request.getHeader(JOB_ACCESS_TOKEN);
+        String clientAccessToken = request.getHeader(ACCESS_TOKEN);
         if (accessToken.equals(clientAccessToken)) {
             return joinPoint.proceed();
         }

@@ -3,7 +3,6 @@ package com.snailwu.job.admin;
 import com.snailwu.job.admin.config.RootConfig;
 import com.snailwu.job.admin.core.config.AdminConfig;
 import com.snailwu.job.admin.mapper.JobNodeDynamicSqlSupport;
-import com.snailwu.job.core.constants.RegistryConstant;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Test;

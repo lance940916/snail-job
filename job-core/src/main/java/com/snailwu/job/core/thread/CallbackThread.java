@@ -3,7 +3,7 @@ package com.snailwu.job.core.thread;
 import com.snailwu.job.core.biz.AdminBiz;
 import com.snailwu.job.core.biz.model.CallbackParam;
 import com.snailwu.job.core.biz.model.ResultT;
-import com.snailwu.job.core.node.SnailJobNode;
+import com.snailwu.job.core.executor.JobExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,6 @@ public class CallbackThread {
 
     /**
      * 回调队列
-     * TODO 回调队列的最大值是 Integer.MAX_VALUE，需要优化
      */
     private static final LinkedBlockingQueue<CallbackParam> CALLBACK_QUEUE = new LinkedBlockingQueue<>();
 
@@ -46,7 +45,7 @@ public class CallbackThread {
      */
     public static void start() {
         // 没有配置调度中心，不需要启动
-        if (SnailJobNode.getAdminBiz() == null) {
+        if (JobExecutor.getAdminBiz() == null) {
             return;
         }
 
@@ -91,7 +90,7 @@ public class CallbackThread {
      * 进行回调
      */
     private static void doCallback(CallbackParam callbackParam) {
-        AdminBiz adminBiz = SnailJobNode.getAdminBiz();
+        AdminBiz adminBiz = JobExecutor.getAdminBiz();
         ResultT<String> result = adminBiz.callback(callbackParam);
         if (ResultT.SUCCESS_CODE != result.getCode()) {
             LOGGER.error("回调返回失败。原因：{}", result.toString());

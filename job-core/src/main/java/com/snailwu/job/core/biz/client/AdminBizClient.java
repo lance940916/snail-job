@@ -8,7 +8,7 @@ import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.utils.JobHttpUtil;
 import com.snailwu.job.core.utils.JobJsonUtil;
 
-import static com.snailwu.job.core.constants.JobCoreConstant.URL_SEPARATOR;
+import static com.snailwu.job.core.constants.CoreConstant.URL_SEPARATOR;
 
 /**
  * Core 调用 Admin 接口的 Client
@@ -29,6 +29,7 @@ public class AdminBizClient implements AdminBiz {
     private final String accessToken;
 
     public AdminBizClient(String address, String accessToken) {
+        // 追加 / 符号
         if (!address.endsWith(URL_SEPARATOR)) {
             address = address + URL_SEPARATOR;
         }

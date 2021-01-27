@@ -3,8 +3,8 @@ package com.snailwu.job.core.thread;
 import com.snailwu.job.core.biz.model.CallbackParam;
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.biz.model.TriggerParam;
+import com.snailwu.job.core.executor.JobExecutor;
 import com.snailwu.job.core.handler.IJobHandler;
-import com.snailwu.job.core.node.SnailJobNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,10 +123,10 @@ public class JobThread extends Thread {
      * 该 JobThread 是否忙碌
      */
     public boolean isRunningOrHasQueue() {
-        if (!running) {
-            return true;
+        if (running) {
+            return runningTask || jobQueue.size() > 0;
         }
-        return runningTask || jobQueue.size() > 0;
+        return false;
     }
 
     @Override
@@ -156,7 +156,7 @@ public class JobThread extends Thread {
                 if (triggerParam == null) {
                     // 30 次获取操作后，没有任务可以处理，则自动销毁线程
                     if (idleTimes > 30 && jobQueue.size() == 0) {
-                        SnailJobNode.removeJobThread(jobId, "执行线程空闲，主动终止");
+                        JobExecutor.removeAndStopJobThread(jobId, "执行线程空闲，主动终止");
                     }
                     continue;
                 }

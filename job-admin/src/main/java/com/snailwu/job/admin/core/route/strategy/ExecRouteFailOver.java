@@ -2,7 +2,7 @@ package com.snailwu.job.admin.core.route.strategy;
 
 import com.snailwu.job.admin.core.route.ExecRouter;
 import com.snailwu.job.admin.core.scheduler.JobScheduler;
-import com.snailwu.job.core.biz.NodeBiz;
+import com.snailwu.job.core.biz.ExecutorBiz;
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.biz.model.TriggerParam;
 
@@ -18,8 +18,8 @@ public class ExecRouteFailOver extends ExecRouter {
         for (String address : addresses) {
             ResultT<String> beatResult;
             try {
-                NodeBiz nodeBiz = JobScheduler.obtainOrCreateNodeBiz(address);
-                beatResult = nodeBiz.beat();
+                ExecutorBiz executorBiz = JobScheduler.obtainOrCreateNodeBiz(address);
+                beatResult = executorBiz.beat();
             } catch (Exception e) {
                 LOGGER.error("选择执行器.idleBeat接口异常,执行器:{},原因:{}", address, e.getMessage());
                 continue;

@@ -1,18 +1,23 @@
 package com.snailwu.job.core.constants;
 
 /**
- * 注册配置
- *
  * @author 吴庆龙
- * @date 2020/5/25 4:16 下午
+ * @date 2020/11/27 上午10:55
  */
-public interface RegistryConstant {
+public interface CoreConstant {
+
+    String ACCESS_TOKEN = "access-token";
+
+    /**
+     * URL 中的分隔符
+     */
+    String URL_SEPARATOR = "/";
 
     /**
      * 心跳间隔时间
      * 单位：秒
      */
-    int BEAT_TIME = 30;
+    int BEAT_TIME = 10;
 
     /**
      * 主机死亡时间

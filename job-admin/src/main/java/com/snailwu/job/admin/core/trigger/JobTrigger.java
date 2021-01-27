@@ -8,7 +8,7 @@ import com.snailwu.job.admin.mapper.JobInfoDynamicSqlSupport;
 import com.snailwu.job.admin.model.JobApp;
 import com.snailwu.job.admin.model.JobInfo;
 import com.snailwu.job.admin.model.JobLog;
-import com.snailwu.job.core.biz.NodeBiz;
+import com.snailwu.job.core.biz.ExecutorBiz;
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.biz.model.TriggerParam;
 import com.snailwu.job.core.enums.AlarmStatus;
@@ -155,8 +155,8 @@ public class JobTrigger {
     private static ResultT<String> process(TriggerParam triggerParam, String address) {
         ResultT<String> result;
         try {
-            NodeBiz nodeBiz = JobScheduler.obtainOrCreateNodeBiz(address);
-            result = nodeBiz.run(triggerParam);
+            ExecutorBiz executorBiz = JobScheduler.obtainOrCreateNodeBiz(address);
+            result = executorBiz.run(triggerParam);
         } catch (Exception e) {
             LOGGER.error("调度请求异常。", e);
             result = new ResultT<>(ResultT.FAIL_CODE, e.getMessage());

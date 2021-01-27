@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
-import static com.snailwu.job.core.constants.JobCoreConstant.JOB_ACCESS_TOKEN;
+import static com.snailwu.job.core.constants.CoreConstant.ACCESS_TOKEN;
 
 /**
  * 使用原生的 HTTPURLConnection 进行请求
@@ -62,7 +62,7 @@ public class JobHttpUtil {
 
         // 请求
         HttpPost post = new HttpPost(url);
-        post.setHeader(JOB_ACCESS_TOKEN, accessToken);
+        post.setHeader(ACCESS_TOKEN, accessToken);
         post.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString());
         post.setEntity(new StringEntity(bodyContent, StandardCharsets.UTF_8));
         try {

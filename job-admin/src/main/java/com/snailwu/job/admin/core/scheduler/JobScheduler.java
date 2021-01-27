@@ -2,8 +2,8 @@ package com.snailwu.job.admin.core.scheduler;
 
 import com.snailwu.job.admin.core.config.AdminConfig;
 import com.snailwu.job.admin.core.thread.*;
-import com.snailwu.job.core.biz.NodeBiz;
-import com.snailwu.job.core.biz.client.NodeBizClient;
+import com.snailwu.job.core.biz.ExecutorBiz;
+import com.snailwu.job.core.biz.client.ExecutorBizClient;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -56,23 +56,23 @@ public class JobScheduler {
      * key: 节点的地址
      * value: 节点调用类
      */
-    private static final ConcurrentHashMap<String, NodeBiz> NODE_BIZ_REPOSITORY = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, ExecutorBiz> NODE_BIZ_REPOSITORY = new ConcurrentHashMap<>();
 
     /**
      * 根据地址 获取 NodeBiz
      */
-    public static NodeBiz obtainOrCreateNodeBiz(String address) {
+    public static ExecutorBiz obtainOrCreateNodeBiz(String address) {
         if (address == null || address.trim().length() == 0) {
             return null;
         }
         address = address.trim();
-        NodeBiz nodeBiz = NODE_BIZ_REPOSITORY.get(address);
-        if (nodeBiz != null) {
-            return nodeBiz;
+        ExecutorBiz executorBiz = NODE_BIZ_REPOSITORY.get(address);
+        if (executorBiz != null) {
+            return executorBiz;
         }
-        nodeBiz = new NodeBizClient(address, AdminConfig.getInstance().getAccessToken());
-        NODE_BIZ_REPOSITORY.put(address, nodeBiz);
-        return nodeBiz;
+        executorBiz = new ExecutorBizClient(address, AdminConfig.getInstance().getAccessToken());
+        NODE_BIZ_REPOSITORY.put(address, executorBiz);
+        return executorBiz;
     }
 
 }

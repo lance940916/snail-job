@@ -2,7 +2,7 @@ package com.snailwu.job.admin.core.route.strategy;
 
 import com.snailwu.job.admin.core.route.ExecRouter;
 import com.snailwu.job.admin.core.scheduler.JobScheduler;
-import com.snailwu.job.core.biz.NodeBiz;
+import com.snailwu.job.core.biz.ExecutorBiz;
 import com.snailwu.job.core.biz.model.IdleBeatParam;
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.biz.model.TriggerParam;
@@ -19,8 +19,8 @@ public class ExecRouteBusyOver extends ExecRouter {
         for (String address : addresses) {
             ResultT<String> result;
             try {
-                NodeBiz nodeBiz = JobScheduler.obtainOrCreateNodeBiz(address);
-                result = nodeBiz.idleBeat(new IdleBeatParam(triggerParam.getJobId()));
+                ExecutorBiz executorBiz = JobScheduler.obtainOrCreateNodeBiz(address);
+                result = executorBiz.idleBeat(new IdleBeatParam(triggerParam.getJobId()));
             } catch (Exception e) {
                 LOGGER.error("选择执行器.idleBeat接口异常,原因:{}", e.getMessage());
                 continue;

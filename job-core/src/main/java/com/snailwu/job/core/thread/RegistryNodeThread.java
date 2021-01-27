@@ -3,8 +3,7 @@ package com.snailwu.job.core.thread;
 import com.snailwu.job.core.biz.AdminBiz;
 import com.snailwu.job.core.biz.model.RegistryParam;
 import com.snailwu.job.core.biz.model.ResultT;
-import com.snailwu.job.core.constants.RegistryConstant;
-import com.snailwu.job.core.node.SnailJobNode;
+import com.snailwu.job.core.executor.JobExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,30 +31,30 @@ public class RegistryNodeThread {
     /**
      * 启动注册线程
      *
-     * @param appName 执行器的唯一标识
+     * @param appName 执行器所属应用
      * @param address 本机的外网地址 http://ip:port
      */
-    public static void start(final String appName, final String address) {
-        if (SnailJobNode.getAdminBiz() == null) {
+    public static void start(String appName, String address) {
+        if (JobExecutor.getAdminBiz() == null) {
             return;
         }
         if (appName == null || appName.trim().length() == 0) {
-            LOGGER.warn("没有配置appName。");
+            LOGGER.warn("appName属性未配置。");
             return;
         }
 
         thread = new Thread(() -> {
-            AdminBiz adminBiz = SnailJobNode.getAdminBiz();
+            AdminBiz adminBiz = JobExecutor.getAdminBiz();
 
             while (running) {
-                // 在调度中心注册节点
-                RegistryParam registryParam = new RegistryParam(appName, address);
+                // 在调度中心注册执行器
                 try {
+                    RegistryParam registryParam = new RegistryParam(appName, address);
                     ResultT<String> result = adminBiz.registryNode(registryParam);
-                    if (ResultT.SUCCESS_CODE != result.getCode()) {
-                        LOGGER.error("在调度中心注册失败。原因：{}", result.getMsg());
+                    if (ResultT.SUCCESS_CODE == result.getCode()) {
+                        LOGGER.info("在调度中心注册成功。本机地址：{}，绑定应用：{}", address, appName);
                     } else {
-                        LOGGER.info("在调度中心注册成功。本机地址：{}，注册应用：{}", address, appName);
+                        LOGGER.error("在调度中心注册失败。原因：{}", result.getMsg());
                     }
                 } catch (Exception e) {
                     LOGGER.error("在调度中心注册异常。", e);
@@ -71,23 +70,23 @@ public class RegistryNodeThread {
                 }
             }
 
-            // 移除节点。线程被停止后通知调度中心进行节点的移除
-            RegistryParam registryParam = new RegistryParam(appName, address);
+            // 移除节点。线程被中断后通知调度中心进行节点的移除
             try {
+                RegistryParam registryParam = new RegistryParam(appName, address);
                 ResultT<String> result = adminBiz.removeNode(registryParam);
-                if (ResultT.SUCCESS_CODE != result.getCode()) {
-                    LOGGER.error("通知调度中心移除注册节点失败。原因：{}", result.getMsg());
+                if (ResultT.SUCCESS_CODE == result.getCode()) {
+                    LOGGER.info("通知调度中心移除执行器成功。");
                 } else {
-                    LOGGER.info("通知调度中心移除注册节点成功。");
+                    LOGGER.error("通知调度中心移除执行器失败。原因：{}", result.getMsg());
                 }
             } catch (Exception e) {
-                LOGGER.error("通知调度中心移除注册节点异常。", e);
+                LOGGER.error("通知调度中心移除执行器异常。", e);
             }
         });
         thread.setDaemon(true);
         thread.setName("registry-thread");
         thread.start();
-        LOGGER.info("注册线程-已启动。");
+        LOGGER.info("注册执行器线程-已启动。");
     }
 
     /**
@@ -95,14 +94,13 @@ public class RegistryNodeThread {
      */
     public static void stop() {
         running = false;
-        thread.interrupt();
         try {
-            // 主线程调用 thread.join() 等待 thread 线程执行完毕再往下执行
+            thread.interrupt();
             thread.join();
-        } catch (InterruptedException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.info("注册执行器线程-已停止。");
+        } catch (Exception e) {
+            LOGGER.error("停止线程 {} 异常", thread.getName(), e);
         }
-        LOGGER.info("注册线程-已停止。");
     }
 
 }

@@ -28,7 +28,7 @@ public class AdminConfig implements InitializingBean, DisposableBean {
         return instance;
     }
 
-    @Value("${job-access-token}")
+    @Value("${access-token}")
     private String accessToken;
 
     public String getAccessToken() {
