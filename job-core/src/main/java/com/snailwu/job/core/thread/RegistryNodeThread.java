@@ -3,6 +3,7 @@ package com.snailwu.job.core.thread;
 import com.snailwu.job.core.biz.AdminBiz;
 import com.snailwu.job.core.biz.model.RegistryParam;
 import com.snailwu.job.core.biz.model.ResultT;
+import com.snailwu.job.core.constants.CoreConstant;
 import com.snailwu.job.core.executor.JobExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +64,7 @@ public class RegistryNodeThread {
                 // 休眠
                 if (running) {
                     try {
-                        TimeUnit.SECONDS.sleep(RegistryConstant.BEAT_TIME);
+                        TimeUnit.SECONDS.sleep(CoreConstant.BEAT_TIME);
                     } catch (Exception e) {
                         // ignore
                     }
