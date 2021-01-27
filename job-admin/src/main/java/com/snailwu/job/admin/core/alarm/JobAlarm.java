@@ -12,6 +12,12 @@ import org.slf4j.LoggerFactory;
 public interface JobAlarm {
     Logger LOGGER = LoggerFactory.getLogger(JobAlarm.class);
 
+    /**
+     * 报警方法
+     * @param jobInfo 任务信息类
+     * @param jobLog 执行日志类
+     * @return true:报警成功；false:报警失败
+     */
     boolean doAlarm(JobInfo jobInfo, JobLog jobLog);
 
 }

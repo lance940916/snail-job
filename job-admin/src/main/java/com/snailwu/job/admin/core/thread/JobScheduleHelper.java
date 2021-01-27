@@ -211,23 +211,23 @@ public class JobScheduleHelper {
     public static void stop() {
         // 设置为停止标志
         scanJobRunning = false;
-        scanJobThread.interrupt();
         try {
+            scanJobThread.interrupt();
             scanJobThread.join();
+            LOGGER.info("扫描任务线程-已停止。");
         } catch (InterruptedException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("停止线程 {} 异常", scanJobThread.getName(), e);
         }
-        LOGGER.info("扫描任务线程-已停止。");
 
         // 停止调度线程（未来待调度的任务停止调度）
         invokeJobRunning = false;
-        invokeJobThread.interrupt();
         try {
+            invokeJobThread.interrupt();
             invokeJobThread.join();
+            LOGGER.info("调度任务线程-已停止。");
         } catch (InterruptedException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("停止线程 {} 异常", invokeJobThread.getName(), e);
         }
-        LOGGER.info("调度任务线程-已停止。");
     }
 
 }

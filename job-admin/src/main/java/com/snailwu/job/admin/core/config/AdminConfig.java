@@ -3,8 +3,6 @@ package com.snailwu.job.admin.core.config;
 import com.snailwu.job.admin.core.alarm.JobAlarmComposite;
 import com.snailwu.job.admin.core.scheduler.JobScheduler;
 import com.snailwu.job.admin.mapper.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,8 +18,6 @@ import javax.annotation.Resource;
 @Component
 @PropertySource("classpath:application.properties")
 public class AdminConfig implements InitializingBean, DisposableBean {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AdminConfig.class);
-
     private static AdminConfig instance;
 
     public static AdminConfig getInstance() {

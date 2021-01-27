@@ -18,7 +18,7 @@ public class ExecRouteFailOver extends ExecRouter {
         for (String address : addresses) {
             ResultT<String> beatResult;
             try {
-                ExecutorBiz executorBiz = JobScheduler.obtainOrCreateNodeBiz(address);
+                ExecutorBiz executorBiz = JobScheduler.obtainOrCreateExecutorBiz(address);
                 beatResult = executorBiz.beat();
             } catch (Exception e) {
                 LOGGER.error("选择执行器.idleBeat接口异常,执行器:{},原因:{}", address, e.getMessage());

@@ -128,12 +128,12 @@ public class JobFailMonitorHelper {
      */
     public static void stop() {
         running = false;
-        thread.interrupt();
         try {
+            thread.interrupt();
             thread.join();
+            LOGGER.info("失败监控线程-已停止。");
         } catch (InterruptedException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("停止线程 {} 异常", thread.getName(), e);
         }
-        LOGGER.info("失败监控线程-已停止。");
     }
 }

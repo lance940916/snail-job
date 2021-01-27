@@ -21,7 +21,7 @@ public class JobScheduler {
      */
     public void startAll() {
         // 定时整理注册节点到 app 中
-        NodeMonitorHelper.start();
+        ExecutorMonitorHelper.start();
 
         // 失败重试线程
         JobFailMonitorHelper.start();
@@ -49,29 +49,29 @@ public class JobScheduler {
 
         JobFailMonitorHelper.stop();
 
-        NodeMonitorHelper.stop();
+        ExecutorMonitorHelper.stop();
     }
 
     /**
      * key: 节点的地址
      * value: 节点调用类
      */
-    private static final ConcurrentHashMap<String, ExecutorBiz> NODE_BIZ_REPOSITORY = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, ExecutorBiz> EXECUTOR_BIZ_REPOSITORY = new ConcurrentHashMap<>();
 
     /**
-     * 根据地址 获取 NodeBiz
+     * 根据地址获取 ExecutorBiz
      */
-    public static ExecutorBiz obtainOrCreateNodeBiz(String address) {
+    public static ExecutorBiz obtainOrCreateExecutorBiz(String address) {
         if (address == null || address.trim().length() == 0) {
             return null;
         }
         address = address.trim();
-        ExecutorBiz executorBiz = NODE_BIZ_REPOSITORY.get(address);
+        ExecutorBiz executorBiz = EXECUTOR_BIZ_REPOSITORY.get(address);
         if (executorBiz != null) {
             return executorBiz;
         }
         executorBiz = new ExecutorBizClient(address, AdminConfig.getInstance().getAccessToken());
-        NODE_BIZ_REPOSITORY.put(address, executorBiz);
+        EXECUTOR_BIZ_REPOSITORY.put(address, executorBiz);
         return executorBiz;
     }
 

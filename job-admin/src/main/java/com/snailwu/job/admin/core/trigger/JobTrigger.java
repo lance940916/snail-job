@@ -155,7 +155,7 @@ public class JobTrigger {
     private static ResultT<String> process(TriggerParam triggerParam, String address) {
         ResultT<String> result;
         try {
-            ExecutorBiz executorBiz = JobScheduler.obtainOrCreateNodeBiz(address);
+            ExecutorBiz executorBiz = JobScheduler.obtainOrCreateExecutorBiz(address);
             result = executorBiz.run(triggerParam);
         } catch (Exception e) {
             LOGGER.error("调度请求异常。", e);

@@ -102,14 +102,13 @@ public class CallbackThread {
      */
     public static void stop() {
         running = false;
-        thread.interrupt();
         try {
-            // 主线程等待回调线程执行完毕
+            thread.interrupt();
             thread.join();
+            LOGGER.info("回调线程-已停止。");
         } catch (InterruptedException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("停止线程 {} 异常", thread.getName(), e);
         }
-        LOGGER.info("回调线程-已停止。");
     }
 
 }

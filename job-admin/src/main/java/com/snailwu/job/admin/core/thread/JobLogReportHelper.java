@@ -23,11 +23,11 @@ import static org.mybatis.dynamic.sql.SqlBuilder.*;
 public class JobLogReportHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(JobLogReportHelper.class);
 
-    private static Thread logReportThread;
+    private static Thread thread;
     private static volatile boolean running = true;
 
     public static void start() {
-        logReportThread = new Thread(() -> {
+        thread = new Thread(() -> {
             while (running) {
                 long startTs = System.currentTimeMillis();
 
@@ -95,9 +95,9 @@ public class JobLogReportHelper {
                 }
             }
         });
-        logReportThread.setDaemon(true);
-        logReportThread.setName("JobLogReportThread");
-        logReportThread.start();
+        thread.setDaemon(true);
+        thread.setName("JobLogReportThread");
+        thread.start();
         LOGGER.info("日志报告线程-已启动。");
     }
 
@@ -121,11 +121,11 @@ public class JobLogReportHelper {
 
     public static void stop() {
         running = false;
-        logReportThread.interrupt();
         try {
-            logReportThread.join();
+            thread.interrupt();
+            thread.join();
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("停止线程 {} 异常", thread.getName(), e);
         }
     }
 

@@ -5,6 +5,7 @@ import com.snailwu.job.admin.mapper.JobAppDynamicSqlSupport;
 import com.snailwu.job.admin.mapper.JobNodeDynamicSqlSupport;
 import com.snailwu.job.admin.model.JobApp;
 import com.snailwu.job.admin.model.JobNode;
+import com.snailwu.job.core.constants.CoreConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -25,8 +26,8 @@ import static org.mybatis.dynamic.sql.SqlBuilder.*;
  * @author 吴庆龙
  * @date 2020/6/4 11:23 上午
  */
-public class NodeMonitorHelper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(NodeMonitorHelper.class);
+public class ExecutorMonitorHelper {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExecutorMonitorHelper.class);
 
     private static Thread thread;
     private static volatile boolean running = true;
@@ -39,7 +40,7 @@ public class NodeMonitorHelper {
             while (running) {
                 try {
                     // 查询并删除死亡的机器
-                    Date deadDate = DateUtils.addSeconds(new Date(), RegistryConstant.DEAD_TIME * -1);
+                    Date deadDate = DateUtils.addSeconds(new Date(), CoreConstant.DEAD_TIME * -1);
                     List<JobNode> jobNodes = AdminConfig.getInstance().getJobNodeMapper().selectMany(
                             select(JobNodeDynamicSqlSupport.jobNode.allColumns())
                                     .from(JobNodeDynamicSqlSupport.jobNode)
@@ -107,7 +108,7 @@ public class NodeMonitorHelper {
                 // 休眠
                 if (running) {
                     try {
-                        TimeUnit.SECONDS.sleep(RegistryConstant.SORT_NODE_ADDRESS_TIME);
+                        TimeUnit.SECONDS.sleep(CoreConstant.SORT_NODE_ADDRESS_TIME);
                     } catch (InterruptedException e) {
                         LOGGER.error("休眠异常。", e);
                     }
@@ -115,7 +116,7 @@ public class NodeMonitorHelper {
             }
         });
         thread.setDaemon(true);
-        thread.setName("node-monitor-thread");
+        thread.setName("executor-monitor-thread");
         thread.start();
         LOGGER.info("节点整理线程-已启动。");
     }
@@ -125,13 +126,13 @@ public class NodeMonitorHelper {
      */
     public static void stop() {
         running = false;
-        thread.interrupt();
         try {
+            thread.interrupt();
             thread.join();
+            LOGGER.info("节点整理线程-已停止。");
         } catch (InterruptedException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("停止线程 {} 异常", thread.getName(), e);
         }
-        LOGGER.info("节点整理线程-已停止。");
     }
 
 }

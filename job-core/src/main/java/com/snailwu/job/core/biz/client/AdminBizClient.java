@@ -41,21 +41,21 @@ public class AdminBizClient implements AdminBiz {
     @Override
     public ResultT<String> callback(CallbackParam callbackParam) {
         String respContent = JobHttpUtil.post(address + "api/callback", accessToken, callbackParam);
-        return JobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
+        return JobJsonUtil.readValue(respContent, new TypeReference<>() {
         });
     }
 
     @Override
     public ResultT<String> registryNode(RegistryParam registryParam) {
         String respContent = JobHttpUtil.post(address + "api/registry", accessToken, registryParam);
-        return JobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
+        return JobJsonUtil.readValue(respContent, new TypeReference<>() {
         });
     }
 
     @Override
     public ResultT<String> removeNode(RegistryParam registryParam) {
         String respContent = JobHttpUtil.post(address + "api/registryRemove", accessToken, registryParam);
-        return JobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
+        return JobJsonUtil.readValue(respContent, new TypeReference<>() {
         });
     }
 }
