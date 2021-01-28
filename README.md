@@ -9,15 +9,6 @@
 
 最后项目目前状态：可运行，可调度。
 
-# 技术选型
-
-- Spring
-- SpringBoot
-- Freemarker
-- MyBatis and dynamic-sql
-- log4j
-- Netty
-
 # 个人总结（个人观点）
 
 通过和xxl项目相比，能体会到一个好的开源项目作者是要付出很多心血的去维护的。
