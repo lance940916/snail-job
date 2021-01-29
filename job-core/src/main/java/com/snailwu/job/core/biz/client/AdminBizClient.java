@@ -46,14 +46,14 @@ public class AdminBizClient implements AdminBiz {
     }
 
     @Override
-    public ResultT<String> registryNode(RegistryParam registryParam) {
+    public ResultT<String> registry(RegistryParam registryParam) {
         String respContent = JobHttpUtil.post(address + "api/registry", accessToken, registryParam);
         return JobJsonUtil.readValue(respContent, new TypeReference<>() {
         });
     }
 
     @Override
-    public ResultT<String> removeNode(RegistryParam registryParam) {
+    public ResultT<String> remove(RegistryParam registryParam) {
         String respContent = JobHttpUtil.post(address + "api/registryRemove", accessToken, registryParam);
         return JobJsonUtil.readValue(respContent, new TypeReference<>() {
         });

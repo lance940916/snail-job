@@ -125,7 +125,7 @@ public class JobInfoEditRequest {
     public JobInfo convertToJobInfo() {
         JobInfo jobInfo = new JobInfo();
         jobInfo.setId(this.id);
-        jobInfo.setName(this.name);
+        jobInfo.setAppName(this.name);
         jobInfo.setAppName(this.groupName);
         jobInfo.setCron(this.cron);
         jobInfo.setUpdateTime(this.updateTime);

@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @date 2020/6/22 11:12 上午
  */
 public class JobTriggerPoolHelper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JobTriggerPoolHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(JobTriggerPoolHelper.class);
 
     /**
      * 调度池
@@ -34,7 +34,6 @@ public class JobTriggerPoolHelper {
                 new LinkedBlockingQueue<>(1000),
                 new JobDefaultThreadFactory()
         );
-        LOGGER.info("调度线程池-已启动。");
     }
 
     /**
@@ -42,19 +41,33 @@ public class JobTriggerPoolHelper {
      */
     public static void stop() {
         triggerPool.shutdownNow();
-        LOGGER.info("调度线程池-已停止。");
     }
 
     /**
      * 添加任务到线程池中调度
-     * 不指定 execParam 使用 JobInfo 中的， failRetryCount 同理
+     *
+     * @param jobId       任务的id
+     * @param triggerType 触发类型
      */
-    public static void push(int jobId, TriggerTypeEnum triggerType, int failRetryCount, String execParam) {
+    public static void push(int jobId, TriggerTypeEnum triggerType) {
+        push(jobId, triggerType, null, null);
+    }
+
+    /**
+     * 添加任务到线程池中调度
+     *
+     * @param jobId                  任务的id
+     * @param triggerType            触发类型
+     * @param overrideFailRetryCount 如果指定则使用该值，-1表示不指定
+     * @param overrideExecParam      如果指定则使用改制，null表示不指定
+     */
+    public static void push(int jobId, TriggerTypeEnum triggerType, Integer overrideFailRetryCount,
+                            String overrideExecParam) {
         triggerPool.execute(() -> {
             try {
-                JobTrigger.trigger(jobId, triggerType, failRetryCount, execParam);
+                JobTrigger.trigger(jobId, triggerType, overrideFailRetryCount, overrideExecParam);
             } catch (Exception e) {
-                LOGGER.error("任务调度异常", e);
+                logger.error("任务调度异常", e);
             }
         });
     }
@@ -71,16 +84,12 @@ public class JobTriggerPoolHelper {
         JobDefaultThreadFactory() {
             SecurityManager s = System.getSecurityManager();
             group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-            namePrefix = "job-trigger-pool-" +
-                    POOL_NUMBER.getAndIncrement() +
-                    "-thread-";
+            namePrefix = "job-trigger-pool-" + POOL_NUMBER.getAndIncrement() + "-thread-";
         }
 
         @Override
         public Thread newThread(Runnable r) {
-            Thread t = new Thread(group, r,
-                    namePrefix + threadNumber.getAndIncrement(),
-                    0);
+            Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
             if (t.isDaemon()) {
                 t.setDaemon(false);
             }

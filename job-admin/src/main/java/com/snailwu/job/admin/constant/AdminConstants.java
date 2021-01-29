@@ -9,7 +9,7 @@ import java.util.Map;
  * @author 吴庆龙
  * @date 2020/8/1 2:28 下午
  */
-public interface JobConstants {
+public interface AdminConstants {
 
     /**
      * 日期时间格式化格式

@@ -27,6 +27,11 @@ public class JobAlarmComposite implements ApplicationContextAware, InitializingB
 
     private ApplicationContext applicationContext;
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
     /**
      * 报警方式集合
      */
@@ -38,11 +43,6 @@ public class JobAlarmComposite implements ApplicationContextAware, InitializingB
         if (!CollectionUtils.isEmpty(jobAlarmMap)) {
             alarmList = new ArrayList<>(jobAlarmMap.values());
         }
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
     }
 
     /**
@@ -61,7 +61,7 @@ public class JobAlarmComposite implements ApplicationContextAware, InitializingB
             try {
                 resultItem = jobAlarm.doAlarm(jobInfo, jobLog);
             } catch (Exception e) {
-                LOGGER.error("告警异常,异常消息:{}", e.getMessage());
+                LOGGER.error("告警异常。", e);
             }
             if (!resultItem) {
                 result = false;

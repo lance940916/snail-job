@@ -19,7 +19,7 @@ public class ExecRouteBusyOver extends ExecRouter {
         for (String address : addresses) {
             ResultT<String> result;
             try {
-                ExecutorBiz executorBiz = JobScheduler.obtainOrCreateExecutorBiz(address);
+                ExecutorBiz executorBiz = JobScheduler.getOrCreateExecutorBiz(address);
                 result = executorBiz.idleBeat(new IdleBeatParam(triggerParam.getJobId()));
             } catch (Exception e) {
                 LOGGER.error("选择执行器.idleBeat接口异常,原因:{}", e.getMessage());

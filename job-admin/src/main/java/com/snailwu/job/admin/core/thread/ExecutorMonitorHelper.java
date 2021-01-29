@@ -1,124 +1,93 @@
 package com.snailwu.job.admin.core.thread;
 
 import com.snailwu.job.admin.core.config.AdminConfig;
-import com.snailwu.job.admin.mapper.JobAppDynamicSqlSupport;
-import com.snailwu.job.admin.mapper.JobNodeDynamicSqlSupport;
 import com.snailwu.job.admin.model.JobApp;
-import com.snailwu.job.admin.model.JobNode;
+import com.snailwu.job.admin.model.JobExecutor;
 import com.snailwu.job.core.constants.CoreConstant;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.lang3.time.DateUtils;
-import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static com.snailwu.job.admin.constant.JobConstants.DATE_TIME_PATTERN;
+import static com.snailwu.job.core.constants.CoreConstant.DEAD_TIME;
 import static com.snailwu.job.core.enums.RegistryType.AUTO;
-import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
 /**
- * 将 job_node 表中的数据整理到 job_app 表中
- *
  * @author 吴庆龙
  * @date 2020/6/4 11:23 上午
  */
 public class ExecutorMonitorHelper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExecutorMonitorHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExecutorMonitorHelper.class);
 
     private static Thread thread;
     private static volatile boolean running = true;
+
+    private static void run() throws InterruptedException {
+        long curTs = System.currentTimeMillis();
+
+        // 删除不活跃的执行器
+        Date deadDate = new Date(curTs - DEAD_TIME);
+        AdminConfig.getInstance().getJobExecutorMapper().deleteDead(deadDate);
+
+        // 获取所有自动注册的应用
+        List<JobApp> apps = AdminConfig.getInstance().getJobAppMapper().selectAutoRegistry(AUTO.getValue());
+
+        // 获取所有的执行器
+        List<JobExecutor> executors = AdminConfig.getInstance().getJobExecutorMapper().selectAllWithoutTime();
+
+        // 根据应用合并执行器地址
+        Map<String, List<String>> appAddressMap = new HashMap<>();
+        for (JobExecutor executor : executors) {
+            String appName = executor.getAppName();
+            String address = executor.getAddress().toLowerCase();
+            List<String> addresses = appAddressMap.computeIfAbsent(appName, k -> new ArrayList<>());
+            if (!addresses.contains(address)) {
+                addresses.add(address);
+            }
+        }
+
+        // 更新应用中的执行器地址
+        Date updateDate = new Date(curTs);
+        for (JobApp app : apps) {
+            List<String> addressList = appAddressMap.get(app.getAppName());
+            String addresses = StringUtils.join(addressList, ",");
+
+            // 通过id更新地址列表
+            app.setAddresses(addresses);
+            app.setUpdateTime(updateDate);
+            AdminConfig.getInstance().getJobAppMapper().updateAddressesById(app);
+            logger.info("应用名称：{} 地址列表：{}", app.getAppName(), addresses);
+        }
+
+        // 休眠
+        if (running) {
+            TimeUnit.SECONDS.sleep(10);
+        }
+    }
 
     /**
      * 启动整理注册器线程
      */
     public static void start() {
+        // TODO 重复代码待重构
         thread = new Thread(() -> {
             while (running) {
                 try {
-                    // 查询并删除死亡的机器
-                    Date deadDate = DateUtils.addSeconds(new Date(), CoreConstant.DEAD_TIME * -1);
-                    List<JobNode> jobNodes = AdminConfig.getInstance().getJobNodeMapper().selectMany(
-                            select(JobNodeDynamicSqlSupport.jobNode.allColumns())
-                                    .from(JobNodeDynamicSqlSupport.jobNode)
-                                    .where(JobNodeDynamicSqlSupport.updateTime, isLessThan(deadDate))
-                                    .build().render(RenderingStrategies.MYBATIS3)
-                    );
-                    for (JobNode node : jobNodes) {
-                        AdminConfig.getInstance().getJobNodeMapper().delete(
-                                deleteFrom(JobNodeDynamicSqlSupport.jobNode)
-                                        .where(JobNodeDynamicSqlSupport.id, isEqualTo(node.getId()))
-                                        .build().render(RenderingStrategies.MYBATIS3)
-                        );
-                        LOGGER.warn("节点机器：{} 已死亡，最后更新时间：{}", node.getAddress(),
-                                DateFormatUtils.format(node.getUpdateTime(), DATE_TIME_PATTERN));
-                    }
-
-                    // 2. 获取所有的App
-                    List<JobApp> apps = AdminConfig.getInstance().getJobAppMapper().selectMany(
-                            select(JobAppDynamicSqlSupport.jobApp.allColumns())
-                                    .from(JobAppDynamicSqlSupport.jobApp)
-                                    .where(JobAppDynamicSqlSupport.jobApp.type, isEqualTo(AUTO.getValue()))
-                                    .build().render(RenderingStrategies.MYBATIS3)
-                    );
-
-                    // 3. 获取所有的Node
-                    List<JobNode> nodes = AdminConfig.getInstance().getJobNodeMapper().selectMany(
-                            select(JobNodeDynamicSqlSupport.jobNode.allColumns())
-                                    .from(JobNodeDynamicSqlSupport.jobNode)
-                                    .build().render(RenderingStrategies.MYBATIS3)
-                    );
-
-                    // 4. 合并相同 appName 的执行器地址
-                    Map<String, List<String>> appAddressMap = new HashMap<>();
-                    for (JobNode node : nodes) {
-                        String appName = node.getAppName();
-                        String address = node.getAddress().toLowerCase();
-                        List<String> addresses = appAddressMap.computeIfAbsent(appName, k -> new ArrayList<>());
-                        // 保证没有重复的地址
-                        if (!addresses.contains(address)) {
-                            addresses.add(address);
-                        }
-                    }
-
-                    // 5. 更新 jobApp 中的 address 字段
-                    for (JobApp app : apps) {
-                        List<String> addrList = appAddressMap.get(app.getAppName());
-                        String addresses = StringUtils.join(addrList, ",");
-                        if (addresses == null) {
-                            addresses = "";
-                        }
-
-                        // 通过id更新地址列表
-                        AdminConfig.getInstance().getJobAppMapper().update(
-                                update(JobAppDynamicSqlSupport.jobApp)
-                                        .set(JobAppDynamicSqlSupport.addresses).equalTo(addresses)
-                                        .where(JobAppDynamicSqlSupport.id, isEqualTo(app.getId()))
-                                        .build().render(RenderingStrategies.MYBATIS3)
-                        );
-                        LOGGER.info("应用名称：{} 地址列表：{}", app.getAppName(), addresses);
+                    run();
+                } catch (InterruptedException e) {
+                    if (running) {
+                        logger.error("线程：{} 休眠异常。", thread.getName(), e);
                     }
                 } catch (Exception e) {
-                    LOGGER.error("整理执行器地址发生异常。", e);
-                }
-
-                // 休眠
-                if (running) {
-                    try {
-                        TimeUnit.SECONDS.sleep(CoreConstant.SORT_NODE_ADDRESS_TIME);
-                    } catch (InterruptedException e) {
-                        LOGGER.error("休眠异常。", e);
-                    }
+                    logger.error("整理节点异常。", e);
                 }
             }
         });
         thread.setDaemon(true);
-        thread.setName("executor-monitor-thread");
+        thread.setName("executor-monitor");
         thread.start();
-        LOGGER.info("节点整理线程-已启动。");
     }
 
     /**
@@ -129,9 +98,8 @@ public class ExecutorMonitorHelper {
         try {
             thread.interrupt();
             thread.join();
-            LOGGER.info("节点整理线程-已停止。");
         } catch (InterruptedException e) {
-            LOGGER.error("停止线程 {} 异常", thread.getName(), e);
+            logger.error("停止线程 {} 异常", thread.getName(), e);
         }
     }
 

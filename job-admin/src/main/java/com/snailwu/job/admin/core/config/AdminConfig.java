@@ -3,13 +3,12 @@ package com.snailwu.job.admin.core.config;
 import com.snailwu.job.admin.core.alarm.JobAlarmComposite;
 import com.snailwu.job.admin.core.scheduler.JobScheduler;
 import com.snailwu.job.admin.mapper.*;
+import jakarta.annotation.Resource;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 
 /**
  * @author 吴庆龙
@@ -50,7 +49,7 @@ public class AdminConfig implements InitializingBean, DisposableBean {
     // ---------------------- mapper ----------------------
 
     @Resource
-    private JobNodeMapper jobNodeMapper;
+    private JobExecutorMapper jobExecutorMapper;
     @Resource
     protected JobAppMapper jobAppMapper;
     @Resource
@@ -64,8 +63,8 @@ public class AdminConfig implements InitializingBean, DisposableBean {
     @Resource
     private JobAlarmComposite jobAlarmComposite;
 
-    public JobNodeMapper getJobNodeMapper() {
-        return jobNodeMapper;
+    public JobExecutorMapper getJobExecutorMapper() {
+        return jobExecutorMapper;
     }
 
     public JobAppMapper getJobAppMapper() {

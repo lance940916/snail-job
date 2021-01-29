@@ -18,7 +18,6 @@ public class TriggerParam {
      */
     private String execHandler;
     private String execParam;
-    private String execBlockStrategy;
     private Integer execTimeout;
 
     /**
@@ -48,14 +47,6 @@ public class TriggerParam {
 
     public void setExecParam(String execParam) {
         this.execParam = execParam;
-    }
-
-    public String getExecBlockStrategy() {
-        return execBlockStrategy;
-    }
-
-    public void setExecBlockStrategy(String execBlockStrategy) {
-        this.execBlockStrategy = execBlockStrategy;
     }
 
     public Integer getExecTimeout() {

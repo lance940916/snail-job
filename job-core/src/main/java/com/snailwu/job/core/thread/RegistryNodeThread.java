@@ -51,7 +51,7 @@ public class RegistryNodeThread {
                 // 在调度中心注册执行器
                 try {
                     RegistryParam registryParam = new RegistryParam(appName, address);
-                    ResultT<String> result = adminBiz.registryNode(registryParam);
+                    ResultT<String> result = adminBiz.registry(registryParam);
                     if (ResultT.SUCCESS_CODE == result.getCode()) {
                         LOGGER.info("在调度中心注册成功。本机地址：{}，绑定应用：{}", address, appName);
                     } else {
@@ -74,7 +74,7 @@ public class RegistryNodeThread {
             // 移除节点。线程被中断后通知调度中心进行节点的移除
             try {
                 RegistryParam registryParam = new RegistryParam(appName, address);
-                ResultT<String> result = adminBiz.removeNode(registryParam);
+                ResultT<String> result = adminBiz.remove(registryParam);
                 if (ResultT.SUCCESS_CODE == result.getCode()) {
                     LOGGER.info("通知调度中心移除执行器成功。");
                 } else {

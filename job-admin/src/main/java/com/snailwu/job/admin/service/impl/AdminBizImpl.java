@@ -1,22 +1,17 @@
 package com.snailwu.job.admin.service.impl;
 
-import com.snailwu.job.admin.mapper.JobLogDynamicSqlSupport;
+import com.snailwu.job.admin.mapper.JobExecutorMapper;
 import com.snailwu.job.admin.mapper.JobLogMapper;
-import com.snailwu.job.admin.mapper.JobNodeDynamicSqlSupport;
-import com.snailwu.job.admin.mapper.JobNodeMapper;
+import com.snailwu.job.admin.model.JobExecutor;
 import com.snailwu.job.admin.model.JobLog;
-import com.snailwu.job.admin.model.JobNode;
 import com.snailwu.job.core.biz.AdminBiz;
 import com.snailwu.job.core.biz.model.CallbackParam;
 import com.snailwu.job.core.biz.model.RegistryParam;
 import com.snailwu.job.core.biz.model.ResultT;
-import org.mybatis.dynamic.sql.render.RenderingStrategies;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.Date;
-
-import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
 /**
  * @author 吴庆龙
@@ -26,7 +21,7 @@ import static org.mybatis.dynamic.sql.SqlBuilder.*;
 public class AdminBizImpl implements AdminBiz {
 
     @Resource
-    private JobNodeMapper jobNodeMapper;
+    private JobExecutorMapper jobExecutorMapper;
     @Resource
     private JobLogMapper jobLogMapper;
 
@@ -36,68 +31,46 @@ public class AdminBizImpl implements AdminBiz {
     @Override
     public ResultT<String> callback(CallbackParam callbackParam) {
         // 查询任务日志
-        JobLog jobLog = jobLogMapper.selectOne(
-                select(JobLogDynamicSqlSupport.id, JobLogDynamicSqlSupport.execCode)
-                        .from(JobLogDynamicSqlSupport.jobLog)
-                        .where(JobLogDynamicSqlSupport.id, isEqualTo(callbackParam.getLogId()))
-                        .build().render(RenderingStrategies.MYBATIS3)
-        ).orElse(null);
-        if (jobLog == null) {
+        JobLog log = jobLogMapper.selectExecCodeById(callbackParam.getLogId());
+        if (log == null) {
             return new ResultT<>(ResultT.FAIL_CODE, "无效的logId");
         }
         // execCode 只能在回调中进行更改
-        if (jobLog.getExecCode() != 0) {
-            // TODO 不能避免高并发重复回调
+        if (log.getExecCode() != 0) {
+            // FIXME 高并发重复回调会有问题
             return new ResultT<>(ResultT.FAIL_CODE, "重复回调");
         }
 
         // 更新 JobLog 执行结果
-        JobLog updateJobLog = new JobLog();
-        updateJobLog.setId(jobLog.getId());
-        updateJobLog.setExecTime(callbackParam.getExecTime());
-        updateJobLog.setExecCode(callbackParam.getExecCode());
-        updateJobLog.setExecMsg(callbackParam.getExecMsg());
-        jobLogMapper.updateByPrimaryKeySelective(updateJobLog);
+        JobLog updateLog = new JobLog();
+        updateLog.setId(log.getId());
+        updateLog.setExecTime(callbackParam.getExecTime());
+        updateLog.setExecCode(callbackParam.getExecCode());
+        updateLog.setExecMsg(callbackParam.getExecMsg());
+        jobLogMapper.updateExecResultById(updateLog);
         return ResultT.SUCCESS;
     }
 
     @Override
-    public ResultT<String> registryNode(RegistryParam registryParam) {
-        String appName = registryParam.getAppName();
-        String address = registryParam.getNodeAddress();
-        JobNode jobExecutor = jobNodeMapper.selectOne(
-                select(JobNodeDynamicSqlSupport.id)
-                        .from(JobNodeDynamicSqlSupport.jobNode)
-                        .where(JobNodeDynamicSqlSupport.appName, isEqualTo(appName))
-                        .and(JobNodeDynamicSqlSupport.address, isEqualTo(address))
-                        .build().render(RenderingStrategies.MYBATIS3)
-        ).orElse(null);
-        if (jobExecutor == null) {
-            // 新增
-            jobExecutor = new JobNode();
-            jobExecutor.setAppName(appName);
-            jobExecutor.setAddress(address);
-            jobExecutor.setUpdateTime(new Date());
-            jobNodeMapper.insertSelective(jobExecutor);
+    public ResultT<String> registry(RegistryParam param) {
+        String appName = param.getAppName();
+        String address = param.getAddress();
+        JobExecutor executor = jobExecutorMapper.selectByAppNameAndAddress(appName, address);
+        if (executor == null) {
+            executor = new JobExecutor();
+            executor.setAppName(appName);
+            executor.setAddress(address);
+            jobExecutorMapper.insert(executor);
         } else {
-            // 更新 update_time
-            jobExecutor.setUpdateTime(new Date());
-            jobNodeMapper.updateByPrimaryKeySelective(jobExecutor);
+            executor.setUpdateTime(new Date());
+            jobExecutorMapper.updateByPrimaryKey(executor);
         }
         return ResultT.SUCCESS;
     }
 
     @Override
-    public ResultT<String> removeNode(RegistryParam registryParam) {
-        // 直接删除
-        jobNodeMapper.delete(
-                deleteFrom(JobNodeDynamicSqlSupport.jobNode)
-                        .where(JobNodeDynamicSqlSupport.appName,
-                                isEqualTo(registryParam.getAppName()))
-                        .and(JobNodeDynamicSqlSupport.address,
-                                isEqualTo(registryParam.getNodeAddress()))
-                        .build().render(RenderingStrategies.MYBATIS3)
-        );
+    public ResultT<String> remove(RegistryParam param) {
+        jobExecutorMapper.deleteByAppNameAndAddress(param.getAppName(), param.getAddress());
         return ResultT.SUCCESS;
     }
 }

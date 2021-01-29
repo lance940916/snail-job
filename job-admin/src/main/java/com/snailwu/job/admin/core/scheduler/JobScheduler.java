@@ -24,16 +24,16 @@ public abstract class JobScheduler {
         ExecutorMonitorHelper.start();
 
         // 失败重试线程
-        JobFailMonitorHelper.start();
+//        JobFailMonitorHelper.start();
 
         // 任务运行结果统计线程
-        JobLogReportHelper.start();
+//        JobLogReportHelper.start();
 
         // 任务触发类线程
-        JobTriggerPoolHelper.start();
+//        JobTriggerPoolHelper.start();
 
         // 启动任务扫描调度类
-        JobScheduleHelper.start();
+//        JobScheduleHelper.start();
     }
 
     /**
@@ -41,15 +41,15 @@ public abstract class JobScheduler {
      * 注意顺序
      */
     public static void stopAll() {
-        JobScheduleHelper.stop();
-
-        JobTriggerPoolHelper.stop();
-
-        JobLogReportHelper.stop();
-
-        JobFailMonitorHelper.stop();
-
         ExecutorMonitorHelper.stop();
+
+//        JobScheduleHelper.stop();
+//
+//        JobTriggerPoolHelper.stop();
+//
+//        JobLogReportHelper.stop();
+//
+//        JobFailMonitorHelper.stop();
     }
 
     /**
@@ -61,11 +61,10 @@ public abstract class JobScheduler {
     /**
      * 根据地址获取 ExecutorBiz
      */
-    public static ExecutorBiz obtainOrCreateExecutorBiz(String address) {
-        if (address == null || address.trim().length() == 0) {
+    public static ExecutorBiz getOrCreateExecutorBiz(String address) {
+        if (address == null || address.length() == 0) {
             return null;
         }
-        address = address.trim();
         ExecutorBiz executorBiz = EXECUTOR_BIZ_REPOSITORY.get(address);
         if (executorBiz != null) {
             return executorBiz;

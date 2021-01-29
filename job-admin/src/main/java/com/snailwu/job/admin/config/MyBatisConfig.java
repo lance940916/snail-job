@@ -1,13 +1,14 @@
 package com.snailwu.job.admin.config;
 
 import com.github.pagehelper.PageInterceptor;
+import jakarta.annotation.Resource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.util.Properties;
 
@@ -51,6 +52,11 @@ public class MyBatisConfig {
 
         // 数据源
         factoryBean.setDataSource(dataSource);
+
+        // 添加 XML 文件位置
+        String xmlMapperLocation = "classpath:mapper/*.xml";
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        factoryBean.setMapperLocations(resolver.getResources(xmlMapperLocation));
 
         // MyBatis JavaConfig配置
         factoryBean.setConfiguration(myBatisConfiguration());

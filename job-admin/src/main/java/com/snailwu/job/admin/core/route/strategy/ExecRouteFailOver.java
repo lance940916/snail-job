@@ -7,7 +7,7 @@ import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.biz.model.TriggerParam;
 
 /**
- * 心跳监测在线可用执行器
+ * 故障转移
  *
  * @author 吴庆龙
  * @date 2020/6/17 10:11 上午
@@ -18,7 +18,7 @@ public class ExecRouteFailOver extends ExecRouter {
         for (String address : addresses) {
             ResultT<String> beatResult;
             try {
-                ExecutorBiz executorBiz = JobScheduler.obtainOrCreateExecutorBiz(address);
+                ExecutorBiz executorBiz = JobScheduler.getOrCreateExecutorBiz(address);
                 beatResult = executorBiz.beat();
             } catch (Exception e) {
                 LOGGER.error("选择执行器.idleBeat接口异常,执行器:{},原因:{}", address, e.getMessage());

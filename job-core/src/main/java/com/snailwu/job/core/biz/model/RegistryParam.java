@@ -14,16 +14,16 @@ public class RegistryParam {
     private String appName;
 
     /**
-     * 节点的地址
+     * 执行器的地址
      */
-    private String nodeAddress;
+    private String address;
 
     public RegistryParam() {
     }
 
-    public RegistryParam(String appName, String nodeAddress) {
+    public RegistryParam(String appName, String address) {
         this.appName = appName;
-        this.nodeAddress = nodeAddress;
+        this.address = address;
     }
 
     public String getAppName() {
@@ -34,11 +34,11 @@ public class RegistryParam {
         this.appName = appName;
     }
 
-    public String getNodeAddress() {
-        return nodeAddress;
+    public String getAddress() {
+        return address;
     }
 
-    public void setNodeAddress(String nodeAddress) {
-        this.nodeAddress = nodeAddress;
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

@@ -15,7 +15,7 @@ public enum ExecRouteStrategyEnum {
 
     FIRST("first", (byte) 1, "第一个", new ExecRouteFirst()),
     LAST("last", (byte) 2, "最后一个", new ExecRouteLast()),
-    //    ROUND("round", (byte) 3, "轮询", new ExecutorRouteRound()),
+//    ROUND("round", (byte) 3, "轮询", new ExecutorRouteRound()),
 //    RANDOM("random", (byte) 4, "随机", new ExecutorRouteRandom()),
 //    CONSISTENT_HASH("consistent_hash", (byte) 5, "一致性HASH", new ExecutorRouteConsistentHash()),
 //    LEAST_FREQUENTLY_USED("least_frequently_used", (byte) 6, "最不经常使用", new ExecutorRouteLFU()),

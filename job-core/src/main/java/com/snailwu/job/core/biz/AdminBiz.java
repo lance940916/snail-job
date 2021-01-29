@@ -24,7 +24,7 @@ public interface AdminBiz {
      * @param registryParam 注册参数
      * @return 注册结果
      */
-    ResultT<String> registryNode(RegistryParam registryParam);
+    ResultT<String> registry(RegistryParam registryParam);
 
     /**
      * 移除客户端
@@ -32,6 +32,6 @@ public interface AdminBiz {
      * @param registryParam 移除参数
      * @return 移除结果
      */
-    ResultT<String> removeNode(RegistryParam registryParam);
+    ResultT<String> remove(RegistryParam registryParam);
 
 }
