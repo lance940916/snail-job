@@ -1,4 +1,4 @@
-[![Build Status](https://www.travis-ci.com/wu0916/snail-job.svg?branch=master)](https://www.travis-ci.com/wu0916/snail-job)
+![Travis (.com) branch](https://img.shields.io/travis/com/wu0916/wu-job/master)
 ![GitHub](https://img.shields.io/github/license/wu0916/wu-job)
 
 # 分布式定时任务调度系统
