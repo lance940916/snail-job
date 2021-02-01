@@ -50,24 +50,24 @@ public class JobAlarmComposite implements ApplicationContextAware, InitializingB
      *
      * @return true=报警成功;false=报警失败
      */
-    public boolean alarm(JobInfo jobInfo, JobLog jobLog) {
+    public boolean alarm(JobInfo info, JobLog log) {
         if (CollectionUtils.isEmpty(alarmList)) {
             return false;
         }
 
-        boolean result = true;
-        for (JobAlarm jobAlarm : alarmList) {
+        boolean finalResult = true;
+        for (JobAlarm alarm : alarmList) {
             boolean resultItem = false;
             try {
-                resultItem = jobAlarm.doAlarm(jobInfo, jobLog);
+                resultItem = alarm.doAlarm(info, log);
             } catch (Exception e) {
-                LOGGER.error("告警异常。", e);
+                LOGGER.error("任务告警异常。", e);
             }
             if (!resultItem) {
-                result = false;
+                finalResult = false;
             }
         }
-        return result;
+        return finalResult;
     }
 
 }

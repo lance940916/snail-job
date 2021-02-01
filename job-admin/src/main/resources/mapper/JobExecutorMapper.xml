@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snailwu.job.admin.mapper.JobExecutorMapper">
+    <resultMap id="BaseResultMap" type="com.snailwu.job.admin.model.JobExecutor">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="app_name" jdbcType="VARCHAR" property="appName"/>
+        <result column="address" jdbcType="VARCHAR" property="address"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from job_executor
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <delete id="deleteDead" parameterType="date">
+        delete
+        from job_executor
+        where update_time <![CDATA[<=]]> #{deadDate}
+    </delete>
+    <delete id="deleteByAppNameAndAddress">
+        delete
+        from job_executor
+        where app_name = #{appName}
+          and address = #{address}
+    </delete>
+    <insert id="insert" parameterType="com.snailwu.job.admin.model.JobExecutor">
+        insert into job_executor (id, app_name, address,
+                                  create_time, update_time)
+        values (#{id,jdbcType=INTEGER}, #{appName,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR},
+                #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="com.snailwu.job.admin.model.JobExecutor">
+        update job_executor
+        set app_name    = #{appName,jdbcType=VARCHAR},
+            address     = #{address,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id, app_name, address, create_time, update_time
+        from job_executor
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select id, app_name, address, create_time, update_time
+        from job_executor
+    </select>
+    <select id="selectByAppNameAndAddress" resultMap="BaseResultMap">
+        select id, app_name, address, create_time, update_time
+        from job_executor
+        where app_name = #{appName}
+          and address = #{address}
+    </select>
+    <select id="selectNeedSortOut" resultMap="BaseResultMap">
+        select app_name, address
+        from job_executor
+    </select>
+</mapper>

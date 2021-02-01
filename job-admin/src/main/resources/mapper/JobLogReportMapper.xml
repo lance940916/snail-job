@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snailwu.job.admin.mapper.JobLogReportMapper">
+    <resultMap id="BaseResultMap" type="com.snailwu.job.admin.model.JobLogReport">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="trigger_day" jdbcType="DATE" property="triggerDay"/>
+        <result column="running_count" jdbcType="INTEGER" property="runningCount"/>
+        <result column="success_count" jdbcType="INTEGER" property="successCount"/>
+        <result column="fail_count" jdbcType="INTEGER" property="failCount"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from job_log_report
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.snailwu.job.admin.model.JobLogReport">
+        insert into job_log_report (id, trigger_day, running_count,
+                                    success_count, fail_count)
+        values (#{id,jdbcType=INTEGER}, #{triggerDay,jdbcType=DATE}, #{runningCount,jdbcType=INTEGER},
+                #{successCount,jdbcType=INTEGER}, #{failCount,jdbcType=INTEGER})
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="com.snailwu.job.admin.model.JobLogReport">
+        update job_log_report
+        set trigger_day   = #{triggerDay,jdbcType=DATE},
+            running_count = #{runningCount,jdbcType=INTEGER},
+            success_count = #{successCount,jdbcType=INTEGER},
+            fail_count    = #{failCount,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id, trigger_day, running_count, success_count, fail_count
+        from job_log_report
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select id, trigger_day, running_count, success_count, fail_count
+        from job_log_report
+    </select>
+    <select id="selectTodayReport" parameterType="date" resultMap="BaseResultMap">
+        select id, trigger_day, running_count, success_count, fail_count
+        from job_log_report
+        where trigger_day = #{trigger_day}
+    </select>
+</mapper>

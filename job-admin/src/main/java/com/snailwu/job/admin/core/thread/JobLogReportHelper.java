@@ -6,7 +6,8 @@ import com.snailwu.job.admin.model.JobLogReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Calendar;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -24,26 +25,17 @@ public class JobLogReportHelper {
     private static volatile boolean running = true;
 
     private static void run() throws InterruptedException {
-        long startTs = System.currentTimeMillis();
-
-        // 当前天
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.MILLISECOND, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-
-        // 触发的开始结束时间
-        Date beginTime = cal.getTime();
-        cal.add(Calendar.DAY_OF_YEAR, 1);
-        Date endTime = cal.getTime();
+        // 当前日期
+        LocalDate date = LocalDate.now();
+        Date beginDate = Date.from(date.atStartOfDay().toInstant(ZoneOffset.ofHours(8)));
+        Date endDate = Date.from(date.plusDays(1).atStartOfDay().toInstant(ZoneOffset.ofHours(8)));
 
         // 不断统计当天的任务执行情况
-        List<JobLog> jobLogs = AdminConfig.getInstance().getJobLogMapper().selectTodayLogs(beginTime, endTime);
+        List<JobLog> logs = AdminConfig.getInstance().getJobLogMapper().selectTodayLogs(beginDate, endDate);
         int successCount = 0;
         int failCount = 0;
         int runningCount = 0;
-        for (JobLog log : jobLogs) {
+        for (JobLog log : logs) {
             Integer triggerCode = log.getTriggerCode();
             Integer execCode = log.getExecCode();
             if (triggerCode == 200 && execCode == 200) {
@@ -54,24 +46,23 @@ public class JobLogReportHelper {
                 failCount++;
             }
         }
-        logger.info("今日任务运行状态统计。运行中:{};成功:{};失败:{}", runningCount, successCount, failCount);
+        logger.info("任务运行状态统计：运行中[{}] 成功[{}] 失败[{}]", runningCount, successCount, failCount);
 
         // 更新 job_log_report
-        JobLogReport jobLogReport = AdminConfig.getInstance().getJobLogReportMapper().selectTodayReport(beginTime);
-        if (jobLogReport == null) {
-            jobLogReport = new JobLogReport();
-            jobLogReport.setTriggerDay(beginTime);
-            jobLogReport.setRunningCount(runningCount);
-            jobLogReport.setSuccessCount(successCount);
-            jobLogReport.setFailCount(failCount);
-            AdminConfig.getInstance().getJobLogReportMapper().insert(jobLogReport);
+        JobLogReport logReport = AdminConfig.getInstance().getJobLogReportMapper().selectTodayReport(beginDate);
+        if (logReport == null) {
+            logReport = new JobLogReport();
+            logReport.setTriggerDay(beginDate);
+            logReport.setSuccessCount(successCount);
+            logReport.setRunningCount(runningCount);
+            logReport.setFailCount(failCount);
+            AdminConfig.getInstance().getJobLogReportMapper().insert(logReport);
         } else {
-            jobLogReport.setRunningCount(runningCount);
-            jobLogReport.setSuccessCount(successCount);
-            jobLogReport.setFailCount(failCount);
-            AdminConfig.getInstance().getJobLogReportMapper().updateByPrimaryKey(jobLogReport);
+            logReport.setSuccessCount(successCount);
+            logReport.setRunningCount(runningCount);
+            logReport.setFailCount(failCount);
+            AdminConfig.getInstance().getJobLogReportMapper().updateByPrimaryKey(logReport);
         }
-        long costMs = System.currentTimeMillis() - startTs;
 
         // 每分钟执行一次
         if (running) {
@@ -80,7 +71,6 @@ public class JobLogReportHelper {
     }
 
     public static void start() {
-        // TODO 重复代码待重构
         thread = new Thread(() -> {
             while (running) {
                 try {
@@ -97,7 +87,6 @@ public class JobLogReportHelper {
         thread.setDaemon(true);
         thread.setName("log-report");
         thread.start();
-        logger.info("日志报告线程-已启动。");
     }
 
     public static void stop() {

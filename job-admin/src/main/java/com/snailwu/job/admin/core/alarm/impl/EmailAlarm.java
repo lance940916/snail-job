@@ -19,7 +19,7 @@ public class EmailAlarm implements JobAlarm {
     private JavaMailSender mailSender;
 
     @Override
-    public boolean doAlarm(JobInfo jobInfo, JobLog jobLog) {
+    public boolean doAlarm(JobInfo info, JobLog log) {
         return true;
     }
 

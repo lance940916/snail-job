@@ -3,7 +3,6 @@ package com.snailwu.job.admin.core.thread;
 import com.snailwu.job.admin.core.config.AdminConfig;
 import com.snailwu.job.admin.model.JobApp;
 import com.snailwu.job.admin.model.JobExecutor;
-import com.snailwu.job.core.constants.CoreConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static com.snailwu.job.core.constants.CoreConstant.BEAT_TIME;
 import static com.snailwu.job.core.constants.CoreConstant.DEAD_TIME;
 import static com.snailwu.job.core.enums.RegistryType.AUTO;
 
@@ -31,11 +31,11 @@ public class ExecutorMonitorHelper {
         Date deadDate = new Date(curTs - DEAD_TIME);
         AdminConfig.getInstance().getJobExecutorMapper().deleteDead(deadDate);
 
-        // 获取所有自动注册的应用
+        // 获取所有应用（使用自动注册的）
         List<JobApp> apps = AdminConfig.getInstance().getJobAppMapper().selectAutoRegistry(AUTO.getValue());
 
         // 获取所有的执行器
-        List<JobExecutor> executors = AdminConfig.getInstance().getJobExecutorMapper().selectAllWithoutTime();
+        List<JobExecutor> executors = AdminConfig.getInstance().getJobExecutorMapper().selectNeedSortOut();
 
         // 根据应用合并执行器地址
         Map<String, List<String>> appAddressMap = new HashMap<>();
@@ -61,9 +61,9 @@ public class ExecutorMonitorHelper {
             logger.info("应用名称：{} 地址列表：{}", app.getAppName(), addresses);
         }
 
-        // 休眠
+        // 休眠 10 秒钟，应用注册间隔时间
         if (running) {
-            TimeUnit.SECONDS.sleep(10);
+            TimeUnit.SECONDS.sleep(BEAT_TIME);
         }
     }
 

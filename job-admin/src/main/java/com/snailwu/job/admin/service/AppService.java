@@ -2,14 +2,11 @@ package com.snailwu.job.admin.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.github.pagehelper.page.PageMethod;
 import com.snailwu.job.admin.controller.request.JobGroupSearchRequest;
 import com.snailwu.job.admin.mapper.JobAppMapper;
 import com.snailwu.job.admin.model.JobApp;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -21,8 +18,6 @@ import java.util.List;
  */
 @Service
 public class AppService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AppService.class);
-
     @Resource
     private JobAppMapper jobAppMapper;
 
@@ -53,12 +48,7 @@ public class AppService {
      * 删除
      */
     public void delete(Integer id) {
-        int ret = jobAppMapper.deleteByPrimaryKey(id);
-        if (ret == 1) {
-            LOGGER.info("删除成功");
-        } else {
-            LOGGER.info("删除失败,记录不存在");
-        }
+        jobAppMapper.deleteByPrimaryKey(id);
     }
 
     /**

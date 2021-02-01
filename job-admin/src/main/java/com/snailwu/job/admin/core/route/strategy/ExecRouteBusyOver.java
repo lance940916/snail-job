@@ -15,21 +15,21 @@ import com.snailwu.job.core.biz.model.TriggerParam;
  */
 public class ExecRouteBusyOver extends ExecRouter {
     @Override
-    public ResultT<String> route(TriggerParam triggerParam, String[] addresses) {
+    public ResultT<String> route(TriggerParam param, String[] addresses) {
         for (String address : addresses) {
+            ExecutorBiz executorBiz = JobScheduler.getOrCreateExecutorBiz(address);
             ResultT<String> result;
             try {
-                ExecutorBiz executorBiz = JobScheduler.getOrCreateExecutorBiz(address);
-                result = executorBiz.idleBeat(new IdleBeatParam(triggerParam.getJobId()));
+                result = executorBiz.idleBeat(new IdleBeatParam(param.getJobId()));
             } catch (Exception e) {
-                LOGGER.error("选择执行器.idleBeat接口异常,原因:{}", e.getMessage());
+                LOGGER.error("选择执行器。idleBeat接口异常，执行器：{}，原因：{}", address, e);
                 continue;
             }
 
             if (result.getCode() == ResultT.SUCCESS_CODE) {
                 return new ResultT<>(address);
             } else {
-                LOGGER.info("选择执行器.执行器:[{}]忙碌,继续寻找执行器...", address);
+                LOGGER.info("选择执行器。执行器：[{}]忙碌，继续寻找执行器...", address);
             }
         }
         return new ResultT<>(ResultT.FAIL_CODE, NO_FOUND_ADDRESS_MSG);

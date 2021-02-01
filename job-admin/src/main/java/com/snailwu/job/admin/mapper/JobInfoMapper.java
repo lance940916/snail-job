@@ -1,5 +1,6 @@
 package com.snailwu.job.admin.mapper;
 
+import com.snailwu.job.admin.controller.request.JobInfoSearchRequest;
 import com.snailwu.job.admin.model.JobInfo;
 import org.apache.ibatis.annotations.Param;
 
@@ -24,4 +25,7 @@ public interface JobInfoMapper {
                             @Param("triggerStatus") Byte triggerStatus,
                             @Param("id") Integer id);
 
+    List<JobInfo> selectByCondition(JobInfoSearchRequest searchRequest);
+
+    List<JobInfo> selectByAppName(String appName);
 }

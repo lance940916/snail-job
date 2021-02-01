@@ -14,7 +14,6 @@ public interface AdminConstants {
     /**
      * 日期时间格式化格式
      */
-    String DATE_TIME_MS_PATTERN = "yyyy-MM-dd HH:mm:ss,SSS";
     String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
     /**

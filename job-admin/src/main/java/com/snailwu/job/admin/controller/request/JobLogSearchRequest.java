@@ -8,22 +8,22 @@ import java.util.Date;
  */
 public class JobLogSearchRequest extends BasePageRequest {
 
-    private String groupName;
+    private String appName;
     private Integer jobId;
     private Integer triggerCode;
     private Integer execCode;
     private Date triggerBeginDate;
     private Date triggerEndDate;
 
-    public String getGroupName() {
-        if (groupName == null || groupName.length() == 0) {
+    public String getAppName() {
+        if (appName == null || appName.length() == 0) {
             return null;
         }
-        return groupName;
+        return appName;
     }
 
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
+    public void setAppName(String appName) {
+        this.appName = appName;
     }
 
     public Integer getJobId() {

@@ -1,7 +1,7 @@
 package com.snailwu.job.admin.core.scheduler;
 
 import com.snailwu.job.admin.core.config.AdminConfig;
-import com.snailwu.job.admin.core.thread.*;
+import com.snailwu.job.admin.core.thread.ExecutorMonitorHelper;
 import com.snailwu.job.core.biz.ExecutorBiz;
 import com.snailwu.job.core.biz.client.ExecutorBizClient;
 
@@ -52,6 +52,8 @@ public abstract class JobScheduler {
 //        JobFailMonitorHelper.stop();
     }
 
+    // ---------------------------------- 注册调用执行器的类
+
     /**
      * key: 节点的地址
      * value: 节点调用类
@@ -62,9 +64,6 @@ public abstract class JobScheduler {
      * 根据地址获取 ExecutorBiz
      */
     public static ExecutorBiz getOrCreateExecutorBiz(String address) {
-        if (address == null || address.length() == 0) {
-            return null;
-        }
         ExecutorBiz executorBiz = EXECUTOR_BIZ_REPOSITORY.get(address);
         if (executorBiz != null) {
             return executorBiz;

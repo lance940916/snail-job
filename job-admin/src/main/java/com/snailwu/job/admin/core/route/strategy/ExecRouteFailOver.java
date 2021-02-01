@@ -16,18 +16,17 @@ public class ExecRouteFailOver extends ExecRouter {
     @Override
     public ResultT<String> route(TriggerParam triggerParam, String[] addresses) {
         for (String address : addresses) {
-            ResultT<String> beatResult;
+            ExecutorBiz executorBiz = JobScheduler.getOrCreateExecutorBiz(address);
+            ResultT<String> result;
             try {
-                ExecutorBiz executorBiz = JobScheduler.getOrCreateExecutorBiz(address);
-                beatResult = executorBiz.beat();
+                result = executorBiz.beat();
             } catch (Exception e) {
-                LOGGER.error("选择执行器.idleBeat接口异常,执行器:{},原因:{}", address, e.getMessage());
+                LOGGER.error("选择执行器。beat接口异常，执行器：{}，原因：{}", address, e);
                 continue;
             }
-            if (beatResult.getCode() == ResultT.SUCCESS_CODE) {
+            // 只要返回了必定是 SUCCESS_CODE
+            if (result.getCode() == ResultT.SUCCESS_CODE) {
                 return new ResultT<>(address);
-            } else {
-                LOGGER.info("选择执行器.执行器:[{}]忙碌,继续寻找执行器...", address);
             }
         }
         return new ResultT<>(ResultT.FAIL_CODE, NO_FOUND_ADDRESS_MSG);

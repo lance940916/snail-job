@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snailwu.job.admin.mapper.JobInfoMapper">
+    <resultMap id="BaseResultMap" type="com.snailwu.job.admin.model.JobInfo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="job_name" jdbcType="VARCHAR" property="jobName"/>
+        <result column="app_name" jdbcType="VARCHAR" property="appName"/>
+        <result column="cron" jdbcType="VARCHAR" property="cron"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="author" jdbcType="VARCHAR" property="author"/>
+        <result column="alarm_email" jdbcType="VARCHAR" property="alarmEmail"/>
+        <result column="exec_route_strategy" jdbcType="VARCHAR" property="execRouteStrategy"/>
+        <result column="exec_handler" jdbcType="VARCHAR" property="execHandler"/>
+        <result column="exec_param" jdbcType="VARCHAR" property="execParam"/>
+        <result column="exec_timeout" jdbcType="INTEGER" property="execTimeout"/>
+        <result column="exec_fail_retry_count" jdbcType="TINYINT" property="execFailRetryCount"/>
+        <result column="trigger_status" jdbcType="TINYINT" property="triggerStatus"/>
+        <result column="trigger_last_time" jdbcType="BIGINT" property="triggerLastTime"/>
+        <result column="trigger_next_time" jdbcType="BIGINT" property="triggerNextTime"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from job_info
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.snailwu.job.admin.model.JobInfo">
+        insert into job_info (id, job_name, app_name,
+                              cron, create_time, update_time,
+                              author, alarm_email, exec_route_strategy,
+                              exec_handler, exec_param, exec_timeout,
+                              exec_fail_retry_count, trigger_status, trigger_last_time,
+                              trigger_next_time)
+        values (#{id,jdbcType=INTEGER}, #{jobName,jdbcType=VARCHAR}, #{appName,jdbcType=VARCHAR},
+                #{cron,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},
+                #{author,jdbcType=VARCHAR}, #{alarmEmail,jdbcType=VARCHAR}, #{execRouteStrategy,jdbcType=VARCHAR},
+                #{execHandler,jdbcType=VARCHAR}, #{execParam,jdbcType=VARCHAR}, #{execTimeout,jdbcType=INTEGER},
+                #{execFailRetryCount,jdbcType=TINYINT}, #{triggerStatus,jdbcType=TINYINT},
+                #{triggerLastTime,jdbcType=BIGINT},
+                #{triggerNextTime,jdbcType=BIGINT})
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="com.snailwu.job.admin.model.JobInfo">
+        update job_info
+        set job_name              = #{jobName,jdbcType=VARCHAR},
+            app_name              = #{appName,jdbcType=VARCHAR},
+            cron                  = #{cron,jdbcType=VARCHAR},
+            create_time           = #{createTime,jdbcType=TIMESTAMP},
+            update_time           = #{updateTime,jdbcType=TIMESTAMP},
+            author                = #{author,jdbcType=VARCHAR},
+            alarm_email           = #{alarmEmail,jdbcType=VARCHAR},
+            exec_route_strategy   = #{execRouteStrategy,jdbcType=VARCHAR},
+            exec_handler          = #{execHandler,jdbcType=VARCHAR},
+            exec_param            = #{execParam,jdbcType=VARCHAR},
+            exec_timeout          = #{execTimeout,jdbcType=INTEGER},
+            exec_fail_retry_count = #{execFailRetryCount,jdbcType=TINYINT},
+            trigger_status        = #{triggerStatus,jdbcType=TINYINT},
+            trigger_last_time     = #{triggerLastTime,jdbcType=BIGINT},
+            trigger_next_time     = #{triggerNextTime,jdbcType=BIGINT}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateNextTimeById">
+        update job_info
+        set trigger_status    = #{triggerStatus,jdbcType=TINYINT},
+            trigger_last_time = #{triggerLastTime,jdbcType=BIGINT},
+            trigger_next_time = #{triggerNextTime,jdbcType=BIGINT}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id,
+               job_name,
+               app_name,
+               cron,
+               create_time,
+               update_time,
+               author,
+               alarm_email,
+               exec_route_strategy,
+               exec_handler,
+               exec_param,
+               exec_timeout,
+               exec_fail_retry_count,
+               trigger_status,
+               trigger_last_time,
+               trigger_next_time
+        from job_info
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select id,
+               job_name,
+               app_name,
+               cron,
+               create_time,
+               update_time,
+               author,
+               alarm_email,
+               exec_route_strategy,
+               exec_handler,
+               exec_param,
+               exec_timeout,
+               exec_fail_retry_count,
+               trigger_status,
+               trigger_last_time,
+               trigger_next_time
+        from job_info
+    </select>
+    <select id="selectTriggerAtTime" resultMap="BaseResultMap">
+        select id,
+               job_name,
+               app_name,
+               cron,
+               create_time,
+               update_time,
+               author,
+               alarm_email,
+               exec_route_strategy,
+               exec_handler,
+               exec_param,
+               exec_timeout,
+               exec_fail_retry_count,
+               trigger_status,
+               trigger_last_time,
+               trigger_next_time
+        from job_info
+        where trigger_status = #{triggerStatus}
+          AND trigger_next_time <![CDATA[<=]]> #{maxTriggerTime}
+    </select>
+    <select id="selectByCondition" parameterType="com.snailwu.job.admin.controller.request.JobInfoSearchRequest"
+            resultMap="BaseResultMap">
+        select id,
+        job_name,
+        app_name,
+        cron,
+        create_time,
+        update_time,
+        author,
+        alarm_email,
+        exec_route_strategy,
+        exec_handler,
+        exec_param,
+        exec_timeout,
+        exec_fail_retry_count,
+        trigger_status,
+        trigger_last_time,
+        trigger_next_time
+        from job_info
+        <where>
+            <if test="name != null and name != ''">
+                and job_name = #{name}
+            </if>
+            <if test="appName != null and appName != ''">
+                and app_name = #{appName}
+            </if>
+            <if test="author != null and author != ''">
+                and author = #{author}
+            </if>
+        </where>
+    </select>
+    <select id="selectByAppName" resultMap="BaseResultMap">
+        select id,
+               job_name,
+               app_name,
+               cron,
+               create_time,
+               update_time,
+               author,
+               alarm_email,
+               exec_route_strategy,
+               exec_handler,
+               exec_param,
+               exec_timeout,
+               exec_fail_retry_count,
+               trigger_status,
+               trigger_last_time,
+               trigger_next_time
+        from job_info
+        where app_name = #{appName}
+    </select>
+</mapper>

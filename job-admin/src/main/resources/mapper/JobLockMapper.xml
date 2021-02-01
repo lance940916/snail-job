@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snailwu.job.admin.mapper.JobLockMapper">
+    <resultMap id="BaseResultMap" type="com.snailwu.job.admin.model.JobLock">
+        <id column="lock_name" jdbcType="VARCHAR" property="lockName"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        delete
+        from job_lock
+        where lock_name = #{lockName,jdbcType=VARCHAR}
+    </delete>
+    <insert id="insert" parameterType="com.snailwu.job.admin.model.JobLock">
+        insert into job_lock (lock_name)
+        values (#{lockName,jdbcType=VARCHAR})
+    </insert>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select lock_name
+        from job_lock
+    </select>
+</mapper>

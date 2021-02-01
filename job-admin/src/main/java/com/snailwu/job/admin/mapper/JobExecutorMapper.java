@@ -1,7 +1,6 @@
 package com.snailwu.job.admin.mapper;
 
 import com.snailwu.job.admin.model.JobExecutor;
-import com.snailwu.job.core.biz.model.RegistryParam;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
@@ -24,5 +23,5 @@ public interface JobExecutorMapper {
 
     void deleteByAppNameAndAddress(@Param("appName") String appName, @Param("address") String address);
 
-    List<JobExecutor> selectAllWithoutTime();
+    List<JobExecutor> selectNeedSortOut();
 }

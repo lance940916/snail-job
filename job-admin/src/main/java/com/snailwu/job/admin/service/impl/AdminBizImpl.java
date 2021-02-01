@@ -29,9 +29,9 @@ public class AdminBizImpl implements AdminBiz {
      * 接收任务执行结果
      */
     @Override
-    public ResultT<String> callback(CallbackParam callbackParam) {
+    public ResultT<String> callback(CallbackParam param) {
         // 查询任务日志
-        JobLog log = jobLogMapper.selectExecCodeById(callbackParam.getLogId());
+        JobLog log = jobLogMapper.selectExecCodeById(param.getLogId());
         if (log == null) {
             return new ResultT<>(ResultT.FAIL_CODE, "无效的logId");
         }
@@ -44,9 +44,9 @@ public class AdminBizImpl implements AdminBiz {
         // 更新 JobLog 执行结果
         JobLog updateLog = new JobLog();
         updateLog.setId(log.getId());
-        updateLog.setExecTime(callbackParam.getExecTime());
-        updateLog.setExecCode(callbackParam.getExecCode());
-        updateLog.setExecMsg(callbackParam.getExecMsg());
+        updateLog.setExecTime(param.getExecTime());
+        updateLog.setExecCode(param.getExecCode());
+        updateLog.setExecMsg(param.getExecMsg());
         jobLogMapper.updateExecResultById(updateLog);
         return ResultT.SUCCESS;
     }

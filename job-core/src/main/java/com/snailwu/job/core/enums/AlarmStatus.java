@@ -8,7 +8,6 @@ package com.snailwu.job.core.enums;
  */
 public enum AlarmStatus {
 
-    LOCK("lock", (byte) -1, "锁定状态"),
     DEFAULT("auto", (byte) 0, "默认"),
     NOT_ALARM("not_alarm", (byte) 1, "无需告警"),
     ALARM_SUCCESS("alarm_success", (byte) 2, "告警成功"),

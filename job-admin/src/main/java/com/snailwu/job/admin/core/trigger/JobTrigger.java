@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 
-import static com.snailwu.job.admin.constant.AdminConstants.DATE_TIME_MS_PATTERN;
+import static com.snailwu.job.admin.constant.AdminConstants.DATE_TIME_PATTERN;
 import static com.snailwu.job.admin.core.route.ExecRouter.NO_FOUND_ADDRESS_MSG;
 
 /**
@@ -27,7 +27,7 @@ import static com.snailwu.job.admin.core.route.ExecRouter.NO_FOUND_ADDRESS_MSG;
  * @date 2020/6/17 1:56 下午
  */
 public class JobTrigger {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JobTrigger.class);
+    private static final Logger logger = LoggerFactory.getLogger(JobTrigger.class);
 
     /**
      * 触发 Job
@@ -42,7 +42,7 @@ public class JobTrigger {
         // 查询任务信息
         JobInfo jobInfo = AdminConfig.getInstance().getJobInfoMapper().selectByPrimaryKey(jobId);
         if (jobInfo == null) {
-            LOGGER.error("无效的任务。jobId：{}", jobId);
+            logger.error("无效的任务。jobId：{}", jobId);
             return;
         }
 
@@ -50,7 +50,7 @@ public class JobTrigger {
         String appName = jobInfo.getAppName();
         JobApp jobApp = AdminConfig.getInstance().getJobAppMapper().selectByAppName(appName);
         if (jobApp == null) {
-            LOGGER.error("无效的应用。appName：{}", appName);
+            logger.error("无效的应用。appName：{}", appName);
             return;
         }
 
@@ -60,19 +60,18 @@ public class JobTrigger {
         }
 
         // 优先使用参数的值
-        int failRetryCount = jobInfo.getExecFailRetryCount();
         if (overrideFailRetryCount != null && overrideFailRetryCount >= 0) {
-            failRetryCount = overrideFailRetryCount;
+            jobInfo.setExecFailRetryCount(overrideFailRetryCount.byteValue());
         }
 
         // 进行调度
-        doTrigger(jobInfo, jobApp.getAddresses(), triggerType, failRetryCount);
+        doTrigger(jobInfo, jobApp.getAddresses(), triggerType);
     }
 
     /**
      * 进行调度
      */
-    private static void doTrigger(JobInfo info, String addresses, TriggerTypeEnum triggerType, int failRetryCount) {
+    private static void doTrigger(JobInfo info, String addresses, TriggerTypeEnum triggerType) {
         // 调度时间
         Date triggerTime = new Date();
 
@@ -104,10 +103,10 @@ public class JobTrigger {
         }
 
         // 日志
-        String triggerTimeStr = DateFormatUtils.format(triggerTime, DATE_TIME_MS_PATTERN);
-        LOGGER.info("执行调度-JobId:{},LogId:{},触发类型:{},参数:{},失败重试次数:{},调度时间:{},节点地址:{}",
+        String triggerTimeStr = DateFormatUtils.format(triggerTime, DATE_TIME_PATTERN);
+        logger.info("执行调度-JobId:{},LogId:{},触发类型:{},参数:{},失败重试次数:{},调度时间:{},节点地址:{}",
                 info.getId(), log.getId(), triggerType, info.getExecParam(),
-                failRetryCount, triggerTimeStr, executorAddress
+                info.getExecFailRetryCount(), triggerTimeStr, executorAddress
         );
 
         // 触发远程执行器
@@ -117,7 +116,7 @@ public class JobTrigger {
         } else {
             triggerResult = new ResultT<>(ResultT.FAIL_CODE, NO_FOUND_ADDRESS_MSG);
         }
-        LOGGER.info("调度完成。结果：{}", triggerResult);
+        logger.info("调度完成。结果：{}", triggerResult);
 
         // 更新 Log
         JobLog updateLog = new JobLog();
@@ -126,7 +125,7 @@ public class JobTrigger {
         updateLog.setExecAddress(executorAddress);
         updateLog.setExecHandler(info.getExecHandler());
         updateLog.setExecParam(info.getExecParam());
-        updateLog.setFailRetryCount((byte) failRetryCount);
+        updateLog.setFailRetryCount(info.getExecFailRetryCount());
         // 无 execTime、execCode和execMsg
         // 调度信息
         updateLog.setTriggerTime(triggerTime);
@@ -146,7 +145,7 @@ public class JobTrigger {
             ExecutorBiz executorBiz = JobScheduler.getOrCreateExecutorBiz(address);
             result = executorBiz.run(triggerParam);
         } catch (Exception e) {
-            LOGGER.error("调度请求异常。", e);
+            logger.error("调度请求异常。", e);
             result = new ResultT<>(ResultT.FAIL_CODE, e.getMessage());
         }
         return result;

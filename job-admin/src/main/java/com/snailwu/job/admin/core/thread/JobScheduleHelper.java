@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-import static com.snailwu.job.admin.constant.AdminConstants.DATE_TIME_MS_PATTERN;
+import static com.snailwu.job.admin.constant.AdminConstants.DATE_TIME_PATTERN;
 import static com.snailwu.job.admin.core.trigger.TriggerTypeEnum.CRON;
 import static com.snailwu.job.core.enums.TriggerStatus.RUNNING;
 import static com.snailwu.job.core.enums.TriggerStatus.STOPPED;
@@ -46,10 +46,12 @@ public class JobScheduleHelper {
     private static final Map<Long, Set<Integer>> TRIGGER_JOB_MAP = new ConcurrentHashMap<>();
 
     private static void scanJob() throws InterruptedException {
-        // 当前时间戳
-        long nowTimeTs = System.currentTimeMillis();
+        // 当前整秒时间戳
+        long nowTime = System.currentTimeMillis() / 1000;
+
         // 获取 当前时间 + 10秒 内所有待调度的任务
-        long maxTriggerTime = nowTimeTs + 10000;
+        long preReadSecond = 10;
+        long maxTriggerTime = nowTime + preReadSecond;
 
         // 扫描将要待执行的任务，根据任务的执行时间从近到远排序
         List<JobInfo> jobInfos = AdminConfig.getInstance().getJobInfoMapper()
@@ -58,19 +60,21 @@ public class JobScheduleHelper {
         // 遍历待执行的任务
         for (JobInfo info : jobInfos) {
             Long triggerNextTime = info.getTriggerNextTime();
-            if (triggerNextTime < nowTimeTs) {
+
+            // 错误触发时间的任务 和 本秒要执行的任务
+            if (triggerNextTime < nowTime) {
                 // 1. 过时的任务 - 忽略调度并更新下次的执行时间
-                logger.warn("任务：【{}】错失触发时间：{}", info.getId(),
-                        DateFormatUtils.format(triggerNextTime, DATE_TIME_MS_PATTERN));
+                logger.warn("任务[{}]错失触发时间[{}]", info.getId(),
+                        DateFormatUtils.format(triggerNextTime * 1000, DATE_TIME_PATTERN));
 
                 // 刷新下次调度时间
                 refreshNextValidTime(info, new Date());
-            } else if (((triggerNextTime / 1000) % 60) == ((nowTimeTs / 1000) % 60)) {
+            } else if ((triggerNextTime % 60) == (nowTime % 60)) {
                 // 2. 当前秒要执行的任务, 直接进行调度
                 JobTriggerPoolHelper.push(info.getId(), CRON, -1, null);
 
                 // 刷新下次调度时间
-                refreshNextValidTime(info, new Date(triggerNextTime));
+                refreshNextValidTime(info, new Date(triggerNextTime * 1000));
             }
 
             // 重新赋值
@@ -79,14 +83,14 @@ public class JobScheduleHelper {
             // 3. 在 [当前秒+1秒,当前秒+preReadMs] 之内要执行的调度任务
             while (triggerNextTime <= maxTriggerTime && triggerNextTime != 0L) {
                 // 任务在第几秒开始执行
-                long invokeSecond = (triggerNextTime / 1000) % 60;
+                long invokeSecond = triggerNextTime % 60;
 
                 // 放入执行队列
                 Set<Integer> jobIdSet = TRIGGER_JOB_MAP.computeIfAbsent(invokeSecond, k -> new HashSet<>());
                 jobIdSet.add(info.getId());
 
                 // 刷新下次调度时间
-                refreshNextValidTime(info, new Date(triggerNextTime));
+                refreshNextValidTime(info, new Date(triggerNextTime * 1000));
                 triggerNextTime = info.getTriggerNextTime();
             }
         }
@@ -137,7 +141,8 @@ public class JobScheduleHelper {
         }
 
         // 对齐到整秒，耗时大于一秒，不进行睡眠
-        // 本次休眠到下次进行调度，会耗费 5 到 10 毫秒左右，所以任务调度的时间一般会有100毫秒以内的延时。
+        // 本次休眠到下次进行调度，会耗费 5 到 10 毫秒左右
+        // 每次任务调度的时间一般会有 100 毫秒以内的延时。
         if (triggerJobRunning && costMs < 1000) {
             // 本秒留给任务调度的毫秒数
             long leftMs = 1000 - nowTimeTs % 1000;
@@ -180,7 +185,8 @@ public class JobScheduleHelper {
                 // ignore
             }
 
-            // 执行到此时会耗费 5 到 10 毫秒
+            // 执行到此时会耗费 5 到 10 毫秒，到将任务放入到调度线程池中时会耗费小于 100 毫秒的时间，
+            // 所以任务调度的时间一般会有100毫秒以内的延时。
             while (triggerJobRunning) {
                 try {
                     triggerJob();
@@ -204,20 +210,20 @@ public class JobScheduleHelper {
      * TODO 对 CronExpression 类使用 LFU 进行缓存
      */
     private static void refreshNextValidTime(JobInfo info, Date fromDate) {
-        Date nextValidDate = null;
+        Date nextValidTime = null;
         try {
-            nextValidDate = new CronExpression(info.getCron()).getNextValidTimeAfter(fromDate);
+            nextValidTime = new CronExpression(info.getCron()).getNextValidTimeAfter(fromDate);
         } catch (ParseException e) {
             logger.error("Cron表达式异常。jobId：{}，cron：{}", info.getId(), info.getCron());
         }
-        if (nextValidDate == null) {
+        if (nextValidTime == null) {
             // 使任务停止
             info.setTriggerLastTime(0L);
             info.setTriggerNextTime(0L);
             info.setTriggerStatus(STOPPED.getValue());
         } else {
             info.setTriggerLastTime(info.getTriggerNextTime());
-            info.setTriggerNextTime(nextValidDate.getTime());
+            info.setTriggerNextTime(nextValidTime.getTime() / 1000);
             info.setTriggerStatus(RUNNING.getValue());
         }
     }

@@ -67,7 +67,7 @@ public class JobTriggerPoolHelper {
             try {
                 JobTrigger.trigger(jobId, triggerType, overrideFailRetryCount, overrideExecParam);
             } catch (Exception e) {
-                logger.error("任务调度异常", e);
+                logger.error("任务调度异常。jobId:{}", jobId, e);
             }
         });
     }

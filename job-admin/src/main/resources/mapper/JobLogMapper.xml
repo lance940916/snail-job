@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.snailwu.job.admin.mapper.JobLogMapper">
+    <resultMap id="BaseResultMap" type="com.snailwu.job.admin.model.JobLog">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="job_id" jdbcType="INTEGER" property="jobId"/>
+        <result column="app_name" jdbcType="VARCHAR" property="appName"/>
+        <result column="exec_address" jdbcType="VARCHAR" property="execAddress"/>
+        <result column="exec_handler" jdbcType="VARCHAR" property="execHandler"/>
+        <result column="exec_param" jdbcType="VARCHAR" property="execParam"/>
+        <result column="fail_retry_count" jdbcType="TINYINT" property="failRetryCount"/>
+        <result column="trigger_time" jdbcType="TIMESTAMP" property="triggerTime"/>
+        <result column="trigger_code" jdbcType="INTEGER" property="triggerCode"/>
+        <result column="trigger_msg" jdbcType="VARCHAR" property="triggerMsg"/>
+        <result column="exec_time" jdbcType="TIMESTAMP" property="execTime"/>
+        <result column="exec_code" jdbcType="INTEGER" property="execCode"/>
+        <result column="exec_msg" jdbcType="VARCHAR" property="execMsg"/>
+        <result column="alarm_status" jdbcType="TINYINT" property="alarmStatus"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete
+        from job_log
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <delete id="deleteByCondition" parameterType="com.snailwu.job.admin.controller.request.JobLogDeleteRequest">
+        delete
+        from job_log
+        where trigger_time <![CDATA[>=]]> #{beginDate} and trigger_time <![CDATA[<=]]> #{endDate}
+        <if test="jobId != null">
+            and job_id = #{jobId}
+        </if>
+        <if test="appName != null and appName != ''">
+            and app_name = #{appName}
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.snailwu.job.admin.model.JobLog" useGeneratedKeys="true" keyColumn="id"
+            keyProperty="id">
+        insert into job_log (id, job_id, app_name,
+                             exec_address, exec_handler, exec_param,
+                             fail_retry_count, trigger_time, trigger_code,
+                             trigger_msg, exec_time, exec_code,
+                             exec_msg, alarm_status)
+        values (#{id,jdbcType=BIGINT}, #{jobId,jdbcType=INTEGER}, #{appName,jdbcType=VARCHAR},
+                #{execAddress,jdbcType=VARCHAR}, #{execHandler,jdbcType=VARCHAR}, #{execParam,jdbcType=VARCHAR},
+                #{failRetryCount,jdbcType=TINYINT}, #{triggerTime,jdbcType=TIMESTAMP}, #{triggerCode,jdbcType=INTEGER},
+                #{triggerMsg,jdbcType=VARCHAR}, #{execTime,jdbcType=TIMESTAMP}, #{execCode,jdbcType=INTEGER},
+                #{execMsg,jdbcType=VARCHAR}, #{alarmStatus,jdbcType=TINYINT})
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="com.snailwu.job.admin.model.JobLog">
+        update job_log
+        set job_id           = #{jobId,jdbcType=INTEGER},
+            app_name         = #{appName,jdbcType=VARCHAR},
+            exec_address     = #{execAddress,jdbcType=VARCHAR},
+            exec_handler     = #{execHandler,jdbcType=VARCHAR},
+            exec_param       = #{execParam,jdbcType=VARCHAR},
+            fail_retry_count = #{failRetryCount,jdbcType=TINYINT},
+            trigger_time     = #{triggerTime,jdbcType=TIMESTAMP},
+            trigger_code     = #{triggerCode,jdbcType=INTEGER},
+            trigger_msg      = #{triggerMsg,jdbcType=VARCHAR},
+            exec_time        = #{execTime,jdbcType=TIMESTAMP},
+            exec_code        = #{execCode,jdbcType=INTEGER},
+            exec_msg         = #{execMsg,jdbcType=VARCHAR},
+            alarm_status     = #{alarmStatus,jdbcType=TINYINT}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateAlarmStatusById">
+        update job_log
+        set alarm_status = #{alarmStatus,jdbcType=TINYINT}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateTriggerResultById">
+        update job_log
+        set exec_address     = #{execAddress,jdbcType=VARCHAR},
+            exec_handler     = #{execHandler,jdbcType=VARCHAR},
+            exec_param       = #{execParam,jdbcType=VARCHAR},
+            fail_retry_count = #{failRetryCount,jdbcType=TINYINT},
+            trigger_time     = #{triggerTime,jdbcType=TIMESTAMP},
+            trigger_code     = #{triggerCode,jdbcType=INTEGER},
+            trigger_msg      = #{triggerMsg,jdbcType=VARCHAR},
+            alarm_status     = #{alarmStatus,jdbcType=TINYINT}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateExecResultById" parameterType="com.snailwu.job.admin.model.JobLog">
+        update job_log
+        set exec_time = #{execTime,jdbcType=TIMESTAMP},
+            exec_code = #{execCode,jdbcType=INTEGER},
+            exec_msg  = #{execMsg,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select id,
+               job_id,
+               app_name,
+               exec_address,
+               exec_handler,
+               exec_param,
+               fail_retry_count,
+               trigger_time,
+               trigger_code,
+               trigger_msg,
+               exec_time,
+               exec_code,
+               exec_msg,
+               alarm_status
+        from job_log
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select id,
+               job_id,
+               app_name,
+               exec_address,
+               exec_handler,
+               exec_param,
+               fail_retry_count,
+               trigger_time,
+               trigger_code,
+               trigger_msg,
+               exec_time,
+               exec_code,
+               exec_msg,
+               alarm_status
+        from job_log
+    </select>
+    <select id="selectNeedAlarm" resultMap="BaseResultMap">
+        select id,
+               job_id,
+               app_name,
+               exec_address,
+               exec_handler,
+               exec_param,
+               fail_retry_count,
+               trigger_time,
+               trigger_code,
+               trigger_msg,
+               exec_time,
+               exec_code,
+               exec_msg,
+               alarm_status
+        from job_log
+        where alarm_status = #{alarmStatus}
+          and (trigger_code <![CDATA[<>]]> #{successCode} or trigger_code <![CDATA[<>]]> #{successCode})
+    </select>
+    <select id="selectTodayLogs" resultMap="BaseResultMap">
+        select trigger_code, exec_code
+        from job_log
+        where trigger_time <![CDATA[>=]]> #{beginTime}
+          and trigger_time <![CDATA[<=]]> #{endTime}
+    </select>
+    <select id="selectExecCodeById" parameterType="long" resultType="com.snailwu.job.admin.model.JobLog">
+        select id, exec_code
+        from job_log
+        where id = #{id}
+    </select>
+    <select id="selectByCondition" parameterType="com.snailwu.job.admin.controller.request.JobLogSearchRequest"
+            resultType="com.snailwu.job.admin.controller.vo.JobLogVO">
+        select id,
+        job_id,
+        app_name,
+        exec_address,
+        exec_handler,
+        exec_param,
+        fail_retry_count,
+        trigger_time,
+        trigger_code,
+        trigger_msg,
+        exec_time,
+        exec_code,
+        exec_msg,
+        alarm_status
+        from job_log
+        <where>
+            <if test="jobId != null">
+                and job_id = #{jobId}
+            </if>
+            <if test="appName != null and appName != ''">
+                and app_name = #{appName}
+            </if>
+            <if test="triggerCode != null">
+                and trigger_code = #{triggerCode}
+            </if>
+            <if test="execCode != null">
+                and exec_code = #{execCode}
+            </if>
+            <if test="triggerBeginDate != null and triggerEndDate != null">
+                and trigger_time <![CDATA[>=]]> #{triggerBeginDate}
+                and trigger_time <![CDATA[<=]]> #{triggerEndDate}
+            </if>
+        </where>
+        order by trigger_time desc
+    </select>
+</mapper>
