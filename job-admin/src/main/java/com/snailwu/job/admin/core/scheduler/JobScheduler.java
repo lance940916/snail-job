@@ -1,7 +1,7 @@
 package com.snailwu.job.admin.core.scheduler;
 
 import com.snailwu.job.admin.core.config.AdminConfig;
-import com.snailwu.job.admin.core.thread.ExecutorMonitorHelper;
+import com.snailwu.job.admin.core.thread.*;
 import com.snailwu.job.core.biz.ExecutorBiz;
 import com.snailwu.job.core.biz.client.ExecutorBizClient;
 
@@ -24,16 +24,16 @@ public abstract class JobScheduler {
         ExecutorMonitorHelper.start();
 
         // 失败重试线程
-//        JobFailMonitorHelper.start();
+        JobFailMonitorHelper.start();
 
         // 任务运行结果统计线程
-//        JobLogReportHelper.start();
+        JobLogReportHelper.start();
 
         // 任务触发类线程
-//        JobTriggerPoolHelper.start();
+        JobTriggerPoolHelper.start();
 
         // 启动任务扫描调度类
-//        JobScheduleHelper.start();
+        JobScheduleHelper.start();
     }
 
     /**
@@ -43,13 +43,13 @@ public abstract class JobScheduler {
     public static void stopAll() {
         ExecutorMonitorHelper.stop();
 
-//        JobScheduleHelper.stop();
-//
-//        JobTriggerPoolHelper.stop();
-//
-//        JobLogReportHelper.stop();
-//
-//        JobFailMonitorHelper.stop();
+        JobScheduleHelper.stop();
+
+        JobTriggerPoolHelper.stop();
+
+        JobLogReportHelper.stop();
+
+        JobFailMonitorHelper.stop();
     }
 
     // ---------------------------------- 注册调用执行器的类

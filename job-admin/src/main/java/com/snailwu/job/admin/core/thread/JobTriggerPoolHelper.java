@@ -84,7 +84,7 @@ public class JobTriggerPoolHelper {
         JobDefaultThreadFactory() {
             SecurityManager s = System.getSecurityManager();
             group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-            namePrefix = "job-trigger-pool-" + POOL_NUMBER.getAndIncrement() + "-thread-";
+            namePrefix = "trigger-pool-" + POOL_NUMBER.getAndIncrement() + "-thread-";
         }
 
         @Override

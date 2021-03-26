@@ -37,7 +37,6 @@ public class AdminBizImpl implements AdminBiz {
         }
         // execCode 只能在回调中进行更改
         if (log.getExecCode() != 0) {
-            // FIXME 高并发重复回调会有问题
             return new ResultT<>(ResultT.FAIL_CODE, "重复回调");
         }
 

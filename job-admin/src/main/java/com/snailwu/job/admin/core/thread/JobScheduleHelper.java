@@ -138,12 +138,14 @@ public class JobScheduleHelper {
         long costMs = System.currentTimeMillis() - nowTimeTs;
         if (costMs >= 1000) {
             logger.warn("执行任务调度耗时过长：{}毫秒！！！", costMs);
+            // 立即进行下一秒任务调度
+            return;
         }
 
         // 对齐到整秒，耗时大于一秒，不进行睡眠
         // 本次休眠到下次进行调度，会耗费 5 到 10 毫秒左右
         // 每次任务调度的时间一般会有 100 毫秒以内的延时。
-        if (triggerJobRunning && costMs < 1000) {
+        if (triggerJobRunning) {
             // 本秒留给任务调度的毫秒数
             long leftMs = 1000 - nowTimeTs % 1000;
             // 本秒还剩余多少毫秒，然后进行睡眠
