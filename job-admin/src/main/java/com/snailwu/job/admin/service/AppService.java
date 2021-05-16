@@ -5,10 +5,10 @@ import com.github.pagehelper.PageInfo;
 import com.snailwu.job.admin.controller.request.JobGroupSearchRequest;
 import com.snailwu.job.admin.mapper.JobAppMapper;
 import com.snailwu.job.admin.model.JobApp;
-import jakarta.annotation.Resource;
 import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 

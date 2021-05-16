@@ -1,5 +1,5 @@
 language: java
 jdk:
-  - openjdk11
+  - openjdk8
 install: mvn clean compile -DskipTests=true -Dmaven.javadoc.skip=true -U -B -V
-script: mvn test
+script: mvn clean

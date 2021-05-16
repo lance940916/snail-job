@@ -5,10 +5,10 @@ import com.snailwu.job.admin.controller.request.JobGroupSearchRequest;
 import com.snailwu.job.admin.model.JobApp;
 import com.snailwu.job.admin.service.AppService;
 import com.snailwu.job.core.biz.model.ResultT;
-import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**

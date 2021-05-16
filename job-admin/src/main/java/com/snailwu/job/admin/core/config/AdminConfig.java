@@ -3,12 +3,13 @@ package com.snailwu.job.admin.core.config;
 import com.snailwu.job.admin.core.alarm.JobAlarmComposite;
 import com.snailwu.job.admin.core.scheduler.JobScheduler;
 import com.snailwu.job.admin.mapper.*;
-import jakarta.annotation.Resource;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 /**
  * @author 吴庆龙

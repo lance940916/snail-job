@@ -33,28 +33,28 @@ public class ExecutorBizClient implements ExecutorBiz {
     @Override
     public ResultT<String> beat() {
         String respContent = JobHttpUtil.post(address + "beat", accessToken, null);
-        return JobJsonUtil.readValue(respContent, new TypeReference<>() {
+        return JobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
         });
     }
 
     @Override
     public ResultT<String> idleBeat(IdleBeatParam idleBeatParam) {
         String respContent = JobHttpUtil.post(address + "ideaBeat", accessToken, idleBeatParam);
-        return JobJsonUtil.readValue(respContent, new TypeReference<>() {
+        return JobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
         });
     }
 
     @Override
     public ResultT<String> run(TriggerParam triggerParam) {
         String respContent = JobHttpUtil.post(address + "run", accessToken, triggerParam);
-        return JobJsonUtil.readValue(respContent, new TypeReference<>() {
+        return JobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
         });
     }
 
     @Override
     public ResultT<String> kill(KillParam killParam) {
         String respContent = JobHttpUtil.post(address + "kill", accessToken, killParam);
-        return JobJsonUtil.readValue(respContent, new TypeReference<>() {
+        return JobJsonUtil.readValue(respContent, new TypeReference<ResultT<String>>() {
         });
     }
 

@@ -8,12 +8,12 @@ import com.snailwu.job.admin.core.cron.CronExpression;
 import com.snailwu.job.admin.mapper.JobInfoMapper;
 import com.snailwu.job.admin.model.JobInfo;
 import com.snailwu.job.core.exception.JobException;
-import jakarta.annotation.Resource;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;

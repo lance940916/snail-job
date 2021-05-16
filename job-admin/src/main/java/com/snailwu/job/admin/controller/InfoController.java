@@ -12,11 +12,11 @@ import com.snailwu.job.admin.model.JobInfo;
 import com.snailwu.job.admin.service.InfoService;
 import com.snailwu.job.core.biz.model.ResultT;
 import com.snailwu.job.core.exception.JobException;
-import jakarta.annotation.Resource;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
