@@ -1,5 +1,5 @@
-CREATE database if NOT EXISTS `snail_job` default character set utf8mb4;
-USE `snail_job`;
+CREATE database if NOT EXISTS `wu_job` default character set utf8mb4;
+USE `wu_job`;
 
 -- 节点注册信息
 DROP TABLE IF EXISTS `job_executor`;

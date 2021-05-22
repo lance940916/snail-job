@@ -11,8 +11,8 @@ import org.springframework.context.annotation.Configuration;
  * @date 2020/8/11 10:21 上午
  */
 @Configuration
-public class SnailJobConfig {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SnailJobConfig.class);
+public class JobConfig {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JobConfig.class);
 
     @Bean
     public JobSpringExecutor snailJobSpringExecutor() {

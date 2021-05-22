@@ -12,7 +12,6 @@ public class JobAdminApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(JobAdminApplication.class, args);
-
     }
 
 }

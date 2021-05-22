@@ -28,11 +28,6 @@ import java.util.List;
  * @date 2020/5/22 1:41 下午
  */
 @Configuration
-@EnableWebMvc
-@ComponentScan(basePackages = "com.snailwu.job.admin.controller")
-@Import({
-        FreeMarkerConfig.class
-})
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class WebConfig implements WebMvcConfigurer, ApplicationContextAware {
 

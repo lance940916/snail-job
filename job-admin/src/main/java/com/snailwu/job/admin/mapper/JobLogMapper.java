@@ -4,11 +4,13 @@ import com.snailwu.job.admin.controller.request.JobLogDeleteRequest;
 import com.snailwu.job.admin.controller.request.JobLogSearchRequest;
 import com.snailwu.job.admin.controller.vo.JobLogVO;
 import com.snailwu.job.admin.model.JobLog;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
 import java.util.List;
 
+@Mapper
 public interface JobLogMapper {
     int deleteByPrimaryKey(Long id);
 

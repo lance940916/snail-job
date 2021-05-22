@@ -2,10 +2,12 @@ package com.snailwu.job.admin.mapper;
 
 import com.snailwu.job.admin.controller.request.JobInfoSearchRequest;
 import com.snailwu.job.admin.model.JobInfo;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+@Mapper
 public interface JobInfoMapper {
     int deleteByPrimaryKey(Integer id);
 

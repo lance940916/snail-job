@@ -1,11 +1,13 @@
 package com.snailwu.job.admin.mapper;
 
 import com.snailwu.job.admin.model.JobExecutor;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
 import java.util.List;
 
+@Mapper
 public interface JobExecutorMapper {
     int deleteByPrimaryKey(Integer id);
 
