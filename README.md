@@ -1,5 +1,5 @@
-[![Build Status](https://www.travis-ci.com/wu0916/wu-job.svg?branch=master)](https://www.travis-ci.com/wu0916/wu-job)
-![GitHub](https://img.shields.io/github/license/wu0916/wu-job)
+[![Build Status](https://www.travis-ci.com/wu0916/distributed-job.svg?branch=master)](https://www.travis-ci.com/wu0916/distributed-job)
+![GitHub](https://img.shields.io/github/license/wu0916/distributed-job)
 
 # 分布式定时任务调度系统
 
